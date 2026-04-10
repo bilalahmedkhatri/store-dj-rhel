@@ -1,0 +1,261 @@
+{% extends 'landing/base.html' %}
+{% load static %}
+
+{% block title %}{{ name }} - Azeem Lab{% endblock %}
+
+{% block content %}
+<section class="py-8 md:py-12 lg:py-20 bg-white">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 xl:gap-16">
+            <!-- Product Gallery (same as before) -->
+            <div class="w-full lg:w-1/2">
+                <div class="lg:sticky lg:top-24">
+                    <div class="bg-gray-50 rounded-2xl md:rounded-3xl overflow-hidden mb-4 aspect-[4/5]">
+                        <img id="main-product-image" src="{{ main_image }}" alt="{{ name }}" 
+                             class="w-full h-full object-cover transition-all duration-500 hover:scale-105">
+                    </div>
+                    {% if images|length > 1 %}
+                    <div class="grid grid-cols-4 gap-3 md:gap-4" id="product-thumbnails">
+                        {% for img in images %}
+                        <button data-image="{{ img }}"
+                                class="thumbnail-btn aspect-square rounded-lg md:rounded-xl overflow-hidden border-2 border-transparent hover:border-primary transition-all bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary">
+                            <img src="{{ img }}" alt="{{ name }} thumbnail" class="w-full h-full object-cover">
+                        </button>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Product Info (same as before) -->
+            <div class="w-full lg:w-1/2">
+                <h1 class="text-3xl sm:text-4xl md:text-5xl font-black mb-4 text-gray-900">{{ name }}</h1>
+                
+                <div class="flex flex-wrap items-center gap-3 md:gap-4 mb-6">
+                    <span class="text-2xl md:text-3xl lg:text-4xl font-black text-primary">${{ price_display }}</span>
+                    <div class="flex items-center gap-2">
+                        <div class="flex text-yellow-400 gap-0.5">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <span class="text-gray-400 text-xs sm:text-sm font-medium">(4.8 / 120 reviews)</span>
+                    </div>
+                </div>
+
+                <div class="prose prose-sm sm:prose-base lg:prose-lg text-gray-600 mb-8 max-w-none">
+                    {{ description|safe }}
+                </div>
+
+                {% if options %}
+                <div class="space-y-6 mb-8 border-t border-b border-gray-100 py-6 md:py-8">
+                    {% regroup options by group as grouped_options %}
+                    {% for group in grouped_options %}
+                    <div>
+                        <h4 class="font-bold text-gray-900 mb-3 md:mb-4 uppercase tracking-wider text-xs md:text-sm">{{ group.grouper }}</h4>
+                        <div class="flex flex-wrap gap-2 md:gap-3">
+                            {% for opt in group.list %}
+                            <label class="relative">
+                                <input type="radio" name="{{ group.grouper }}" value="{{ opt.id }}" class="peer sr-only">
+                                <span class="px-4 md:px-6 py-2 md:py-3 rounded-lg md:rounded-xl border border-gray-200 cursor-pointer hover:border-primary peer-checked:bg-primary peer-checked:text-white peer-checked:border-primary transition-all inline-block font-bold text-sm md:text-base">
+                                    {{ opt.name }}
+                                </span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <form id="add-to-cart-form" method="post" action="{% url 'cart_add' %}" class="flex flex-col sm:flex-row gap-3 md:gap-4 mb-8 md:mb-12">
+                    {% csrf_token %}
+                    <input type="hidden" name="slug" value="{{ slug }}">
+                    <input type="hidden" name="name" value="{{ name }}">
+                    <input type="hidden" name="image_url" value="{{ main_image }}">
+                    <input type="hidden" name="price" value="{{ min_price|default:price_display }}">
+                    <input type="hidden" name="variant" value="Default">
+                    <input type="hidden" name="next" value="{% url 'cart' %}">
+                    <div class="flex items-center border border-gray-200 rounded-lg md:rounded-xl px-3 md:px-4 bg-gray-50">
+                        <button type="button" id="decrease-qty" class="p-2 hover:text-primary transition-colors focus:outline-none"><i class="fas fa-minus text-sm md:text-base"></i></button>
+                        <input type="number" id="quantity" name="quantity" value="1" min="1" class="w-10 md:w-12 text-center bg-transparent border-none focus:ring-0 font-bold text-base md:text-lg">
+                        <button type="button" id="increase-qty" class="p-2 hover:text-primary transition-colors focus:outline-none"><i class="fas fa-plus text-sm md:text-base"></i></button>
+                    </div>
+                    <button id="add-to-cart-btn" type="submit" class="flex-grow bg-primary hover:bg-secondary text-white font-bold md:font-black py-3 md:py-4 px-6 md:px-8 rounded-lg md:rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl transition-all flex items-center justify-center gap-2 md:gap-3 text-base md:text-lg">
+                        <i class="fas fa-shopping-cart"></i> Add to Cart
+                    </button>
+                    <button type="button" class="w-12 h-12 md:w-14 md:h-14 border border-gray-200 rounded-lg md:rounded-xl flex items-center justify-center hover:bg-red-50 hover:text-red-500 hover:border-red-500 transition-all text-gray-400">
+                        <i class="far fa-heart text-lg md:text-xl"></i> 
+                    </button>
+                </form>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+                    <div class="flex items-start gap-3 md:gap-4 p-3 md:p-4 bg-gray-50 rounded-xl md:rounded-2xl">
+                        <div class="w-8 h-8 md:w-10 md:h-10 bg-white rounded-lg md:rounded-xl flex items-center justify-center text-primary shadow-sm flex-shrink-0"><i class="fas fa-truck text-sm md:text-base"></i></div>
+                        <div><h5 class="font-bold text-gray-900 text-sm md:text-base">Free Shipping</h5><p class="text-xs md:text-sm text-gray-500">On all orders over $100</p></div>
+                    </div>
+                    <div class="flex items-start gap-3 md:gap-4 p-3 md:p-4 bg-gray-50 rounded-xl md:rounded-2xl">
+                        <div class="w-8 h-8 md:w-10 md:h-10 bg-white rounded-lg md:rounded-xl flex items-center justify-center text-primary shadow-sm flex-shrink-0"><i class="fas fa-shield-alt text-sm md:text-base"></i></div>
+                        <div><h5 class="font-bold text-gray-900 text-sm md:text-base">Secure Payment</h5><p class="text-xs md:text-sm text-gray-500">100% secure payment</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== ADDITIONAL PRODUCT INFORMATION ========== -->
+        <div class="mt-16 md:mt-20 lg:mt-24">
+            <!-- Tab Headers (Desktop) -->
+            <div class="hidden md:flex border-b border-gray-200 mb-8">
+                <button class="tab-btn active py-4 px-6 font-bold text-gray-900 border-b-2 border-primary transition-all" data-tab="details">Product Details</button>
+                <button class="tab-btn py-4 px-6 font-bold text-gray-500 hover:text-gray-900 border-b-2 border-transparent hover:border-gray-300 transition-all" data-tab="specs">Specifications</button>
+                <button class="tab-btn py-4 px-6 font-bold text-gray-500 hover:text-gray-900 border-b-2 border-transparent hover:border-gray-300 transition-all" data-tab="shipping">Shipping & Returns</button>
+                <button class="tab-btn py-4 px-6 font-bold text-gray-500 hover:text-gray-900 border-b-2 border-transparent hover:border-gray-300 transition-all" data-tab="reviews">Reviews (120)</button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="space-y-8 md:space-y-0">
+                <!-- Product Details Tab -->
+                <div id="details" class="tab-content active">
+                    <div class="bg-gray-50 rounded-2xl p-6 md:p-8">
+                        <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:hidden">Product Details</h3>
+                        <div class="prose prose-sm md:prose-base max-w-none text-gray-600">
+                            <p>{{ detailed_description|default:description|safe }}</p>
+                            <ul class="mt-4 space-y-2">
+                                <li><i class="fas fa-check-circle text-primary mr-2"></i> Premium quality materials</li>
+                                <li><i class="fas fa-check-circle text-primary mr-2"></i> Designed for durability and comfort</li>
+                                <li><i class="fas fa-check-circle text-primary mr-2"></i> Available in multiple sizes/colors</li>
+                                <li><i class="fas fa-check-circle text-primary mr-2"></i> 30-day money-back guarantee</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Specifications Tab (enhanced) -->
+                <div id="specs" class="tab-content hidden">
+                    <div class="bg-gray-50 rounded-2xl p-6 md:p-8">
+                        <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:hidden">Specifications</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-bold text-gray-900 mb-3">Technical Details</h4>
+                                <table class="w-full text-sm">
+                                    {% if facets %}
+                                        {% for facet in facets %}
+                                        <tr class="border-b border-gray-200">
+                                            <td class="py-3 font-medium text-gray-500 capitalize">{{ facet.group }}</td>
+                                            <td class="py-3 text-gray-900 font-semibold">{{ facet.name }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr class="border-b border-gray-200"><td class="py-3 font-medium text-gray-500">Material</td><td class="py-3 text-gray-900">Stainless Steel / Leather</td></tr>
+                                        <tr class="border-b border-gray-200"><td class="py-3 font-medium text-gray-500">Dimensions</td><td class="py-3 text-gray-900">40mm case, 8mm thickness</td></tr>
+                                        <tr class="border-b border-gray-200"><td class="py-3 font-medium text-gray-500">Weight</td><td class="py-3 text-gray-900">120g</td></tr>
+                                        <tr class="border-b border-gray-200"><td class="py-3 font-medium text-gray-500">Water Resistance</td><td class="py-3 text-gray-900">5 ATM (splash resistant)</td></tr>
+                                    {% endif %}
+                                </table>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 mb-3">Additional Info</h4>
+                                <table class="w-full text-sm">
+                                    <tr class="border-b border-gray-200"><td class="py-3 font-medium text-gray-500">Warranty</td><td class="py-3 text-gray-900">2 years limited warranty</td></tr>
+                                    <tr class="border-b border-gray-200"><td class="py-3 font-medium text-gray-500">Manufacturer</td><td class="py-3 text-gray-900">Azeem Lab</td></tr>
+                                    <tr class="border-b border-gray-200"><td class="py-3 font-medium text-gray-500">Country of Origin</td><td class="py-3 text-gray-900">Imported</td></tr>
+                                    <tr><td class="py-3 font-medium text-gray-500">SKU</td><td class="py-3 text-gray-900">AZ-{{ name|slugify|upper }}-001</td></tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shipping & Returns Tab -->
+                <div id="shipping" class="tab-content hidden">
+                    <div class="bg-gray-50 rounded-2xl p-6 md:p-8">
+                        <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:hidden">Shipping & Returns</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="font-bold text-gray-900 mb-2 flex items-center gap-2"><i class="fas fa-truck text-primary"></i> Shipping Information</h4>
+                                <p class="text-gray-600">Free standard shipping on orders over $100. Estimated delivery: 3-5 business days. Express shipping available at checkout.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 mb-2 flex items-center gap-2"><i class="fas fa-undo-alt text-primary"></i> Returns Policy</h4>
+                                <p class="text-gray-600">30-day hassle-free returns. Items must be unused and in original packaging. Return shipping is free for defective products.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 mb-2 flex items-center gap-2"><i class="fas fa-headset text-primary"></i> Customer Support</h4>
+                                <p class="text-gray-600">Contact us at support@azeemlab.com or call +1 (123) 456-7890 for any questions.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reviews Tab -->
+                <div id="reviews" class="tab-content hidden">
+                    <div class="bg-gray-50 rounded-2xl p-6 md:p-8">
+                        <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:hidden">Customer Reviews</h3>
+                        <!-- Summary -->
+                        <div class="flex flex-col md:flex-row gap-8 mb-8 pb-6 border-b border-gray-200">
+                            <div class="text-center md:text-left">
+                                <div class="text-5xl font-black text-primary">4.8</div>
+                                <div class="flex text-yellow-400 justify-center md:justify-start my-2"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+                                <p class="text-gray-500 text-sm">Based on 120 reviews</p>
+                            </div>
+                            <div class="flex-1 space-y-2">
+                                <div class="flex items-center gap-2"><span class="text-sm w-8">5 ★</span><div class="flex-1 h-2 bg-gray-200 rounded-full"><div class="h-full bg-yellow-400 rounded-full" style="width: 85%"></div></div><span class="text-sm text-gray-500">85%</span></div>
+                                <div class="flex items-center gap-2"><span class="text-sm w-8">4 ★</span><div class="flex-1 h-2 bg-gray-200 rounded-full"><div class="h-full bg-yellow-400 rounded-full" style="width: 10%"></div></div><span class="text-sm text-gray-500">10%</span></div>
+                                <div class="flex items-center gap-2"><span class="text-sm w-8">3 ★</span><div class="flex-1 h-2 bg-gray-200 rounded-full"><div class="h-full bg-yellow-400 rounded-full" style="width: 3%"></div></div><span class="text-sm text-gray-500">3%</span></div>
+                                <div class="flex items-center gap-2"><span class="text-sm w-8">2 ★</span><div class="flex-1 h-2 bg-gray-200 rounded-full"><div class="h-full bg-yellow-400 rounded-full" style="width: 1%"></div></div><span class="text-sm text-gray-500">1%</span></div>
+                                <div class="flex items-center gap-2"><span class="text-sm w-8">1 ★</span><div class="flex-1 h-2 bg-gray-200 rounded-full"><div class="h-full bg-yellow-400 rounded-full" style="width: 1%"></div></div><span class="text-sm text-gray-500">1%</span></div>
+                            </div>
+                        </div>
+                        <!-- Individual Reviews -->
+                        <div class="space-y-6">
+                            <div class="border-b border-gray-200 pb-6">
+                                <div class="flex items-center gap-3 mb-2"><div class="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center font-bold text-primary">JD</div><div><p class="font-bold text-gray-900">John Doe</p><div class="flex text-yellow-400 text-sm"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div></div><span class="text-xs text-gray-400 ml-auto">2 days ago</span></div>
+                                <p class="text-gray-600">Absolutely love this watch! The quality is amazing and it looks even better in person. Highly recommend.</p>
+                            </div>
+                            <div class="border-b border-gray-200 pb-6">
+                                <div class="flex items-center gap-3 mb-2"><div class="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center font-bold text-primary">SM</div><div><p class="font-bold text-gray-900">Sarah Miller</p><div class="flex text-yellow-400 text-sm"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div></div><span class="text-xs text-gray-400 ml-auto">1 week ago</span></div>
+                                <p class="text-gray-600">Great product, fast shipping. The band is comfortable and it keeps perfect time. Would buy again.</p>
+                            </div>
+                            <button class="text-primary font-semibold hover:underline">Load more reviews →</button>
+                        </div>
+                        <button class="mt-6 w-full md:w-auto bg-white border-2 border-primary text-primary font-bold py-3 px-8 rounded-xl hover:bg-primary hover:text-white transition-all">Write a Review</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Products Section -->
+        <div class="mt-16 md:mt-20 lg:mt-24">
+            <div class="flex justify-between items-center mb-6 md:mb-8">
+                <h3 class="text-2xl md:text-3xl font-black text-gray-900">You May Also Like</h3>
+                <a href="/products/" class="text-primary font-semibold hover:underline flex items-center gap-1">View All <i class="fas fa-arrow-right text-sm"></i></a>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                <!-- Product Card 1 (example, replace with dynamic data) -->
+                <div class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all">
+                    <div class="aspect-square bg-gray-100 overflow-hidden"><img src="{% static 'images/product1.jpg' %}" alt="Related product" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"></div>
+                    <div class="p-4"><h4 class="font-bold text-gray-900 mb-1">Classic Leather Watch</h4><p class="text-primary font-bold">$89.00</p><div class="flex text-yellow-400 text-sm mt-1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div></div>
+                </div>
+                <div class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all">
+                    <div class="aspect-square bg-gray-100 overflow-hidden"><img src="{% static 'images/product2.jpg' %}" alt="Related product" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"></div>
+                    <div class="p-4"><h4 class="font-bold text-gray-900 mb-1">Sport Digital Watch</h4><p class="text-primary font-bold">$149.00</p><div class="flex text-yellow-400 text-sm mt-1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div></div>
+                </div>
+                <div class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all">
+                    <div class="aspect-square bg-gray-100 overflow-hidden"><img src="{% static 'images/product3.jpg' %}" alt="Related product" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"></div>
+                    <div class="p-4"><h4 class="font-bold text-gray-900 mb-1">Gold Premium Watch</h4><p class="text-primary font-bold">$299.00</p><div class="flex text-yellow-400 text-sm mt-1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div></div>
+                </div>
+                <div class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all">
+                    <div class="aspect-square bg-gray-100 overflow-hidden"><img src="{% static 'images/product4.jpg' %}" alt="Related product" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"></div>
+                    <div class="p-4"><h4 class="font-bold text-gray-900 mb-1">Minimalist Watch</h4><p class="text-primary font-bold">$79.00</p><div class="flex text-yellow-400 text-sm mt-1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% block extra_js %}
+<script src="{% static 'js/product-page.js' %}"></script>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/product-page.css' %}">
+{% endblock %}
+{% endblock %}

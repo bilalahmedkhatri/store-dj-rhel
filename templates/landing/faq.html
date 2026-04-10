@@ -1,0 +1,127 @@
+{% extends 'landing/base.html' %}
+{% load static %}
+
+{% block title %}FAQs - Azeem Lab{% endblock %}
+
+{% block content %}
+<div class="bg-white">
+  <!-- Hero with centered layout -->
+  <div class="bg-gradient-to-b from-gray-50 to-white border-b border-gray-100">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center">
+      <div class="max-w-2xl mx-auto">
+        <span class="text-primary font-semibold text-sm uppercase tracking-wider">Help center</span>
+        <h1 class="text-4xl md:text-5xl font-black text-gray-900 mt-2 mb-4">
+          How can we help?
+        </h1>
+        <p class="text-gray-500 text-lg">Find quick answers to common questions</p>
+      </div>
+      <!-- Search bar -->
+      <div class="max-w-xl mx-auto mt-8">
+        <div class="relative">
+          <input type="text" id="faqSearch" placeholder="Search for answers..." 
+                 class="w-full px-5 py-4 pl-12 border border-gray-200 rounded-xl focus:border-primary focus:ring-4 focus:ring-primary/10 transition shadow-sm">
+          <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ content - simple static display -->
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
+    <div class="max-w-4xl mx-auto">
+      <!-- Category tabs (optional) -->
+      <div class="flex flex-wrap justify-center gap-2 mb-12">
+        <button class="category-tab active px-5 py-2 rounded-full bg-primary text-white font-medium text-sm">All</button>
+        <button class="category-tab px-5 py-2 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium text-sm">Orders</button>
+        <button class="category-tab px-5 py-2 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium text-sm">Shipping</button>
+        <button class="category-tab px-5 py-2 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium text-sm">Returns</button>
+        <button class="category-tab px-5 py-2 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium text-sm">Account</button>
+      </div>
+
+      <!-- FAQ items as cards (no dropdown) -->
+      <div class="space-y-4" id="faqList">
+        <!-- Order questions -->
+        <div class="faq-item bg-white border border-gray-100 rounded-xl shadow-sm p-6" data-category="orders">
+          <h3 class="font-semibold text-gray-800 text-lg mb-2">How do I check my order status?</h3>
+          <p class="text-gray-600 text-sm leading-relaxed">
+            Log into your account and visit "Order History". You'll see real‑time tracking updates there.
+          </p>
+        </div>
+
+        <div class="faq-item bg-white border border-gray-100 rounded-xl shadow-sm p-6" data-category="orders">
+          <h3 class="font-semibold text-gray-800 text-lg mb-2">Can I change or cancel my order?</h3>
+          <p class="text-gray-600 text-sm leading-relaxed">
+            Contact us within 1 hour of placing the order. After that, it's already being processed.
+          </p>
+        </div>
+
+        <!-- Shipping questions -->
+        <div class="faq-item bg-white border border-gray-100 rounded-xl shadow-sm p-6" data-category="shipping">
+          <h3 class="font-semibold text-gray-800 text-lg mb-2">How long does delivery take?</h3>
+          <p class="text-gray-600 text-sm leading-relaxed">
+            Standard: 3‑5 business days. Express: 1‑2 business days. International: 7‑14 business days.
+          </p>
+        </div>
+
+        <div class="faq-item bg-white border border-gray-100 rounded-xl shadow-sm p-6" data-category="shipping">
+          <h3 class="font-semibold text-gray-800 text-lg mb-2">Do you ship internationally?</h3>
+          <p class="text-gray-600 text-sm leading-relaxed">
+            Yes, worldwide. Shipping costs are calculated at checkout. Customers pay any customs fees.
+          </p>
+        </div>
+
+        <!-- Returns questions -->
+        <div class="faq-item bg-white border border-gray-100 rounded-xl shadow-sm p-6" data-category="returns">
+          <h3 class="font-semibold text-gray-800 text-lg mb-2">What's your return policy?</h3>
+          <p class="text-gray-600 text-sm leading-relaxed">
+            30‑day hassle‑free returns. Items must be unused with original tags. Start a return in your account.
+          </p>
+        </div>
+
+        <div class="faq-item bg-white border border-gray-100 rounded-xl shadow-sm p-6" data-category="returns">
+          <h3 class="font-semibold text-gray-800 text-lg mb-2">How long does it take to get a refund?</h3>
+          <p class="text-gray-600 text-sm leading-relaxed">
+            Once we receive your return, please allow 5-7 business days for inspection and processing.
+          </p>
+        </div>
+
+        <!-- Account questions -->
+        <div class="faq-item bg-white border border-gray-100 rounded-xl shadow-sm p-6" data-category="account">
+          <h3 class="font-semibold text-gray-800 text-lg mb-2">How do I reset my password?</h3>
+          <p class="text-gray-600 text-sm leading-relaxed">
+            Click "Forgot Password" on the login page. We'll email you a reset link.
+          </p>
+        </div>
+
+        <div class="faq-item bg-white border border-gray-100 rounded-xl shadow-sm p-6" data-category="account">
+          <h3 class="font-semibold text-gray-800 text-lg mb-2">How do I create an account?</h3>
+          <p class="text-gray-600 text-sm leading-relaxed">
+            Click the "Register" link at the top of the page. It takes less than a minute to sign up.
+          </p>
+        </div>
+      </div>
+
+      <!-- No results message -->
+      <div id="noResults" class="text-center py-12 hidden">
+        <p class="text-gray-500">No matching questions found. <a href="{% url 'contact_us' %}" class="text-primary hover:underline">Contact support</a></p>
+      </div>
+    </div>
+
+    <!-- Still stuck CTA -->
+    <div class="max-w-2xl mx-auto mt-16 text-center bg-gray-50 rounded-2xl p-8">
+      <h3 class="text-xl font-bold text-gray-900 mb-2">Still have questions?</h3>
+      <p class="text-gray-500 mb-4">Our team is here to help you.</p>
+      <a href="{% url 'contact_us' %}" class="inline-flex items-center gap-2 bg-primary text-white font-semibold py-3 px-6 rounded-lg hover:bg-secondary transition">
+        Contact Support
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+      </a>
+    </div>
+  </div>
+</div>
+
+{% block extra_js %}
+<script src="{% static 'js/faq.js' %}"></script>
+{% endblock %}
+{% endblock %}

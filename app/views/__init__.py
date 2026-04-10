@@ -1,0 +1,17 @@
+from .register import register_view
+from .products import products_view, product_detail_view
+from .not_found import not_found_view
+from .main import index, category_list, category_detail, all_products
+from .login import login_view, logout_view
+from .cart import cart_view, add_to_cart_view, cart_update_view, cart_remove_view
+from .checkout import checkout_view
+from .extra_pages import (
+    faqs,
+    about_us,
+    contact_us,
+    privacy_policy,
+    terms_and_conditions,
+    shipping_policy,
+    return_policy,
+    payment_methods,
+)

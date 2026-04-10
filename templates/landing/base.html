@@ -1,0 +1,33 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    {% include 'landing/meta.html' %}
+    <title>{% block title %}Azeem Lab{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/cart-toast.css' %}">
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body>
+    {% include 'landing/header.html' %}
+
+    <main>{% block content %}{% endblock %}</main>
+
+    {% include 'landing/footer.html' %}
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" aria-live="polite" aria-atomic="false"></div>
+
+    <!-- Core Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@1.7.0/dist/umd/lucide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="{% static 'js/script.js' %}"></script>
+
+    <!-- Page Specific Scripts -->
+    {% block extra_js %}{% endblock %}
+
+    <!-- Global Cart Engine (must load after page-specific scripts) -->
+    <script src="{% static 'js/cart-handler.js' %}"></script>
+    <script id="cart-data" type="application/json">{{ cart_items_json|safe }}</script>
+  </body>
+</html>

@@ -1,0 +1,268 @@
+from django.db.models import Prefetch
+from django.http import Http404
+from django.shortcuts import render, get_object_or_404
+
+from ..models import (
+    Collection,
+    CollectionTranslation,
+    Product,
+    ProductTranslation,
+    ProductVariant,
+    ProductVariantPrice,
+    ProductVariantTranslation,
+)
+from .mock_data import get_mock_categories, get_mock_products
+
+def index(request):
+    """
+    Renders the home page with featured products.
+    """
+    products = Product.objects.all()[:8]  # Get first 8 products
+    product_list = []
+    
+    for product in products:
+        try:
+            translation = ProductTranslation.objects.filter(baseid=product, languagecode='en').first()
+            if not translation:
+                continue
+                
+            variant = ProductVariant.objects.filter(productid=product).first()
+            if not variant:
+                continue
+                
+            price_obj = ProductVariantPrice.objects.filter(variantid=variant).first()
+            price = price_obj.price / 100 if price_obj else 0.0
+            
+            image_url = 'https://via.placeholder.com/400'
+            if product.featuredassetid:
+                image_url = product.featuredassetid.preview
+            
+            product_list.append({
+                'name': translation.name,
+                'price': f"{price:.2f}",
+                'image_url': image_url,
+                'slug': translation.slug
+            })
+        except Exception:
+            continue
+            
+    if not product_list:
+        product_list = get_mock_products()
+
+    categories = []
+    db_categories = list(
+        Collection.objects.filter(isprivate=False)
+        .prefetch_related(
+            Prefetch(
+                "collectiontranslation_set",
+                CollectionTranslation.objects.filter(languagecode="en"),
+            )
+        )[:3]
+    )
+    for category in db_categories:
+        translation = next(iter(category.collectiontranslation_set.all()), None)
+        categories.append(
+            {
+                "id": category.id,
+                "name": translation.name if translation else category.get_name("en"),
+                "image_url": (
+                    category.featuredassetid.source
+                    if category.featuredassetid and category.featuredassetid.source
+                    else "/static/images/default-category.jpg"
+                ),
+                "url": f"/category/{category.id}/",
+            }
+        )
+    if not categories:
+        categories = get_mock_categories()
+
+    # Split products for popular and latest sections
+    popular_products = product_list[:4]
+    latest_products = product_list[4:8]
+    
+    return render(request, 'landing/body.html', {
+        'popular_products': popular_products,
+        'latest_products': latest_products,
+        'categories': categories,
+    })
+
+
+def category_list(request):
+    """List public categories (collections) for navigation or listing pages."""
+    categories = Collection.objects.filter(isprivate=False).prefetch_related(
+        "collectiontranslation_set",
+    )
+    return render(request, "components/banners.html", {"categories": categories})
+
+
+def category_detail(request, category_id, slug=None):
+    """
+    Single category (Collection) with products linked via
+    CollectionProductVariantsProductVariant (Vendure-style join).
+    """
+    lang = "en"
+    category = get_object_or_404(
+        Collection.objects.filter(isprivate=False),
+        pk=category_id,
+    )
+
+    cat_trans = CollectionTranslation.objects.filter(
+        baseid=category, languagecode=lang
+    ).first()
+    if slug and cat_trans and cat_trans.slug != slug:
+        raise Http404("Category not found")
+
+    category_name = cat_trans.name if cat_trans else category.get_name(lang)
+    category_description = (cat_trans.description or "").strip() if cat_trans else ""
+
+    variants = (
+        ProductVariant.objects.filter(
+            collectionproductvariantsproductvariant__collectionid=category,
+            enabled=True,
+            deletedat__isnull=True,
+            productid__enabled=True,
+            productid__deletedat__isnull=True,
+        )
+        .select_related(
+            "productid",
+            "productid__featuredassetid",
+            "featuredassetid",
+        )
+        .prefetch_related(
+            Prefetch(
+                "productid__producttranslation_set",
+                ProductTranslation.objects.filter(languagecode=lang),
+            ),
+            Prefetch(
+                "productvarianttranslation_set",
+                ProductVariantTranslation.objects.filter(languagecode=lang),
+            ),
+            "productvariantprice_set",
+        )
+        .distinct()
+        .order_by("id")
+    )
+
+    placeholder_image = "/static/images/products/product.jpg"
+    seen_product_ids = set()
+    product_items = []
+
+    for variant in variants:
+        product = variant.productid
+        if not product or product.id in seen_product_ids:
+            continue
+
+        translations = list(variant.productid.producttranslation_set.all())
+        if not translations:
+            continue
+        pt = translations[0]
+        seen_product_ids.add(product.id)
+
+        vt_list = list(variant.productvarianttranslation_set.all())
+        variant_label = vt_list[0].name if vt_list and vt_list[0].name else ""
+
+        prices = list(variant.productvariantprice_set.all())
+        price_cents = prices[0].price if prices else None
+        price_display = (
+            f"{(price_cents / 100):.2f}" if price_cents is not None else "0.00"
+        )
+
+        if variant.featuredassetid and variant.featuredassetid.preview:
+            image_url = variant.featuredassetid.preview
+        elif product.featuredassetid and product.featuredassetid.preview:
+            image_url = product.featuredassetid.preview
+        else:
+            image_url = placeholder_image
+
+        product_items.append(
+            {
+                "name": pt.name,
+                "slug": pt.slug,
+                "variant_label": variant_label,
+                "price": price_display,
+                "image_url": image_url,
+            }
+        )
+    if not product_items:
+        product_items = get_mock_products()[:6]
+
+    subcategories = []
+    for sub in (
+        Collection.objects.filter(parentid=category, isprivate=False)
+        .order_by("position")
+        .prefetch_related(
+            Prefetch(
+                "collectiontranslation_set",
+                CollectionTranslation.objects.filter(languagecode=lang),
+            )
+        )
+    ):
+        st_list = list(sub.collectiontranslation_set.all())
+        st = st_list[0] if st_list else None
+        subcategories.append(
+            {
+                "id": sub.id,
+                "slug": st.slug if st else "",
+                "name": st.name if st else sub.get_name(lang),
+            }
+        )
+
+    return render(
+        request,
+        "landing/category_detail.html",
+        {
+            "category": category,
+            "category_name": category_name,
+            "category_description": category_description,
+            "product_items": product_items,
+            "product_count": len(product_items),
+            "subcategories": subcategories,
+        },
+    )
+
+
+def all_products(request):
+    """View to display all products"""
+    products = ProductVariant.objects.filter(
+        enabled=True
+    ).prefetch_related(
+        'productvarianttranslation_set',
+        'product__producttranslation_set',
+        'productvariantprice_set'
+    )
+    
+    product_items = []
+    for variant in products:
+        try:
+            variant_trans = ProductVariantTranslation.objects.filter(
+                baseid=variant, languagecode="en"
+            ).first()
+            product_trans = ProductTranslation.objects.filter(
+                baseid=variant.productid, languagecode="en"
+            ).first()
+            if not product_trans:
+                continue
+            price_obj = ProductVariantPrice.objects.filter(variantid=variant).first()
+            price = price_obj.price / 100 if price_obj else 0.0
+            image_url = "/static/images/products/product.jpg"
+            if variant.featuredassetid and variant.featuredassetid.preview:
+                image_url = variant.featuredassetid.preview
+            elif variant.productid and variant.productid.featuredassetid:
+                image_url = variant.productid.featuredassetid.preview
+            product_items.append(
+                {
+                    "name": product_trans.name,
+                    "slug": product_trans.slug,
+                    "variant_label": variant_trans.name if variant_trans else "",
+                    "price": f"{price:.2f}",
+                    "image_url": image_url,
+                }
+            )
+        except Exception:
+            continue
+
+    if not product_items:
+        product_items = get_mock_products()
+
+    context = {"products": product_items}
+    return render(request, 'landing/all_products.html', context)

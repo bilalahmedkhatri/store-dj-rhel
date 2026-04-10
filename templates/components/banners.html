@@ -1,0 +1,117 @@
+{% comment %} {% load static %}
+<!-- Product banner section -->
+<section id="product-banners">
+  <div class="container mx-auto py-10">
+    <div class="flex flex-wrap">
+      <!-- Category 1 -->
+      <div class="w-full sm:w-1/3 px-4 mb-8">
+        <div
+          class="category-banner relative overflow-hidden rounded-lg shadow-lg group"
+        >
+          <img
+            src="{% static 'images/cat-image1.jpg' %}"
+            alt="Category 1"
+            class="w-full h-auto"
+          />
+          <div class="absolute inset-0 bg-gray-light/50"></div>
+          <div
+            class="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4"
+          >
+            <h2 class="text-2xl md:text-3xl font-bold mb-4">Men</h2>
+            <a
+              href="/"
+              class="bg-primary hover:bg-transparent border border-transparent hover:border-white text-white hover:text-white font-semibold px-4 py-2 rounded-full inline-block"
+              >Shop now</a
+            >
+          </div>
+        </div>
+      </div>
+      <!-- Category 2 -->
+      <div class="w-full sm:w-1/3 px-4 mb-8">
+        <div
+          class="category-banner relative overflow-hidden rounded-lg shadow-lg group"
+        >
+          <img
+            src="{% static 'images/cat-image4.jpg' %}"
+            alt="Category 2"
+            class="w-full h-auto"
+          />
+          <div class="absolute inset-0 bg-gray-light/50"></div>
+          <div
+            class="category-text absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4 transition duration-300"
+          >
+            <h2 class="text-2xl md:text-3xl font-bold mb-4">Women</h2>
+            <a
+              href="/"
+              class="bg-primary hover:bg-transparent border border-transparent hover:border-white text-white hover:text-white font-semibold px-4 py-2 rounded-full inline-block"
+              >Shop now</a
+            >
+          </div>
+        </div>
+      </div>
+      <!-- Category 3 -->
+      <div class="w-full sm:w-1/3 px-4 mb-8">
+        <div
+          class="category-banner relative overflow-hidden rounded-lg shadow-lg group"
+        >
+          <img
+            src="{% static 'images/cat-image5.jpg' %}"
+            alt="Category 3"
+            class="w-full h-auto"
+          />
+          <div class="absolute inset-0 bg-gray-light/50"></div>
+          <div
+            class="category-text absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4 transition duration-300"
+          >
+            <h2 class="text-2xl md:text-3xl font-bold mb-4">Accessories</h2>
+            <a
+              href="/"
+              class="bg-primary hover:bg-transparent border border-transparent hover:border-white text-white hover:text-white font-semibold px-4 py-2 rounded-full inline-block"
+              >Shop now</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section> {% endcomment %}
+
+
+{% load static %}
+
+<!-- Product banner section -->
+<section id="product-banners">
+  <div class="container mx-auto py-10">
+    <div class="flex flex-wrap">
+      {% for category in categories %}
+      <!-- Category banner -->
+      <div class="w-full sm:w-1/3 px-4 mb-8">
+        <div
+          class="category-banner relative overflow-hidden rounded-lg shadow-lg group"
+        >
+          <img
+            src="{% if category.image_url %}{{ category.image_url }}{% elif category.featuredassetid %}{{ category.featuredassetid.source }}{% else %}{% static 'images/default-category.jpg' %}{% endif %}"
+            alt="{% if category.name %}{{ category.name }}{% else %}{{ category.get_name }}{% endif %}"
+            class="w-full h-auto"
+          />
+          <div class="absolute inset-0 bg-gray-light/50"></div>
+          <div
+            class="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4"
+          >
+            <h2 class="text-2xl md:text-3xl font-bold mb-4">{% if category.name %}{{ category.name }}{% else %}{{ category.get_name }}{% endif %}</h2>
+            <a
+              href="{% if category.url %}{{ category.url }}{% else %}{% url 'category_detail' category_id=category.id %}{% endif %}"
+              class="bg-primary hover:bg-transparent border border-transparent hover:border-white text-white hover:text-white font-semibold px-4 py-2 rounded-full inline-block transition duration-300"
+              >Shop now</a
+            >
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="w-full text-center py-10">
+        <p class="text-gray-500">No categories found.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,96 @@
+{% load static %}
+<footer class="bg-[#f5f5f5] border-t border-gray-200 text-[#333]">
+  <div class="container mx-auto px-4 py-10">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div class="lg:col-span-6">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div>
+            <h4 class="text-xs font-bold uppercase mb-3">Company Info</h4>
+            <ul class="space-y-2 text-sm text-gray-600">
+              <li><a href="{% url 'about_us' %}" class="hover:text-black">About SHEIN</a></li>
+              <li><a href="#" class="hover:text-black">Social Responsibility</a></li>
+              <li><a href="#" class="hover:text-black">Careers</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-xs font-bold uppercase mb-3">Help & Support</h4>
+            <ul class="space-y-2 text-sm text-gray-600">
+              <li><a href="{% url 'shipping_policy' %}" class="hover:text-black">Shipping Info</a></li>
+              <li><a href="{% url 'return_policy' %}" class="hover:text-black">Returns</a></li>
+              <li><a href="{% url 'refund_policy' %}" class="hover:text-black">Refund</a></li>
+              <li><a href="#" class="hover:text-black">How To Order</a></li>
+              <li><a href="#" class="hover:text-black">How To Track</a></li>
+              <li><a href="#" class="hover:text-black">Size Guide</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-xs font-bold uppercase mb-3">Customer Care</h4>
+            <ul class="space-y-2 text-sm text-gray-600">
+              <li><a href="{% url 'contact_us' %}" class="hover:text-black">Contact us</a></li>
+              <li><a href="{% url 'payment_methods' %}" class="hover:text-black">Payment Method</a></li>
+              <li><a href="#" class="hover:text-black">Bonus Point</a></li>
+              <li><a href="{% url 'faqs' %}" class="hover:text-black">FAQ</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-6">
+        <h4 class="text-xs font-bold uppercase mb-3">Find Us On</h4>
+        <div class="flex flex-wrap gap-3 mb-5">
+          <a href="#" aria-label="facebook"><img src="{% static 'images/social_icons/facebook.svg' %}" class="w-5 h-5" alt="facebook"></a>
+          <a href="#" aria-label="instagram"><img src="{% static 'images/social_icons/instagram.svg' %}" class="w-5 h-5" alt="instagram"></a>
+          <a href="#" aria-label="twitter"><img src="{% static 'images/social_icons/twitter.svg' %}" class="w-5 h-5" alt="twitter"></a>
+          <a href="#" aria-label="youtube"><img src="{% static 'images/social_icons/youtube.svg' %}" class="w-5 h-5" alt="youtube"></a>
+          <a href="#" aria-label="pinterest"><img src="{% static 'images/social_icons/pinterest.svg' %}" class="w-5 h-5" alt="pinterest"></a>
+        </div>
+
+        <h4 class="text-xs font-bold uppercase mb-3">Sign Up For SHEIN Style News</h4>
+        <div class="space-y-2">
+          <div class="flex">
+            <input type="email" placeholder="Your Email Address" class="flex-1 h-10 px-3 border border-gray-300 bg-white text-sm focus:outline-none">
+            <button type="button" class="h-10 px-5 bg-black text-white text-sm font-semibold">Subscribe</button>
+          </div>
+          <div class="flex">
+            <span class="h-10 px-3 border border-gray-300 bg-white text-sm flex items-center text-gray-500">UZ +998</span>
+            <input type="text" placeholder="Your phone number for SMS" class="flex-1 h-10 px-3 border-t border-b border-gray-300 bg-white text-sm focus:outline-none">
+            <button type="button" class="h-10 px-5 bg-black text-white text-sm font-semibold">Subscribe</button>
+          </div>
+          <div class="flex">
+            <span class="h-10 px-3 border border-gray-300 bg-white text-sm flex items-center text-gray-500">UZ +998</span>
+            <input type="text" placeholder="WhatsApp Account" class="flex-1 h-10 px-3 border-t border-b border-gray-300 bg-white text-sm focus:outline-none">
+            <button type="button" class="h-10 px-5 bg-black text-white text-sm font-semibold">Subscribe</button>
+          </div>
+        </div>
+        <p class="text-xs text-gray-500 mt-4">
+          By clicking the SUBSCRIBE button, you are agreeing to our
+          <a href="{% url 'privacy_policy' %}" class="underline">Privacy & Cookie Policy</a>
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-10">
+      <h4 class="text-xs font-bold uppercase mb-3">We Accept</h4>
+      <div class="flex flex-wrap items-center gap-3">
+        <img src="{% static 'images/social_icons/visa.svg' %}" alt="visa" class="h-6">
+        <img src="{% static 'images/social_icons/paypal.svg' %}" alt="paypal" class="h-6">
+        <img src="{% static 'images/social_icons/stripe.svg' %}" alt="stripe" class="h-6">
+        <img src="{% static 'images/brands/php.svg' %}" alt="card" class="h-6">
+        <img src="{% static 'images/brands/js.svg' %}" alt="card" class="h-6">
+      </div>
+    </div>
+  </div>
+
+  <div class="border-t border-gray-200">
+    <div class="container mx-auto px-4 py-5 text-xs text-gray-600">
+      <p class="mb-3">©2009-2026 SHEIN All Rights Reserved</p>
+      <div class="flex flex-wrap gap-x-4 gap-y-2">
+        <a href="{% url 'privacy_policy' %}" class="underline hover:text-black">Privacy Center</a>
+        <a href="{% url 'privacy_policy' %}" class="underline hover:text-black">Privacy & Cookie Policy</a>
+        <a href="{% url 'terms_and_conditions' %}" class="underline hover:text-black">Terms & Conditions</a>
+        <a href="{% url 'refund_policy' %}" class="underline hover:text-black">Refund Policy</a>
+        <a href="{% url 'shipping_policy' %}" class="underline hover:text-black">Shipping Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>

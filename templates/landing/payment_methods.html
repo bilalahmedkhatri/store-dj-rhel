@@ -1,0 +1,22 @@
+{% extends 'landing/base.html' %}
+{% load static %}
+
+{% block title %}Payment Methods - Azeem Lab{% endblock %}
+
+{% block content %}
+<div class="bg-white py-12 md:py-16">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+        <h1 class="text-3xl md:text-4xl font-black text-gray-900 mb-4">{{ title }}</h1>
+        <p class="text-gray-500 mb-8">{{ subtitle }}</p>
+
+        <div class="prose prose-lg text-gray-600 max-w-none">
+            {% for method in methods %}
+            <h2>{{ method.name }}</h2>
+            <p>{{ method.description }}</p>
+            {% endfor %}
+            <h2>Security</h2>
+            <p>{{ security_note }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

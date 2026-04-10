@@ -1,0 +1,47 @@
+{% load static %}
+<!-- Latest product section -->
+<section id="latest-products" class="py-10">
+  <div class="container mx-auto px-4">
+    <h2 class="text-2xl font-bold mb-8 text-center uppercase">
+      Latest products
+    </h2>
+    <div class="flex flex-wrap -mx-4 justify-center">
+      {% for product in latest_products %}
+      <!-- Product Item -->
+      <div class="w-full sm:w-1/2 lg:w-1/4 px-4 mb-8">
+        <div
+          class="bg-white p-3 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
+        >
+          <div class="relative overflow-hidden rounded-lg mb-4 aspect-square">
+            <img
+              src="{{ product.image_url }}"
+              alt="{{ product.name }}"
+              class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
+            />
+          </div>
+          <a
+            href="/products/{{ product.slug }}/"
+            class="text-lg font-semibold mb-2 block truncate hover:text-primary transition-colors"
+            >{{ product.name }}</a
+          >
+          <p class="my-2 text-gray-500 text-sm">New Collection</p>
+          <div class="flex items-center mb-4 justify-between">
+            <span class="text-xl font-bold text-primary"
+              >${{ product.price }}</span
+            >
+          </div>
+          <button
+            class="bg-primary border border-transparent hover:bg-transparent hover:border-primary text-white hover:text-primary font-semibold py-2 px-4 rounded-full w-full transition-all duration-300"
+          >
+            Add to Cart
+          </button>
+        </div>
+      </div>
+      {% empty %}
+      <div class="w-full text-center py-10 text-gray-500">
+        No latest products found.
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>

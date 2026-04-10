@@ -1,0 +1,79 @@
+{% load static %}
+<header class="sticky top-0 z-50 bg-white border-b border-gray-200">
+  <div class="container mx-auto px-4 h-14 flex items-center justify-between">
+    <a href="{% url 'index' %}" class="font-black text-xl tracking-wide text-black">SHEIN STYLE</a>
+
+    <nav class="hidden md:flex items-center gap-6 text-sm font-semibold" aria-label="Main">
+      <a href="{% url 'index' %}" class="hover:text-gray-500">Home</a>
+      <a href="{% url 'products' %}" class="hover:text-gray-500">Women</a>
+      <a href="{% url 'products' %}" class="hover:text-gray-500">Men</a>
+      <a href="{% url 'products' %}" class="hover:text-gray-500">Shop</a>
+      <a href="{% url 'contact_us' %}" class="hover:text-gray-500">Contact</a>
+    </nav>
+
+    <div class="flex items-center gap-4">
+      <!-- Mini Cart -->
+      <div class="relative" id="mini-cart">
+        <button id="mini-cart-toggle" class="relative group flex items-center text-black focus:outline-none">
+          <i class="fas fa-shopping-cart text-xl"></i>
+          <span id="mini-cart-count" class="absolute -top-2 -right-2 bg-black text-white text-[10px] rounded-full h-4 min-w-4 px-1 flex items-center justify-center">
+            {{ header_cart_count }}
+          </span>
+        </button>
+
+        <!-- Dropdown -->
+        <div id="mini-cart-dropdown" class="hidden absolute right-0 mt-4 w-80 bg-white border border-gray-100 rounded-2xl shadow-xl z-50">
+          <div class="p-4 border-b border-gray-50 flex justify-between items-center">
+            <h3 class="font-bold text-gray-900">Your Cart</h3>
+            <span class="text-xs text-gray-400 font-medium"><span id="mini-cart-items-count">0</span> items</span>
+          </div>
+
+          <div id="mini-cart-items" class="max-h-80 overflow-y-auto divide-y divide-gray-50 scrollbar-hide"></div>
+
+          <div id="mini-cart-empty" class="p-8 text-center hidden">
+            <div class="bg-gray-50 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+              <i class="fas fa-shopping-bag text-gray-300"></i>
+            </div>
+            <p class="text-sm font-medium text-gray-500">Your cart is empty</p>
+            <p class="text-xs text-gray-400 mt-1">Start shopping to add items</p>
+          </div>
+
+          <div class="p-4 bg-gray-50/50 rounded-b-2xl">
+            <div class="flex justify-between items-center mb-4">
+              <span class="text-sm font-medium text-gray-500">Subtotal</span>
+              <span id="mini-cart-subtotal" class="font-bold text-gray-900">$0.00</span>
+            </div>
+
+            <div class="grid grid-cols-1 gap-2">
+              <a href="{% url 'cart' %}" class="block w-full bg-black text-white text-center py-2.5 rounded-xl text-sm font-bold hover:bg-gray-900 transition-colors">
+                View Cart
+              </a>
+              <a href="{% url 'checkout' %}" class="block w-full bg-white text-black border border-gray-200 text-center py-2.5 rounded-xl text-sm font-bold hover:bg-gray-50 transition-colors">
+                Checkout
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {% if user.is_authenticated %}
+      <a href="{% url 'logout' %}" class="text-xs font-semibold hover:text-gray-500">Logout</a>
+      {% else %}
+      <a href="{% url 'login' %}" class="text-xs font-semibold hover:text-gray-500">Login</a>
+      {% endif %}
+      <button id="hamburger" type="button" class="md:hidden text-black" aria-label="Open menu">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<nav id="mobile-menu-placeholder" class="mobile-menu hidden md:hidden bg-white border-b border-gray-200">
+  <div class="px-4 py-3 flex flex-col gap-2 text-sm font-semibold">
+    <a href="{% url 'index' %}">Home</a>
+    <a href="{% url 'products' %}">Women</a>
+    <a href="{% url 'products' %}">Men</a>
+    <a href="{% url 'products' %}">Shop</a>
+    <a href="{% url 'contact_us' %}">Contact</a>
+  </div>
+</nav>

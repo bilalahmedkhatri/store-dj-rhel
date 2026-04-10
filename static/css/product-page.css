@@ -1,0 +1,8 @@
+@media (max-width: 768px) {
+    .tab-content {
+        display: block !important;
+    }
+    .tab-btn {
+        display: none;
+    }
+}

@@ -1,0 +1,120 @@
+{% load static %}
+<section class="bg-white pb-6">
+  <div class="container mx-auto px-3">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-base md:text-lg font-bold">Recommended For You</h2>
+      <a href="#" class="text-xs text-gray-500 hover:text-gray-800">View all</a>
+    </div>
+
+    <div id="storefront-products-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+      <a href="#" class="block">
+        <div class="bg-gray-100 rounded-md overflow-hidden">
+          <img src="{% static 'images/products/1.jpg' %}" alt="Item 1" class="w-full h-40 md:h-52 object-cover" />
+        </div>
+        <p class="text-xs text-gray-700 mt-2 line-clamp-2">Bow detail summer dress with soft cotton feel.</p>
+        <p class="text-sm font-semibold mt-1">$12.99</p>
+      </a>
+      <a href="#" class="block">
+        <div class="bg-gray-100 rounded-md overflow-hidden">
+          <img src="{% static 'images/products/2.jpg' %}" alt="Item 2" class="w-full h-40 md:h-52 object-cover" />
+        </div>
+        <p class="text-xs text-gray-700 mt-2 line-clamp-2">Elegant shirt blouse for office and daily wear.</p>
+        <p class="text-sm font-semibold mt-1">$16.49</p>
+      </a>
+      <a href="#" class="block">
+        <div class="bg-gray-100 rounded-md overflow-hidden">
+          <img src="{% static 'images/products/3.jpg' %}" alt="Item 3" class="w-full h-40 md:h-52 object-cover" />
+        </div>
+        <p class="text-xs text-gray-700 mt-2 line-clamp-2">Mini handbag with chain strap and zip pocket.</p>
+        <p class="text-sm font-semibold mt-1">$10.00</p>
+      </a>
+      <a href="#" class="block">
+        <div class="bg-gray-100 rounded-md overflow-hidden">
+          <img src="{% static 'images/products/4.jpg' %}" alt="Item 4" class="w-full h-40 md:h-52 object-cover" />
+        </div>
+        <p class="text-xs text-gray-700 mt-2 line-clamp-2">Classic knit sweater with textured stripe look.</p>
+        <p class="text-sm font-semibold mt-1">$15.75</p>
+      </a>
+      <a href="#" class="block">
+        <div class="bg-gray-100 rounded-md overflow-hidden">
+          <img src="{% static 'images/products/5.jpg' %}" alt="Item 5" class="w-full h-40 md:h-52 object-cover" />
+        </div>
+        <p class="text-xs text-gray-700 mt-2 line-clamp-2">Street style trouser with loose fit comfort.</p>
+        <p class="text-sm font-semibold mt-1">$18.20</p>
+      </a>
+      <a href="#" class="block">
+        <div class="bg-gray-100 rounded-md overflow-hidden">
+          <img src="{% static 'images/products/6.jpg' %}" alt="Item 6" class="w-full h-40 md:h-52 object-cover" />
+        </div>
+        <p class="text-xs text-gray-700 mt-2 line-clamp-2">Oversized hoodie with soft lining and pockets.</p>
+        <p class="text-sm font-semibold mt-1">$21.99</p>
+      </a>
+      <a href="#" class="block">
+        <div class="bg-gray-100 rounded-md overflow-hidden">
+          <img src="{% static 'images/products/7.jpg' %}" alt="Item 7" class="w-full h-40 md:h-52 object-cover" />
+        </div>
+        <p class="text-xs text-gray-700 mt-2 line-clamp-2">Daily wear denim with straight cut silhouette.</p>
+        <p class="text-sm font-semibold mt-1">$22.40</p>
+      </a>
+      <a href="#" class="block">
+        <div class="bg-gray-100 rounded-md overflow-hidden">
+          <img src="{% static 'images/products/8.jpg' %}" alt="Item 8" class="w-full h-40 md:h-52 object-cover" />
+        </div>
+        <p class="text-xs text-gray-700 mt-2 line-clamp-2">Crossbody purse in structured premium finish.</p>
+        <p class="text-sm font-semibold mt-1">$13.85</p>
+      </a>
+
+      <!-- Extra cards hidden by default, shown via View More -->
+      <div class="js-more-product hidden">
+        <div class="bg-gray-200 rounded-md h-40 md:h-52"></div>
+        <div class="h-3 bg-gray-100 rounded mt-2"></div>
+        <div class="h-3 bg-gray-100 rounded mt-1 w-2/3"></div>
+      </div>
+      <div class="js-more-product hidden">
+        <div class="bg-gray-200 rounded-md h-40 md:h-52"></div>
+        <div class="h-3 bg-gray-100 rounded mt-2"></div>
+        <div class="h-3 bg-gray-100 rounded mt-1 w-2/3"></div>
+      </div>
+      <div class="js-more-product hidden">
+        <div class="bg-gray-200 rounded-md h-40 md:h-52"></div>
+        <div class="h-3 bg-gray-100 rounded mt-2"></div>
+        <div class="h-3 bg-gray-100 rounded mt-1 w-2/3"></div>
+      </div>
+      <div class="js-more-product hidden">
+        <div class="bg-gray-200 rounded-md h-40 md:h-52"></div>
+        <div class="h-3 bg-gray-100 rounded mt-2"></div>
+        <div class="h-3 bg-gray-100 rounded mt-1 w-2/3"></div>
+      </div>
+      <div class="js-more-product hidden">
+        <div class="bg-gray-200 rounded-md h-40 md:h-52"></div>
+        <div class="h-3 bg-gray-100 rounded mt-2"></div>
+        <div class="h-3 bg-gray-100 rounded mt-1 w-2/3"></div>
+      </div>
+      <div class="js-more-product hidden">
+        <div class="bg-gray-200 rounded-md h-40 md:h-52"></div>
+        <div class="h-3 bg-gray-100 rounded mt-2"></div>
+        <div class="h-3 bg-gray-100 rounded mt-1 w-2/3"></div>
+      </div>
+      <div class="js-more-product hidden">
+        <div class="bg-gray-200 rounded-md h-40 md:h-52"></div>
+        <div class="h-3 bg-gray-100 rounded mt-2"></div>
+        <div class="h-3 bg-gray-100 rounded mt-1 w-2/3"></div>
+      </div>
+      <div class="js-more-product hidden">
+        <div class="bg-gray-200 rounded-md h-40 md:h-52"></div>
+        <div class="h-3 bg-gray-100 rounded mt-2"></div>
+        <div class="h-3 bg-gray-100 rounded mt-1 w-2/3"></div>
+      </div>
+      <div class="js-more-product hidden">
+        <div class="bg-gray-200 rounded-md h-40 md:h-52"></div>
+        <div class="h-3 bg-gray-100 rounded mt-2"></div>
+        <div class="h-3 bg-gray-100 rounded mt-1 w-2/3"></div>
+      </div>
+      <div class="js-more-product hidden">
+        <div class="bg-gray-200 rounded-md h-40 md:h-52"></div>
+        <div class="h-3 bg-gray-100 rounded mt-2"></div>
+        <div class="h-3 bg-gray-100 rounded mt-1 w-2/3"></div>
+      </div>
+    </div>
+  </div>
+</section>
