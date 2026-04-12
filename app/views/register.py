@@ -5,11 +5,12 @@ from ..forms import UserRegistrationForm, CustomAuthenticationForm
 
 def register_view(request):
     if request.method == "POST":
-        form = UserRegistrationForm(request.POST)
+        form = UserRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
+            # MerchantProfile logic would go here in a real app
             login(request, user)
-            return redirect('index')
+            return redirect('kyc') # Redirect to KYC verification as per gopayfast.md
         else:
             # If form is invalid, keep the register_form with errors
             login_form = CustomAuthenticationForm()

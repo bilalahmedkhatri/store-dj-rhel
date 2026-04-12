@@ -189,12 +189,13 @@ def get_mock_about_data() -> dict:
 def get_mock_privacy_policy_data() -> dict:
     return {
         "title": "Privacy Policy",
-        "effective_date": "April 1, 2025",
+        "effective_date": "April 12, 2026",
         "sections": [
-            {"title": "Information We Collect", "body": "We collect information you provide directly, including account and checkout details."},
-            {"title": "How We Use Your Information", "bullets": ["Process and fulfill orders", "Communicate about orders", "Improve our services", "Send promotions (opt-out available)"]},
-            {"title": "Data Security", "body": "We apply industry-standard controls to protect your data."},
-            {"title": "Contact", "body": "For privacy questions, email privacy@azeemlab.com."},
+            {"title": "Information We Collect", "body": "We collect information you provide directly, including account and checkout details, in compliance with SBP Consumer Protection Directives."},
+            {"title": "How We Use Your Information", "bullets": ["Process and fulfill orders", "Communicate about orders", "Improve our services", "Send promotions (opt-out available)", "Regulatory reporting to SBP/FMU"]},
+            {"title": "PCI DSS & Data Security", "body": "We apply industry-standard PCI DSS v4.0 controls to protect your payment data. Sensitive card information is never stored on our servers."},
+            {"title": "AML Record Retention", "body": "In accordance with AML/CFT Regulations, we retain customer identification and transaction records for a minimum of 10 years."},
+            {"title": "Contact", "body": "For privacy questions or SBP CPD related queries, email privacy@azeemlab.com."},
         ],
     }
 
@@ -202,12 +203,13 @@ def get_mock_privacy_policy_data() -> dict:
 def get_mock_terms_data() -> dict:
     return {
         "title": "Terms of Service",
-        "last_updated": "April 1, 2025",
+        "last_updated": "April 12, 2026",
         "sections": [
-            {"title": "Acceptance of Terms", "body": "By using this website, you agree to these terms and applicable laws."},
-            {"title": "Products and Pricing", "body": "Prices and availability can change without prior notice."},
-            {"title": "Orders and Payment", "body": "We may refuse or cancel orders when needed for fraud/security reasons."},
-            {"title": "Returns and Refunds", "body": "Please review our Returns Policy for complete details."},
+            {"title": "Acceptance of Terms", "body": "By using this website, you agree to these terms and the Electronic Transactions Ordinance (ETO), 2002 of Pakistan."},
+            {"title": "Jurisdiction", "body": "These terms are governed by the laws of the Islamic Republic of Pakistan. Any disputes shall be subject to the exclusive jurisdiction of the courts in Karachi."},
+            {"title": "Transaction Limits", "body": "Transactions are subject to limits defined by the State Bank of Pakistan (SBP) and your issuing bank."},
+            {"title": "Liability Cap", "body": "Our liability for any transaction-related issue is capped at the total amount of the specific transaction in question."},
+            {"title": "Orders and Payment", "body": "We may refuse or cancel orders when needed for fraud/security reasons as per AML/CFT guidelines."},
             {"title": "Contact", "body": "For legal questions, email legal@azeemlab.com."},
         ],
     }
@@ -216,11 +218,12 @@ def get_mock_terms_data() -> dict:
 def get_mock_refund_policy_data() -> dict:
     return {
         "title": "Returns & Refunds Policy",
-        "last_updated": "April 1, 2025",
+        "last_updated": "April 12, 2026",
         "sections": [
-            {"title": "30-Day Return Policy", "body": "Most unused items can be returned within 30 days of delivery."},
-            {"title": "Eligibility", "bullets": ["Unused and original condition", "All tags and packaging included", "Final-sale/custom items are excluded"]},
-            {"title": "Refund Processing", "body": "Refunds are usually processed within 5-7 business days after inspection."},
+            {"title": "7-Day Auto-Refund Guarantee", "body": "For failed transactions where amount is deducted, an auto-refund is initiated within 7 days as per SBP standards."},
+            {"title": "Standard Returns", "body": "Most unused items can be returned within 30 days of delivery."},
+            {"title": "Refund Processing Timeline", "body": "Once approved, refunds are typically processed within 10-12 business days depending on your bank's cycle."},
+            {"title": "Dispute Escalation", "body": "If a refund is not received within the stated timeline, please contact our Compliance Officer or escalate to the Banking Mohtasib Pakistan (BMP)."},
             {"title": "Support", "body": "Need help? Contact returns@azeemlab.com."},
         ],
     }

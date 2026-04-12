@@ -45,4 +45,5 @@ urlpatterns = [
     path('security/', views.security, name='security'),
     path('cookie-policy/', views.cookie_policy, name='cookie_policy'),
     path('status/', views.status_page, name='status_page'),
+    path('webhooks/gopayfast/', views.gopayfast_webhook, name='gopayfast_webhook'),
 ]

@@ -1191,3 +1191,17 @@ class UserRolesRole(models.Model):
         managed = False
         db_table = 'user_roles_role'
         unique_together = (('userid', 'roleid'),)
+
+class MerchantProfile(models.Model):
+    user = models.OneToOneField('User', on_delete=models.CASCADE, related_name='merchant_profile')
+    merchant_type = models.CharField(max_length=50, choices=[('individual', 'Individual'), ('business', 'Registered Business')])
+    ntn = models.CharField(max_length=20, blank=True, null=True, verbose_name="NTN Number")
+    cnic = models.CharField(max_length=15, blank=True, null=True, verbose_name="CNIC Number")
+    utility_bill = models.FileField(upload_to='merchant_docs/bills/', blank=True, null=True)
+    cnic_front = models.FileField(upload_to='merchant_docs/cnic/', blank=True, null=True)
+    cnic_back = models.FileField(upload_to='merchant_docs/cnic/', blank=True, null=True)
+    is_verified = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Merchant: {self.user.identifier}"

@@ -5,6 +5,7 @@ from .main import index, category_list, category_detail, all_products
 from .login import login_view, logout_view
 from .cart import cart_view, add_to_cart_view, cart_update_view, cart_remove_view
 from .checkout import checkout_view, payment_success_view, payment_failed_view, payment_pending_view, receipt_view
+from .webhooks import gopayfast_webhook
 from .extra_pages import (
     faqs,
     about_us,
