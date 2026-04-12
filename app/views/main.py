@@ -17,7 +17,7 @@ def index(request):
     """
     Renders the home page with featured products.
     """
-    products = Product.objects.all()[:8]  # Get first 8 products
+    products = Product.objects.all()[:8]
     product_list = []
     
     for product in products:
@@ -45,9 +45,14 @@ def index(request):
             })
         except Exception:
             continue
-            
-    if not product_list:
-        product_list = get_mock_products()
+    
+    mock_products = get_mock_products()
+    if len(product_list) < 8:
+        for mp in mock_products:
+            if len(product_list) >= 8:
+                break
+            if not any(p.get('slug') == mp.get('slug') for p in product_list):
+                product_list.append(mp)
 
     categories = []
     db_categories = list(
@@ -57,7 +62,7 @@ def index(request):
                 "collectiontranslation_set",
                 CollectionTranslation.objects.filter(languagecode="en"),
             )
-        )[:3]
+        )[:10]
     )
     for category in db_categories:
         translation = next(iter(category.collectiontranslation_set.all()), None)
@@ -73,10 +78,15 @@ def index(request):
                 "url": f"/category/{category.id}/",
             }
         )
-    if not categories:
-        categories = get_mock_categories()
+    
+    mock_categories = get_mock_categories()
+    if len(categories) < 4:
+        for mc in mock_categories:
+            if len(categories) >= 4:
+                break
+            if not any(c.get('name') == mc.get('name') for c in categories):
+                categories.append(mc)
 
-    # Split products for popular and latest sections
     popular_products = product_list[:4]
     latest_products = product_list[4:8]
     

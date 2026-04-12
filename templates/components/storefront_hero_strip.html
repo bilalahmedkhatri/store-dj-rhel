@@ -2,6 +2,16 @@
 <section class="bg-white">
   <div class="container mx-auto px-3 pt-4 pb-3">
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      {% for category in categories|slice:":4" %}
+      <a href="{{ category.url }}" class="relative rounded-xl overflow-hidden block min-h-[120px]">
+        <img src="{{ category.image_url }}" alt="{{ category.name }}" class="absolute inset-0 w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-black/30"></div>
+        <div class="relative z-10 p-3 text-white">
+          <p class="text-xs uppercase tracking-wide">Collection</p>
+          <h3 class="text-lg font-bold">{{ category.name }}</h3>
+        </div>
+      </a>
+      {% empty %}
       <a href="#" class="relative rounded-xl overflow-hidden block min-h-[120px]">
         <img src="{% static 'images/main-slider/5.jpg' %}" alt="Fresh edits" class="absolute inset-0 w-full h-full object-cover" />
         <div class="absolute inset-0 bg-black/30"></div>
@@ -34,6 +44,7 @@
           <h3 class="text-lg font-bold">Accessories</h3>
         </div>
       </a>
+      {% endfor %}
     </div>
   </div>
 </section>
