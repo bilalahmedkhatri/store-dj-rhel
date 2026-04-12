@@ -27,77 +27,97 @@
                 </div>
             </div>
 
-            <!-- Product Info (same as before) -->
+            <!-- Product Info: SHEIN Style Buy Box -->
             <div class="w-full lg:w-1/2">
-                <h1 class="text-3xl sm:text-4xl md:text-5xl font-black mb-4 text-gray-900">{{ name }}</h1>
-                
-                <div class="flex flex-wrap items-center gap-3 md:gap-4 mb-6">
-                    <span class="text-2xl md:text-3xl lg:text-4xl font-black text-primary">${{ price_display }}</span>
-                    <div class="flex items-center gap-2">
-                        <div class="flex text-yellow-400 gap-0.5">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                        </div>
-                        <span class="text-gray-400 text-xs sm:text-sm font-medium">(4.8 / 120 reviews)</span>
-                    </div>
-                </div>
-
-                <div class="prose prose-sm sm:prose-base lg:prose-lg text-gray-600 mb-8 max-w-none">
-                    {{ description|safe }}
-                </div>
-
-                {% if options %}
-                <div class="space-y-6 mb-8 border-t border-b border-gray-100 py-6 md:py-8">
-                    {% regroup options by group as grouped_options %}
-                    {% for group in grouped_options %}
-                    <div>
-                        <h4 class="font-bold text-gray-900 mb-3 md:mb-4 uppercase tracking-wider text-xs md:text-sm">{{ group.grouper }}</h4>
-                        <div class="flex flex-wrap gap-2 md:gap-3">
-                            {% for opt in group.list %}
-                            <label class="relative">
-                                <input type="radio" name="{{ group.grouper }}" value="{{ opt.id }}" class="peer sr-only">
-                                <span class="px-4 md:px-6 py-2 md:py-3 rounded-lg md:rounded-xl border border-gray-200 cursor-pointer hover:border-primary peer-checked:bg-primary peer-checked:text-white peer-checked:border-primary transition-all inline-block font-bold text-sm md:text-base">
-                                    {{ opt.name }}
-                                </span>
-                            </label>
-                            {% endfor %}
+                <div class="lg:sticky lg:top-24 bg-white p-6 sm:p-8 rounded-2xl md:rounded-3xl border border-gray-100 shadow-sm">
+                    <div class="mb-6">
+                        <h1 class="text-2xl sm:text-3xl font-black mb-2 text-gray-900 leading-tight">{{ name }}</h1>
+                        <div class="flex items-center gap-2">
+                            <div class="flex text-yellow-400 text-xs gap-0.5">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <span class="text-gray-400 text-xs font-medium">(4.8 / 120 reviews)</span>
                         </div>
                     </div>
-                    {% endfor %}
-                </div>
-                {% endif %}
-
-                <form id="add-to-cart-form" method="post" action="{% url 'cart_add' %}" class="flex flex-col sm:flex-row gap-3 md:gap-4 mb-8 md:mb-12">
-                    {% csrf_token %}
-                    <input type="hidden" name="slug" value="{{ slug }}">
-                    <input type="hidden" name="name" value="{{ name }}">
-                    <input type="hidden" name="image_url" value="{{ main_image }}">
-                    <input type="hidden" name="price" value="{{ min_price|default:price_display }}">
-                    <input type="hidden" name="variant" value="Default">
-                    <input type="hidden" name="next" value="{% url 'cart' %}">
-                    <div class="flex items-center border border-gray-200 rounded-lg md:rounded-xl px-3 md:px-4 bg-gray-50">
-                        <button type="button" id="decrease-qty" class="p-2 hover:text-primary transition-colors focus:outline-none"><i class="fas fa-minus text-sm md:text-base"></i></button>
-                        <input type="number" id="quantity" name="quantity" value="1" min="1" class="w-10 md:w-12 text-center bg-transparent border-none focus:ring-0 font-bold text-base md:text-lg">
-                        <button type="button" id="increase-qty" class="p-2 hover:text-primary transition-colors focus:outline-none"><i class="fas fa-plus text-sm md:text-base"></i></button>
+                    
+                    <div class="flex flex-wrap items-baseline gap-3 mb-6">
+                        <span class="text-3xl md:text-4xl font-black text-primary">${{ price_display }}</span>
+                        {% if old_price %}
+                        <span class="text-gray-400 line-through text-lg font-medium">${{ old_price }}</span>
+                        {% endif %}
                     </div>
-                    <button id="add-to-cart-btn" type="submit" class="flex-grow bg-primary hover:bg-secondary text-white font-bold md:font-black py-3 md:py-4 px-6 md:px-8 rounded-lg md:rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl transition-all flex items-center justify-center gap-2 md:gap-3 text-base md:text-lg">
-                        <i class="fas fa-shopping-cart"></i> Add to Cart
-                    </button>
-                    <button type="button" class="w-12 h-12 md:w-14 md:h-14 border border-gray-200 rounded-lg md:rounded-xl flex items-center justify-center hover:bg-red-50 hover:text-red-500 hover:border-red-500 transition-all text-gray-400">
-                        <i class="far fa-heart text-lg md:text-xl"></i> 
-                    </button>
-                </form>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-                    <div class="flex items-start gap-3 md:gap-4 p-3 md:p-4 bg-gray-50 rounded-xl md:rounded-2xl">
-                        <div class="w-8 h-8 md:w-10 md:h-10 bg-white rounded-lg md:rounded-xl flex items-center justify-center text-primary shadow-sm flex-shrink-0"><i class="fas fa-truck text-sm md:text-base"></i></div>
-                        <div><h5 class="font-bold text-gray-900 text-sm md:text-base">Free Shipping</h5><p class="text-xs md:text-sm text-gray-500">On all orders over $100</p></div>
+                    <div class="prose prose-sm text-gray-600 mb-8 pb-6 border-b border-gray-100">
+                        {{ description|safe }}
                     </div>
-                    <div class="flex items-start gap-3 md:gap-4 p-3 md:p-4 bg-gray-50 rounded-xl md:rounded-2xl">
-                        <div class="w-8 h-8 md:w-10 md:h-10 bg-white rounded-lg md:rounded-xl flex items-center justify-center text-primary shadow-sm flex-shrink-0"><i class="fas fa-shield-alt text-sm md:text-base"></i></div>
-                        <div><h5 class="font-bold text-gray-900 text-sm md:text-base">Secure Payment</h5><p class="text-xs md:text-sm text-gray-500">100% secure payment</p></div>
+
+                    {% if options %}
+                    <div class="space-y-6 mb-8">
+                        {% regroup options by group as grouped_options %}
+                        {% for group in grouped_options %}
+                        <div>
+                            <h4 class="font-bold text-gray-900 mb-3 uppercase tracking-wider text-[10px]">{{ group.grouper }}</h4>
+                            <div class="flex flex-wrap gap-2">
+                                {% for opt in group.list %}
+                                <label class="relative group/variant">
+                                    <input type="radio" name="{{ group.grouper }}" value="{{ opt.id }}" 
+                                           class="peer sr-only variant-radio" 
+                                           data-images='{{ opt.images|safe }}'
+                                           data-image="{{ opt.image|default:main_image }}"
+                                           {% if forloop.first %}checked{% endif %}>
+                                    <span class="px-4 py-2 rounded-lg border border-gray-200 cursor-pointer group-hover/variant:border-primary peer-checked:bg-primary/5 peer-checked:text-primary peer-checked:border-primary transition-all inline-block font-bold text-sm">
+                                        {{ opt.name }}
+                                    </span>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <form id="add-to-cart-form" method="post" action="{% url 'cart_add' %}" class="space-y-4">
+                        {% csrf_token %}
+                        <input type="hidden" name="slug" value="{{ slug }}">
+                        <input type="hidden" name="name" value="{{ name }}">
+                        <input type="hidden" name="image_url" id="form-image-url" value="{{ main_image }}">
+                        <input type="hidden" name="price" value="{{ min_price|default:price_display }}">
+                        <input type="hidden" name="next" value="{% url 'cart' %}">
+                        
+                        <div class="flex gap-3">
+                            <div class="flex items-center border border-gray-200 rounded-xl px-3 bg-gray-50 h-[52px]">
+                                <button type="button" id="decrease-qty" class="p-2 hover:text-primary transition-colors focus:outline-none"><i class="fas fa-minus text-sm"></i></button>
+                                <input type="number" id="quantity" name="quantity" value="1" min="1" class="w-10 text-center bg-transparent border-none focus:ring-0 font-bold text-lg">
+                                <button type="button" id="increase-qty" class="p-2 hover:text-primary transition-colors focus:outline-none"><i class="fas fa-plus text-sm"></i></button>
+                            </div>
+                            <button id="add-to-cart-btn" type="submit" class="flex-grow bg-primary hover:bg-secondary text-white font-black h-[52px] rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl transition-all flex items-center justify-center gap-3 text-lg">
+                                <i class="fas fa-shopping-bag"></i> Add to Cart
+                            </button>
+                        </div>
+                        
+                        <div class="flex gap-3">
+                            <button type="button" class="flex-1 border border-gray-200 rounded-xl flex items-center justify-center gap-2 hover:bg-red-50 hover:text-red-500 hover:border-red-500 transition-all text-gray-400 font-bold text-sm py-3">
+                                <i class="far fa-heart"></i> Add to Wishlist
+                            </button>
+                            <button type="button" class="flex-1 border border-gray-200 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-50 transition-all text-gray-600 font-bold text-sm py-3">
+                                <i class="fas fa-share-alt"></i> Share
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="mt-8 space-y-4 pt-6 border-t border-gray-100">
+                        <div class="flex items-start gap-4">
+                            <i class="fas fa-truck text-primary mt-1"></i>
+                            <div><p class="text-sm font-bold text-gray-900">Fast Shipping</p><p class="text-xs text-gray-500">Estimated delivery: 3–5 days</p></div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <i class="fas fa-undo-alt text-primary mt-1"></i>
+                            <div><p class="text-sm font-bold text-gray-900">Free Returns</p><p class="text-xs text-gray-500">30-day hassle-free returns</p></div>
+                        </div>
                     </div>
                 </div>
             </div>
+
         </div>
 
         <!-- ========== ADDITIONAL PRODUCT INFORMATION ========== -->

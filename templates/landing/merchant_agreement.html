@@ -1,0 +1,65 @@
+{% extends 'landing/base.html' %}
+{% load static %}
+
+{% block title %}Merchant Agreement - Azeem Lab{% endblock %}
+
+{% block content %}
+<div class="bg-white py-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-extrabold text-gray-900 sm:text-4xl mb-8 text-center">Merchant Service Agreement</h1>
+        
+        <div class="prose prose-indigo prose-lg text-gray-500 max-w-none">
+            <p class="mb-6 leading-relaxed">
+                This Merchant Service Agreement ("Agreement") is entered into between Azeem Lab Pvt Ltd ("Service Provider") and the entity/individual registering as a merchant ("Merchant"). By using the GoPayFast gateway, you agree to be bound by these terms.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-10 mb-4">1. Scope of Services</h2>
+            <p class="mb-4">
+                Service Provider shall provide Merchant with access to the GoPayFast platform to facilitate electronic payments from customers. This includes:
+            </p>
+            <ul class="list-disc pl-5 mb-6 space-y-2">
+                <li>Processing of credit/debit cards, bank transfers, and mobile wallets.</li>
+                <li>Provision of a merchant dashboard for transaction tracking.</li>
+                <li>Settlement of funds to the Merchant's designated bank account.</li>
+            </ul>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-10 mb-4">2. Settlement Terms</h2>
+            <p class="mb-4">
+                Funds will be settled into the Merchant's verified bank account according to the following schedule:
+            </p>
+            <ul class="list-disc pl-5 mb-6 space-y-2">
+                <li><strong>T+2:</strong> For credit/debit card transactions (Standard).</li>
+                <li><strong>T+1:</strong> For bank transfers and mobile wallets.</li>
+                <li>Settlements are processed on business days only (excluding weekends and public holidays).</li>
+            </ul>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-10 mb-4">3. Fees and Charges</h2>
+            <p class="mb-4">
+                Merchant agrees to pay the service fees as defined in the <strong>Pricing Schedule</strong>. Service Provider reserves the right to deduct fees directly from the settlement amount. Fees are exclusive of applicable government taxes.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-10 mb-4">4. Chargebacks and Refunds</h2>
+            <p class="mb-6">
+                Merchant is solely responsible for all chargebacks and refunds. In case of a chargeback, the Service Provider will deduct the disputed amount plus a chargeback processing fee from the Merchant's balance.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-10 mb-4">5. Compliance and Audit</h2>
+            <p class="mb-6">
+                Merchant must comply with all SBP regulations and PCI DSS standards. Service Provider reserves the right to audit Merchant's business practices and premises to ensure compliance with AML/KYC policies.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-10 mb-4">6. Termination</h2>
+            <p class="mb-6">
+                Either party may terminate this agreement with a 30-day written notice. Immediate termination may occur in case of fraud, violation of the Acceptable Use Policy, or regulatory directive from the SBP.
+            </p>
+
+            <div class="mt-12 p-8 bg-indigo-50 rounded-xl border-2 border-indigo-100 text-center">
+                <p class="text-indigo-900 font-bold mb-4">Are you ready to grow your business?</p>
+                <a href="{% url 'register' %}" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm">
+                    Register as a Merchant
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

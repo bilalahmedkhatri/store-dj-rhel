@@ -1,0 +1,79 @@
+{% extends 'landing/base.html' %}
+{% load static %}
+
+{% block title %}Security & Trust - Azeem Lab{% endblock %}
+
+{% block content %}
+<div class="bg-white py-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-16">
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-4">Your Security is Our Priority</h1>
+            <p class="text-lg text-gray-600">GoPayFast employs bank-grade security to protect your data and transactions.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div class="space-y-8">
+                <section>
+                    <div class="flex items-center mb-4">
+                        <div class="bg-indigo-100 p-3 rounded-lg mr-4">
+                            <i data-lucide="shield-check" class="h-6 w-6 text-indigo-600"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-gray-900">PCI DSS v4.0 Compliance</h2>
+                    </div>
+                    <p class="text-gray-600 leading-relaxed">
+                        We are a PCI DSS certified Level 1 Service Provider. This means we adhere to the highest security standards for handling, storing, and transmitting credit card data.
+                    </p>
+                </section>
+
+                <section>
+                    <div class="flex items-center mb-4">
+                        <div class="bg-indigo-100 p-3 rounded-lg mr-4">
+                            <i data-lucide="lock" class="h-6 w-6 text-indigo-600"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-gray-900">End-to-End Encryption</h2>
+                    </div>
+                    <p class="text-gray-600 leading-relaxed">
+                        All data transmitted between your browser and our servers is encrypted using 256-bit SSL/TLS encryption, ensuring that sensitive information remains private.
+                    </p>
+                </section>
+            </div>
+
+            <div class="space-y-8">
+                <section>
+                    <div class="flex items-center mb-4">
+                        <div class="bg-indigo-100 p-3 rounded-lg mr-4">
+                            <i data-lucide="user-check" class="h-6 w-6 text-indigo-600"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-gray-900">3D Secure (3DS)</h2>
+                    </div>
+                    <p class="text-gray-600 leading-relaxed">
+                        We support 3D Secure authentication (Verified by Visa, Mastercard SecureCode) to provide an extra layer of protection against unauthorized card usage.
+                    </p>
+                </section>
+
+                <section>
+                    <div class="flex items-center mb-4">
+                        <div class="bg-indigo-100 p-3 rounded-lg mr-4">
+                            <i data-lucide="eye" class="h-6 w-6 text-indigo-600"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-gray-900">Fraud Monitoring</h2>
+                    </div>
+                    <p class="text-gray-600 leading-relaxed">
+                        Our real-time fraud detection engine analyzes every transaction using machine learning to identify and block suspicious activities before they happen.
+                    </p>
+                </section>
+            </div>
+        </div>
+
+        <div class="mt-16 bg-gray-50 rounded-2xl p-8 border border-gray-100 flex flex-col md:flex-row items-center justify-between">
+            <div class="mb-6 md:mb-0">
+                <h3 class="text-lg font-bold text-gray-900">Responsible Disclosure</h3>
+                <p class="text-sm text-gray-600 mt-1">Found a security bug? Report it to our security team.</p>
+            </div>
+            <a href="mailto:security@azeemlab.com" class="px-6 py-2 bg-white border border-gray-300 rounded-md text-sm font-bold text-gray-700 hover:bg-gray-50 transition">
+                Report Vulnerability
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

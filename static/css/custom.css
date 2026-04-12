@@ -257,3 +257,15 @@ svg {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+
+:root {
+    --color-secondary: #10b981;
+}
+
+.bg-secondary {
+    background-color: var(--color-secondary);
+}
+
+.hover\:bg-secondary:hover {
+    background-color: var(--color-secondary);
+}

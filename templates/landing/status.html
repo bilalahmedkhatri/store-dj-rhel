@@ -1,0 +1,89 @@
+{% extends 'landing/base.html' %}
+{% load static %}
+
+{% block title %}System Status - Azeem Lab{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 py-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mx-auto">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <!-- Header Status -->
+            <div class="bg-green-600 px-8 py-10 text-white flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold">All Systems Operational</h1>
+                    <p class="text-green-100 mt-1">Status as of April 12, 2026 14:30 PKT</p>
+                </div>
+                <i data-lucide="check-circle-2" class="h-16 w-16 text-green-200"></i>
+            </div>
+
+            <div class="p-8">
+                <h2 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-6">Service Health</h2>
+                
+                <div class="space-y-6">
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100">
+                        <div class="flex items-center">
+                            <i data-lucide="credit-card" class="h-5 w-5 text-indigo-600 mr-4"></i>
+                            <div>
+                                <p class="text-sm font-bold text-gray-900">Card Processing</p>
+                                <p class="text-xs text-gray-500">Domestic & International</p>
+                            </div>
+                        </div>
+                        <span class="text-xs font-bold text-green-600 flex items-center">
+                            <span class="w-2 h-2 bg-green-600 rounded-full mr-2 animate-pulse"></span>
+                            OPERATIONAL
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100">
+                        <div class="flex items-center">
+                            <i data-lucide="wallet" class="h-5 w-5 text-indigo-600 mr-4"></i>
+                            <div>
+                                <p class="text-sm font-bold text-gray-900">Mobile Wallets</p>
+                                <p class="text-xs text-gray-500">EasyPaisa, JazzCash</p>
+                            </div>
+                        </div>
+                        <span class="text-xs font-bold text-green-600 flex items-center">
+                            <span class="w-2 h-2 bg-green-600 rounded-full mr-2 animate-pulse"></span>
+                            OPERATIONAL
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100">
+                        <div class="flex items-center">
+                            <i data-lucide="webhook" class="h-5 w-5 text-indigo-600 mr-4"></i>
+                            <div>
+                                <p class="text-sm font-bold text-gray-900">Webhooks Delivery</p>
+                                <p class="text-xs text-gray-500">Real-time callbacks</p>
+                            </div>
+                        </div>
+                        <span class="text-xs font-bold text-green-600 flex items-center">
+                            <span class="w-2 h-2 bg-green-600 rounded-full mr-2 animate-pulse"></span>
+                            OPERATIONAL
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100">
+                        <div class="flex items-center">
+                            <i data-lucide="layout-dashboard" class="h-5 w-5 text-indigo-600 mr-4"></i>
+                            <div>
+                                <p class="text-sm font-bold text-gray-900">Merchant Dashboard</p>
+                                <p class="text-xs text-gray-500">Reports & Settlements</p>
+                            </div>
+                        </div>
+                        <span class="text-xs font-bold text-green-600 flex items-center">
+                            <span class="w-2 h-2 bg-green-600 rounded-full mr-2 animate-pulse"></span>
+                            OPERATIONAL
+                        </span>
+                    </div>
+                </div>
+
+                <div class="mt-12 pt-8 border-t border-gray-100 text-center">
+                    <p class="text-xs text-gray-400">
+                        Uptime last 30 days: <strong class="text-gray-600">99.98%</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -4,7 +4,7 @@ from .not_found import not_found_view
 from .main import index, category_list, category_detail, all_products
 from .login import login_view, logout_view
 from .cart import cart_view, add_to_cart_view, cart_update_view, cart_remove_view
-from .checkout import checkout_view
+from .checkout import checkout_view, payment_success_view, payment_failed_view, payment_pending_view, receipt_view
 from .extra_pages import (
     faqs,
     about_us,
@@ -14,4 +14,14 @@ from .extra_pages import (
     shipping_policy,
     return_policy,
     payment_methods,
+    complaints,
+    aml_policy,
+    acceptable_use,
+    merchant_agreement,
+    pricing,
+    kyc,
+    refund_status,
+    security,
+    cookie_policy,
+    status_page,
 )

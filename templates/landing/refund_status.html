@@ -1,0 +1,70 @@
+{% extends 'landing/base.html' %}
+{% load static %}
+
+{% block title %}Refund Status - Azeem Lab{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md mx-auto">
+        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+            <h1 class="text-2xl font-bold text-gray-900 mb-6 text-center">Track Your Refund</h1>
+            
+            <form action="#" method="GET" class="space-y-4">
+                <div>
+                    <label for="txn_id" class="block text-sm font-medium text-gray-700 mb-1">Transaction or Refund ID</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i data-lucide="search" class="h-4 w-4 text-gray-400"></i>
+                        </div>
+                        <input type="text" id="txn_id" name="txn_id" required class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="PF-REF-...">
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-200">
+                    Track Status
+                </button>
+            </form>
+
+            <div class="mt-10 space-y-8">
+                <div class="flex items-center space-x-4">
+                    <div class="flex flex-col items-center">
+                        <div class="bg-green-500 text-white p-1 rounded-full"><i data-lucide="check" class="h-4 w-4"></i></div>
+                        <div class="w-0.5 h-10 bg-green-500"></div>
+                    </div>
+                    <div class="pb-6">
+                        <p class="text-sm font-bold text-gray-900">Refund Initiated</p>
+                        <p class="text-xs text-gray-500">Request received and validated.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div class="flex flex-col items-center">
+                        <div class="bg-indigo-600 text-white p-1 rounded-full animate-pulse"><i data-lucide="loader-2" class="h-4 w-4 animate-spin"></i></div>
+                        <div class="w-0.5 h-10 bg-gray-200"></div>
+                    </div>
+                    <div class="pb-6">
+                        <p class="text-sm font-bold text-gray-900">Gateway Processing</p>
+                        <p class="text-xs text-gray-500">Communicating with the bank.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-4 opacity-40">
+                    <div class="flex flex-col items-center">
+                        <div class="bg-gray-200 text-gray-500 p-1 rounded-full"><i data-lucide="credit-card" class="h-4 w-4"></i></div>
+                    </div>
+                    <div class="pb-6">
+                        <p class="text-sm font-bold text-gray-900">Funds Disbursed</p>
+                        <p class="text-xs text-gray-500">Amount credited to original source.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 p-4 bg-yellow-50 rounded-lg border border-yellow-100">
+                <p class="text-[10px] text-yellow-800 leading-relaxed uppercase font-bold mb-1">Important Note</p>
+                <p class="text-xs text-yellow-700">
+                    Refunds to credit cards may take <strong>10-12 business days</strong> to reflect on your bank statement after disbursement.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

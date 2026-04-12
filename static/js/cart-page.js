@@ -172,6 +172,7 @@
         if (minusBtn) {
             minusBtn.addEventListener("click", (e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 e.stopImmediatePropagation();
                 let current = parseInt(qtyEl.textContent) || 1;
                 if (current <= 1) return;
@@ -185,6 +186,7 @@
         if (plusBtn) {
             plusBtn.addEventListener("click", (e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 e.stopImmediatePropagation();
                 let current = parseInt(qtyEl.textContent) || 1;
                 let newQty = current + 1;
@@ -197,6 +199,7 @@
         if (removeBtn) {
             removeBtn.addEventListener("click", async (e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 e.stopImmediatePropagation();
                 const slug = row.dataset.slug;
                 row.remove();

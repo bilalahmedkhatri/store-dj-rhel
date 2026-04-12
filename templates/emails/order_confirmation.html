@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - Store DJ Reheel</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f9fafb;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background-color: #111827;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            color: #ffffff;
+            margin: 0;
+            font-size: 24px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .header p {
+            color: #9ca3af;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .greeting {
+            font-size: 20px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 12px;
+        }
+        .message {
+            font-size: 16px;
+            color: #4b5563;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .order-card {
+            background-color: #f3f4f6;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        .item-details {
+            flex: 1;
+        }
+        .item-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+        }
+        .item-qty {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        .item-price {
+            font-size: 14px;
+            font-weight: 700;
+            color: #111827;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #111827;
+            font-size: 18px;
+            font-weight: 800;
+            color: #111827;
+        }
+        .section-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #9ca3af;
+            margin-bottom: 8px;
+        }
+        .footer {
+            background-color: #f9fafb;
+            padding: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+        .footer a {
+            color: #111827;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .button {
+            display: inline-block;
+            background-color: #111827;
+            color: #ffffff !important;
+            padding: 14px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Store DJ Reheel</h1>
+            <p>Order #{{ order_id|default:"12345" }}</p>
+            <p style="font-size: 12px; color: #6b7280; opacity: 0.8;">{{ order_date|date:"F d, Y"|default:"" }}</p>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <div class="greeting">Hi {{ user_name|default:"Valued Customer" }},</div>
+            <p class="message">
+                Your order has been confirmed and is now being processed. Thank you for choosing Store DJ Reheel! We'll notify you as soon as your items are on their way.
+            </p>
+
+            <div class="section-title">Order Summary</div>
+            <div class="order-card">
+                {% for item in cart_items %}
+                <div class="order-item">
+                    <div class="item-details">
+                        <div class="item-name">{{ item.product.name }}</div>
+                        <div class="item-qty">Quantity: {{ item.quantity }}</div>
+                    </div>
+                    <div class="item-price">${{ item.total_price|floatformat:2 }}</div>
+                </div>
+                {% endfor %}
+
+                <div class="summary-row">
+                    <span style="color: #6b7280;">Subtotal</span>
+                    <span style="color: #111827;">${{ subtotal|floatformat:2 }}</span>
+                </div>
+                <div class="summary-row">
+                    <span style="color: #6b7280;">Shipping</span>
+                    <span style="color: #111827;">${{ shipping|floatformat:2 }}</span>
+                </div>
+                <div class="total-row">
+                    <span>Total</span>
+                    <span>${{ total|floatformat:2 }}</span>
+                </div>
+            </div>
+
+            <div style="display: table; width: 100%;">
+                <div style="display: table-cell; width: 50%; padding-right: 10px;">
+                    <div class="section-title">Shipping Address</div>
+                    <div style="font-size: 14px; color: #4b5563; line-height: 1.4;">
+                        {{ address }}<br>
+                        {{ phone }}
+                    </div>
+                </div>
+                <div style="display: table-cell; width: 50%; padding-left: 10px;">
+                    <div class="section-title">Payment Method</div>
+                    <div style="font-size: 14px; color: #4b5563;">
+                        {{ payment_method|title }}
+                    </div>
+                </div>
+            </div>
+
+            <center>
+                <a href="{{ products_url }}" class="button">Visit Our Shop</a>
+            </center>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>&copy; 2026 Store DJ Reheel. All rights reserved.</p>
+            <p>Karachi, Pakistan | Moscow, Russia</p>
+            <div style="margin-top: 15px;">
+                <a href="{{ privacy_url|default:'#' }}">Privacy Policy</a>
+                <a href="{{ terms_url|default:'#' }}">Terms of Use</a>
+                <a href="{{ support_url|default:'#' }}">Support</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

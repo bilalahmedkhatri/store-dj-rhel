@@ -1,0 +1,64 @@
+{% extends 'landing/base.html' %}
+{% load static %}
+
+{% block title %}AML & KYC Policy - Azeem Lab{% endblock %}
+
+{% block content %}
+<div class="bg-white py-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mx-auto">
+        <h1 class="text-3xl font-extrabold text-gray-900 sm:text-4xl mb-8">Anti-Money Laundering (AML) & KYC Policy</h1>
+        
+        <div class="prose prose-indigo prose-lg text-gray-500">
+            <p class="mb-6">
+                Azeem Lab Pvt Ltd ("the Company") is committed to the highest standards of Anti-Money Laundering (AML) and Counter-Terrorism Financing (CTF). Our policy is designed to comply with the SBP AML/CFT/CPF Regulations and the Anti-Money Laundering Act, 2010 of Pakistan.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-10 mb-4">1. Customer Due Diligence (CDD)</h2>
+            <p class="mb-4">
+                We implement a robust "Know Your Customer" (KYC) program. No merchant or high-value customer account will be activated without:
+            </p>
+            <ul class="list-disc pl-5 mb-6 space-y-2">
+                <li>Verification of CNIC/Passport for individuals.</li>
+                <li>Verification of NTN and Incorporation documents for businesses.</li>
+                <li>Biometric verification where applicable under SBP guidelines.</li>
+                <li>Physical address verification through utility bills.</li>
+            </ul>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-10 mb-4">2. Transaction Monitoring</h2>
+            <p class="mb-4">
+                We employ automated systems to monitor transactions for suspicious patterns, including:
+            </p>
+            <ul class="list-disc pl-5 mb-6 space-y-2">
+                <li>Unusually large transactions compared to the customer's profile.</li>
+                <li>Rapid succession of transactions from the same source.</li>
+                <li>Structuring of transactions to avoid reporting thresholds.</li>
+            </ul>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-10 mb-4">3. Reporting Obligations</h2>
+            <p class="mb-4">
+                The Company is legally obligated to report:
+            </p>
+            <ul class="list-disc pl-5 mb-6 space-y-2">
+                <li><strong>Suspicious Transaction Reports (STRs):</strong> Reported to the Financial Monitoring Unit (FMU) of Pakistan within 7 days of detection.</li>
+                <li><strong>Currency Transaction Reports (CTRs):</strong> For transactions exceeding the threshold defined by SBP.</li>
+            </ul>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-10 mb-4">4. Record Retention</h2>
+            <p class="mb-6">
+                In compliance with SBP regulations, all KYC documents and transaction records are retained for a minimum period of <strong>10 years</strong> following the termination of the business relationship or the date of the transaction.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-10 mb-4">5. Sanctions Screening</h2>
+            <p class="mb-6">
+                We screen all customers against the UN Security Council Sanctions List and the NACTA Proscribed Persons list. We maintain a zero-tolerance policy for transactions involving proscribed entities or individuals.
+            </p>
+
+            <div class="mt-12 p-6 bg-gray-50 rounded-lg border border-gray-200">
+                <p class="text-sm italic">
+                    Last Updated: April 2026. This policy is subject to periodic review based on updates from the State Bank of Pakistan (SBP) and the Financial Monitoring Unit (FMU).
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

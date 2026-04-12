@@ -333,15 +333,31 @@
                   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-gray-100">
                     <div class="min-w-0">
                       <p class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">Contact Information</p>
-                      <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-                        <p class="text-sm font-semibold text-gray-900" id="review-email">—</p>
-                        <span class="hidden sm:inline text-gray-300">|</span>
-                        <p class="text-sm text-gray-600" id="review-name">—</p>
-                        <span class="hidden sm:inline text-gray-300">|</span>
-                        <p class="text-sm text-gray-600 flex items-center gap-1.5" id="review-phone-wrap">
-                          <i class="fas fa-phone-alt text-[10px] text-gray-400"></i>
-                          <span id="review-phone">—</span>
-                        </p>
+                      <div class="space-y-1.5">
+                        <div class="flex items-center gap-2">
+                          <span class="text-sm font-bold text-gray-400 tracking-wide w-20">
+                            Email
+                          </span>
+                          <p class="text-sm font-semibold text-gray-900" id="review-email">—</p>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                          <span class="text-sm font-bold text-gray-400 tracking-wide w-20">
+                            Ship to
+                          </span>
+                          <p class="text-sm text-gray-600" id="review-name">—</p>
+                        </div>
+
+                        <div class="flex items-center gap-2" id="review-phone-wrap">
+                          <span class="text-sm font-bold text-gray-400 tracking-wide w-20">
+                            Phone
+                          </span>
+                          <p class="text-sm text-gray-600 flex items-center gap-1.5">
+                            <span id="review-phone">—</span>
+                          </p>
+                        </div>
+
+
                       </div>
                     </div>
                     <button type="button" class="btn-back text-xs font-bold text-primary hover:underline flex-shrink-0 self-start sm:self-center" data-target="1">Edit</button>

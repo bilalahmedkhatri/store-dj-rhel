@@ -1,0 +1,76 @@
+{% extends 'landing/base.html' %}
+{% load static %}
+
+{% block title %}Acceptable Use Policy - Azeem Lab{% endblock %}
+
+{% block content %}
+<div class="bg-white py-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mx-auto">
+        <h1 class="text-3xl font-extrabold text-gray-900 sm:text-4xl mb-8">Acceptable Use Policy</h1>
+        
+        <div class="prose prose-indigo prose-lg text-gray-500">
+            <p class="mb-6">
+                This Acceptable Use Policy ("AUP") outlines the prohibited activities for any merchant or user utilizing the GoPayFast payment gateway provided by Azeem Lab. Failure to comply may result in immediate suspension or termination of services.
+            </p>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-10 mb-4">Prohibited Merchants & Activities</h2>
+            <p class="mb-4">You may not use our services for any transactions involving:</p>
+            
+            <div class="space-y-8 mt-6">
+                <section>
+                    <h3 class="text-lg font-bold text-gray-800 flex items-center">
+                        <i data-lucide="shield-alert" class="mr-2 h-5 w-5 text-red-500"></i>
+                        Illegal Products & Services
+                    </h3>
+                    <p class="text-sm mt-1">Illegal drugs, narcotics, prescription medicines without valid authorization, or any items prohibited by the laws of Pakistan.</p>
+                </section>
+
+                <section>
+                    <h3 class="text-lg font-bold text-gray-800 flex items-center">
+                        <i data-lucide="flame" class="mr-2 h-5 w-5 text-red-500"></i>
+                        Dangerous Goods
+                    </h3>
+                    <p class="text-sm mt-1">Weapons, ammunition, explosives, fireworks, or toxic/radioactive materials.</p>
+                </section>
+
+                <section>
+                    <h3 class="text-lg font-bold text-gray-800 flex items-center">
+                        <i data-lucide="scale" class="mr-2 h-5 w-5 text-red-500"></i>
+                        Financial & Legal Services
+                    </h3>
+                    <p class="text-sm mt-1">Ponzi schemes, pyramid selling, multi-level marketing (MLM), unlicensed money transmission, or currency exchange (Hawala/Hundi).</p>
+                </section>
+
+                <section>
+                    <h3 class="text-lg font-bold text-gray-800 flex items-center">
+                        <i data-lucide="ban" class="mr-2 h-5 w-5 text-red-500"></i>
+                        Adult Content
+                    </h3>
+                    <p class="text-sm mt-1">Pornography, sexually explicit materials, or escort services.</p>
+                </section>
+
+                <section>
+                    <h3 class="text-lg font-bold text-gray-800 flex items-center">
+                        <i data-lucide="dices" class="mr-2 h-5 w-5 text-red-500"></i>
+                        Gambling
+                    </h3>
+                    <p class="text-sm mt-1">Online casinos, sports betting, or any unlicensed gambling activities.</p>
+                </section>
+            </div>
+
+            <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">Merchant Responsibilities</h2>
+            <ul class="list-disc pl-5 mb-6 space-y-2">
+                <li>Clearly display product prices and refund policies.</li>
+                <li>Obtain necessary licenses for regulated businesses.</li>
+                <li>Prevent fraudulent transactions through proper customer verification.</li>
+            </ul>
+
+            <div class="mt-12 p-6 bg-red-50 rounded-lg border border-red-100">
+                <p class="text-sm text-red-800 font-medium">
+                    Enforcement: We regularly audit merchant transactions. Accounts found violating this AUP will be blocked, and pending settlements may be frozen for investigation.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

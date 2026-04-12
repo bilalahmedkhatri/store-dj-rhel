@@ -54,23 +54,8 @@
 
         // Dynamic payment validation on step 3
         if (step === 3) {
-            const paymentMethod = document.querySelector('[name="payment"]:checked')?.value;
-            if (paymentMethod === 'card') {
-                const cardFields = [
-                    { id: 'card-number', errorId: 'card-number-error', test: v => /^\d[\d\s]{13,17}$/.test(v.replace(/\s/g, '').padEnd(16, '0')) || v.replace(/\D/g, '').length === 16 },
-                    { id: 'card-name',   errorId: 'card-name-error',   test: v => v.trim().length > 1 },
-                    { id: 'card-expiry', errorId: 'card-expiry-error', test: v => /^\d{2}[\s/]+\d{2}$/.test(v) },
-                    { id: 'card-cvc',    errorId: 'card-cvc-error',    test: v => /^\d{3,4}$/.test(v) },
-                ];
-                cardFields.forEach(({ id, errorId, test }) => {
-                    const el = $(id);
-                    if (!el) return;
-                    const ok = test(el.value);
-                    markInputError(id, !ok);
-                    if (ok) hideError(errorId); else { showError(errorId); valid = false; }
-                });
-            }
-            return valid;
+            // No extra validation needed locally; the gateway will handle the actual payment data securely.
+            return true;
         }
 
         fields.forEach(({ id, errorId, test, isCheckbox }) => {
@@ -149,6 +134,7 @@
         const reviewPhone   = $('review-phone');
         const reviewAddress = $('review-address');
         const reviewShip    = $('review-shipping');
+        const reviewPay     = $('review-payment');
 
         if (reviewEmail)   reviewEmail.textContent   = email;
         if (reviewName)    reviewName.textContent     = `${firstName} ${lastName}`.trim() || '—';
@@ -160,24 +146,17 @@
 
         if (reviewAddress) reviewAddress.textContent = [address, city, postal].filter(Boolean).join(', ') || '—';
 
-
         const selectedShipping = document.querySelector('[name="shipping_method"]:checked');
         if (reviewShip && selectedShipping) {
             const label = selectedShipping.closest('label')?.querySelector('p.text-sm.font-semibold')?.childNodes[0]?.textContent?.trim();
             reviewShip.textContent = label || 'Standard';
         }
-    }
 
-    // ─── Card number formatting ────────────────────────────────────
-    function formatCardNumber(input) {
-        let val = input.value.replace(/\D/g, '').slice(0, 16);
-        input.value = val.replace(/(.{4})/g, '$1 ').trim();
-    }
-
-    function formatExpiry(input) {
-        let val = input.value.replace(/\D/g, '').slice(0, 4);
-        if (val.length >= 3) val = val.slice(0, 2) + ' / ' + val.slice(2);
-        input.value = val;
+        const selectedPayment = document.querySelector('[name="payment"]:checked');
+        if (reviewPay && selectedPayment) {
+            const label = selectedPayment.closest('label')?.querySelector('p.text-sm.font-semibold')?.childNodes[0]?.textContent?.trim();
+            reviewPay.textContent = label || 'PayFast';
+        }
     }
 
     // ─── Shipping method visual state ──────────────────────────────
@@ -200,14 +179,11 @@
         });
     }
 
-    // ─── Payment method toggle ─────────────────────────────────────
+    // ─── Payment method visual state ──────────────────────────────
     function setupPaymentToggle() {
-        const cardFields = $('card-fields');
-        document.querySelectorAll('[name="payment"]').forEach(radio => {
+        document.querySelectorAll('.payment-method-card input[type="radio"]').forEach(radio => {
             radio.addEventListener('change', () => {
-                if (cardFields) {
-                    cardFields.style.display = radio.value === 'card' ? '' : 'none';
-                }
+                // We can add any visual change here if needed when toggling payment options
             });
         });
     }
@@ -263,11 +239,7 @@
             });
         });
 
-        // Card formatting
-        const cardNum    = $('card-number');
-        const cardExpiry = $('card-expiry');
-        if (cardNum)    cardNum.addEventListener('input',    () => formatCardNumber(cardNum));
-        if (cardExpiry) cardExpiry.addEventListener('input', () => formatExpiry(cardExpiry));
+        // Card formatting removed due to external gateway integration.
 
         // Inline validation: clear errors on input
         document.querySelectorAll('.checkout-input').forEach(input => {
@@ -278,26 +250,87 @@
             });
         });
 
-        // Submit: validate step 4
+        // Submit: validate step 4 and handle AJAX
         const form = $('checkout-form');
         if (form) {
-            form.addEventListener('submit', e => {
-                if (!validateStep(4)) {
-                    e.preventDefault();
-                    return;
-                }
-                // Final loading state
-                const btn = $('place-order-btn');
-                if (btn) {
-                    btn.disabled = true;
-                    btn.innerHTML = `
-                        <i class="fas fa-circle-notch fa-spin text-lg"></i>
-                        <span>Placing Order...</span>
-                    `;
-                }
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                if (!validateStep(4)) return;
 
+                const btn = $('place-order-btn');
+                const originalBtnHTML = btn.innerHTML;
+                
+                // Final loading state
+                btn.disabled = true;
+                btn.innerHTML = `
+                    <i class="fas fa-circle-notch fa-spin text-lg"></i>
+                    <span>Processing Payment...</span>
+                `;
+
+                try {
+                    const formData = new FormData(form);
+                    formData.append('ajax', 'true');
+
+                    const response = await fetch(form.action || window.location.href, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        }
+                    });
+
+                    const result = await response.json();
+
+                    if (result.status === 'success') {
+                        // Prefetch products page in background
+                        const prefetch = document.createElement('link');
+                        prefetch.rel = 'prefetch';
+                        prefetch.href = result.redirect_url || '/products/';
+                        document.head.appendChild(prefetch);
+
+                        // Show premium success overlay
+                        const overlay = $('payment-success-overlay');
+                        const progress = $('success-progress');
+                        const msg = $('success-message');
+                        
+                        if (overlay) {
+                            if (result.message) msg.textContent = result.message;
+                            overlay.style.display = 'flex';
+                            // Trigger reflow for transition
+                            overlay.offsetHeight;
+                            overlay.classList.add('visible');
+                            
+                            // Animate progress bar (3 seconds)
+                            if (progress) {
+                                setTimeout(() => {
+                                    progress.style.width = '100%';
+                                }, 50);
+                            }
+
+                            // Start background pre-navigation wait
+                            setTimeout(() => {
+                                window.location.href = result.redirect_url || '/products/';
+                            }, 3200);
+                        } else {
+                            // Fallback if overlay is missing
+                            window.location.href = result.redirect_url || '/products/';
+                        }
+                    } else {
+                        throw new Error(result.message || 'Payment failed. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Checkout Error:', error);
+                    alert(error.message || 'An unexpected error occurred. Please try again.');
+                    
+                    // Reset button
+                    btn.disabled = false;
+                    btn.innerHTML = originalBtnHTML;
+                }
             });
         }
+
 
         setupShippingOptions();
         setupPaymentToggle();

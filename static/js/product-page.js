@@ -8,10 +8,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const decreaseBtn = document.getElementById('decrease-qty');
     const increaseBtn = document.getElementById('increase-qty');
 
-    if (qtyInput) {
+    if (qtyInput && !qtyInput.dataset.eventsAttached) {
+        qtyInput.dataset.eventsAttached = "true";
+        
         if (decreaseBtn) {
             decreaseBtn.addEventListener('click', e => {
                 e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
                 const val = parseInt(qtyInput.value);
                 if (!isNaN(val) && val > 1) qtyInput.value = val - 1;
             });
@@ -19,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (increaseBtn) {
             increaseBtn.addEventListener('click', e => {
                 e.preventDefault();
+                e.stopPropagation();
                 e.stopImmediatePropagation();
                 const val = parseInt(qtyInput.value);
                 if (!isNaN(val)) qtyInput.value = val + 1;
@@ -31,31 +36,56 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // ── 2. Gallery Image Switching ────────────────────────────────
+    // ── 2. Gallery & Variant Switching ────────────────────────────
     const mainImage = document.getElementById('main-product-image');
     const thumbs = document.querySelectorAll('.thumbnail-btn');
+    const variantRadios = document.querySelectorAll('.variant-radio');
 
-    if (mainImage && thumbs.length > 0) {
-        // Set first thumb as active
-        if (thumbs[0]) thumbs[0].classList.add('border-primary');
+    function updateMainImage(url, forceActiveThumb = false) {
+        if (!mainImage || !url) return;
+        mainImage.style.opacity = '0';
+        setTimeout(() => {
+            mainImage.src = url;
+            mainImage.style.opacity = '1';
+        }, 150);
 
-        thumbs.forEach(thumb => {
-            const imgUrl = thumb.getAttribute('data-image');
-            if (!imgUrl) return;
-            thumb.addEventListener('click', e => {
-                e.preventDefault();
-                // Smooth crossfade
-                mainImage.style.opacity = '0';
-                setTimeout(() => {
-                    mainImage.src = imgUrl;
-                    mainImage.style.opacity = '1';
-                }, 150);
-                thumbs.forEach(t => t.classList.remove('border-primary'));
-                thumb.classList.add('border-primary');
+        if (forceActiveThumb) {
+            thumbs.forEach(t => {
+                if (t.getAttribute('data-image') === url) {
+                    t.classList.add('border-primary');
+                } else {
+                    t.classList.remove('border-primary');
+                }
+            });
+        }
+    }
+
+    if (mainImage) {
+        mainImage.style.transition = 'opacity 0.15s ease';
+        
+        if (thumbs.length > 0) {
+            if (thumbs[0]) thumbs[0].classList.add('border-primary');
+            thumbs.forEach(thumb => {
+                thumb.addEventListener('click', e => {
+                    e.preventDefault();
+                    updateMainImage(thumb.getAttribute('data-image'));
+                    thumbs.forEach(t => t.classList.remove('border-primary'));
+                    thumb.classList.add('border-primary');
+                });
+            });
+        }
+
+        // Variant Image Switch
+        variantRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                const img = radio.getAttribute('data-image');
+                if (img) updateMainImage(img, true);
+                
+                // Also update form hidden input if needed (usually handled by FormData)
+                const formImg = document.getElementById('form-image-url');
+                if (formImg) formImg.value = img;
             });
         });
-        // Crossfade transition style
-        mainImage.style.transition = 'opacity 0.15s ease';
     }
 
     // ── 3. Tab System ─────────────────────────────────────────────
@@ -87,57 +117,53 @@ document.addEventListener('DOMContentLoaded', function () {
     const addToCartForm = document.getElementById('add-to-cart-form');
     const addToCartBtn = document.getElementById('add-to-cart-btn');
 
-    if (addToCartForm && addToCartBtn) {
+    if (addToCartForm && addToCartBtn && !addToCartForm.dataset.eventsAttached) {
+        addToCartForm.dataset.eventsAttached = "true";
+        
         addToCartForm.addEventListener('submit', async function (e) {
             e.preventDefault();
-            e.stopImmediatePropagation(); // even stronger prevention
-            if (addToCartBtn.disabled) return;
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            if (addToCartBtn.disabled || addToCartBtn.getAttribute('data-state') === 'success') return;
 
-
-            // Store original label
             const originalHTML = addToCartBtn.innerHTML;
-
-            // ── Loading state ──────────────────────────────────────
             addToCartBtn.disabled = true;
             addToCartBtn.innerHTML = `
-                <i class="fas fa-circle-notch fa-spin text-lg"></i>
+                <i class="fas fa-circle-notch fa-spin"></i>
                 <span>Adding&hellip;</span>
             `;
 
-            // Wait for cart handler (loaded after this script)
             const engine = window.cartState;
             if (!engine) {
                 addToCartBtn.disabled = false;
                 addToCartBtn.innerHTML = originalHTML;
-                addToCartForm.submit(); // fallback
+                addToCartForm.submit();
                 return;
             }
 
             const result = await engine.addToCart(addToCartForm);
 
             if (result?.success) {
-                // ── Success state ──────────────────────────────────
+                addToCartBtn.setAttribute('data-state', 'success');
                 addToCartBtn.innerHTML = `
-                    <i class="fas fa-shopping-bag text-lg"></i>
+                    <i class="fas fa-check"></i>
                     <span>Show Cart</span>
                 `;
                 addToCartBtn.classList.remove('bg-primary');
-                addToCartBtn.classList.add('bg-green-600', 'text-white'); // ✅ FIX
-                // Change action to redirect to cart
+                addToCartBtn.classList.add('bg-secondary', 'text-white');
                 addToCartBtn.type = 'button';
-                addToCartBtn.onclick = () => window.location.href = '/cart/';
+                addToCartBtn.disabled = false;
+                
+                // Important: detach the submit handler logic for redirection
+                addToCartBtn.onclick = (event) => {
+                    event.preventDefault();
+                    window.location.href = '/cart/';
+                };
 
-                setTimeout(() => {
-                    addToCartBtn.disabled = false;
-                }, 500);
-                // No automatic revert to "Add to Cart" if success, 
-                // we want it to stay as "Show Cart"
+                // Remove the hidden attribute if any
+                addToCartBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             } else {
-                // ── Error / fallback ───────────────────────────────
-                addToCartBtn.innerHTML = `
-                    <i class="fas fa-exclamation-circle text-lg"></i>
-                    <span>Try Again</span>
-                `;
+                addToCartBtn.innerHTML = `<span>Try Again</span>`;
                 setTimeout(() => {
                     addToCartBtn.disabled = false;
                     addToCartBtn.innerHTML = originalHTML;
@@ -158,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <i class="fas fa-shopping-bag text-lg"></i>
                 <span>Show Cart</span>
             `;
-            addToCartBtn.classList.add('bg-secondary');
+            addToCartBtn.classList.add('bg-secondary', 'text-white');
             addToCartBtn.classList.remove('bg-primary');
             addToCartBtn.type = 'button';
             addToCartBtn.onclick = (e) => {
@@ -174,5 +200,4 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initial check (slightly delayed to allow hydration)
     setTimeout(checkCartStatus, 300);
 });
-
 

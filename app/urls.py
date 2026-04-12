@@ -14,6 +14,10 @@ urlpatterns = [
     path('cart/update/<slug:slug>/', views.cart_update_view, name='cart_update'),
     path('cart/remove/<slug:slug>/', views.cart_remove_view, name='cart_remove'),
     path('checkout/', views.checkout_view, name='checkout'),
+    path('payment/success/', views.payment_success_view, name='payment_success'),
+    path('payment/failed/', views.payment_failed_view, name='payment_failed'),
+    path('payment/pending/', views.payment_pending_view, name='payment_pending'),
+    path('receipt/<str:transaction_id>/', views.receipt_view, name='receipt'),
     
     # categories
     path('categories/', views.category_list, name='category_list'),
@@ -31,4 +35,14 @@ urlpatterns = [
     path('return-policy/', views.return_policy, name='return_policy'),
     path('refund-policy/', views.return_policy, name='refund_policy'),
     path('payment-methods/', views.payment_methods, name='payment_methods'),
+    path('complaints/', views.complaints, name='complaints'),
+    path('aml-policy/', views.aml_policy, name='aml_policy'),
+    path('acceptable-use/', views.acceptable_use, name='acceptable_use'),
+    path('merchant-agreement/', views.merchant_agreement, name='merchant_agreement'),
+    path('pricing/', views.pricing, name='pricing'),
+    path('kyc/', views.kyc, name='kyc'),
+    path('refund-status/', views.refund_status, name='refund_status'),
+    path('security/', views.security, name='security'),
+    path('cookie-policy/', views.cookie_policy, name='cookie_policy'),
+    path('status/', views.status_page, name='status_page'),
 ]

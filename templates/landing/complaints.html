@@ -1,0 +1,93 @@
+{% extends 'landing/base.html' %}
+{% load static %}
+
+{% block title %}Complaint Redressal - Azeem Lab{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-4">Complaint Redressal</h1>
+            <p class="text-lg text-gray-600">Your satisfaction is our priority. If you have any grievances, please let us know.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Info Sidebar -->
+            <div class="md:col-span-1 space-y-6">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                    <h3 class="font-bold text-gray-900 mb-4 flex items-center">
+                        <i data-lucide="clock" class="mr-2 h-5 w-5 text-indigo-600"></i>
+                        Our SLA
+                    </h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">
+                        We acknowledge all complaints within <strong>24 hours</strong> and aim for full resolution within <strong>48-72 hours</strong>.
+                    </p>
+                </div>
+
+                <div class="bg-indigo-50 p-6 rounded-lg border border-indigo-100">
+                    <h3 class="font-bold text-indigo-900 mb-4 flex items-center">
+                        <i data-lucide="shield-check" class="mr-2 h-5 w-5 text-indigo-600"></i>
+                        Escalation
+                    </h3>
+                    <p class="text-xs text-indigo-800 leading-relaxed mb-4">
+                        If you are not satisfied with our resolution, you may escalate to the Banking Mohtasib Pakistan (BMP).
+                    </p>
+                    <a href="https://www.bankingmohtasib.gov.pk/" target="_blank" class="text-xs font-bold text-indigo-600 hover:underline">Visit BMP Website &rarr;</a>
+                </div>
+            </div>
+
+            <!-- Complaint Form -->
+            <div class="md:col-span-2 bg-white p-8 rounded-lg shadow-sm border border-gray-100">
+                <form action="{% url 'complaints' %}" method="POST" class="space-y-6">
+                    {% csrf_token %}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                            <input type="text" id="name" name="name" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                            <input type="email" id="email" name="email" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="txn_id" class="block text-sm font-medium text-gray-700 mb-1">Transaction ID (Optional)</label>
+                        <input type="text" id="txn_id" name="txn_id" placeholder="PF-TXN-..." class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+
+                    <div>
+                        <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Complaint Category</label>
+                        <select id="category" name="category" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">Select a category</option>
+                            <option value="payment_failed">Payment Failed / Amount Deducted</option>
+                            <option value="refund_delayed">Refund Delay</option>
+                            <option value="unauthorized">Unauthorized Transaction</option>
+                            <option value="merchant_issue">Merchant Product/Service Issue</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Detailed Description</label>
+                        <textarea id="message" name="message" rows="5" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" placeholder="Please provide as much detail as possible..."></textarea>
+                    </div>
+
+                    <div class="flex items-start">
+                        <div class="flex items-center h-5">
+                            <input id="consent" name="consent" type="checkbox" required class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                        </div>
+                        <div class="ml-3 text-sm">
+                            <label for="consent" class="font-medium text-gray-700">I consent to the processing of my data for complaint resolution.</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-md hover:bg-indigo-700 transition duration-200">
+                        Submit Complaint
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

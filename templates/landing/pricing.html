@@ -1,0 +1,101 @@
+{% extends 'landing/base.html' %}
+{% load static %}
+
+{% block title %}Pricing & Fees - Azeem Lab{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 py-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-5xl mx-auto text-center">
+        <h1 class="text-4xl font-extrabold text-gray-900 mb-4">Simple, Transparent Pricing</h1>
+        <p class="text-xl text-gray-600 mb-12">No hidden charges. No setup fees. Only pay for what you use.</p>
+
+        <!-- Pricing Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Domestic Cards -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-8">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Domestic Cards</h3>
+                    <div class="flex items-center justify-center mb-6">
+                        <span class="text-5xl font-extrabold text-indigo-600">2.5%</span>
+                        <span class="text-gray-500 ml-2">per txn</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-8">+ PKR 10 fixed fee</p>
+                    <ul class="text-left space-y-4 text-sm text-gray-600 mb-8">
+                        <li class="flex items-center"><i data-lucide="check" class="h-4 w-4 text-green-500 mr-2"></i> Visa & Mastercard</li>
+                        <li class="flex items-center"><i data-lucide="check" class="h-4 w-4 text-green-500 mr-2"></i> PayPak Support</li>
+                        <li class="flex items-center"><i data-lucide="check" class="h-4 w-4 text-green-500 mr-2"></i> T+2 Settlement</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Wallets & IBFT -->
+            <div class="bg-indigo-600 rounded-2xl shadow-xl transform scale-105 z-10 text-white overflow-hidden">
+                <div class="p-8">
+                    <span class="bg-indigo-500 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-4 inline-block">Most Popular</span>
+                    <h3 class="text-lg font-bold mb-4">Wallets & IBFT</h3>
+                    <div class="flex items-center justify-center mb-6">
+                        <span class="text-5xl font-extrabold">1.5%</span>
+                        <span class="text-indigo-200 ml-2">per txn</span>
+                    </div>
+                    <p class="text-sm text-indigo-200 mb-8">No fixed fees</p>
+                    <ul class="text-left space-y-4 text-sm mb-8">
+                        <li class="flex items-center"><i data-lucide="check" class="h-4 w-4 text-indigo-300 mr-2"></i> EasyPaisa & JazzCash</li>
+                        <li class="flex items-center"><i data-lucide="check" class="h-4 w-4 text-indigo-300 mr-2"></i> Direct Bank Transfer</li>
+                        <li class="flex items-center"><i data-lucide="check" class="h-4 w-4 text-indigo-300 mr-2"></i> T+1 Settlement</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- International -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-8">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">International</h3>
+                    <div class="flex items-center justify-center mb-6">
+                        <span class="text-5xl font-extrabold text-indigo-600">3.9%</span>
+                        <span class="text-gray-500 ml-2">per txn</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-8">+ Conversion Fees</p>
+                    <ul class="text-left space-y-4 text-sm text-gray-600 mb-8">
+                        <li class="flex items-center"><i data-lucide="check" class="h-4 w-4 text-green-500 mr-2"></i> Global Acceptance</li>
+                        <li class="flex items-center"><i data-lucide="check" class="h-4 w-4 text-green-500 mr-2"></i> Multi-currency</li>
+                        <li class="flex items-center"><i data-lucide="check" class="h-4 w-4 text-green-500 mr-2"></i> T+7 Settlement</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Fees Table -->
+        <div class="mt-20 max-w-3xl mx-auto">
+            <h2 class="text-2xl font-bold text-gray-900 mb-8">Other Service Fees</h2>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Service</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Fee</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 text-sm text-gray-600">
+                        <tr>
+                            <td class="px-6 py-4 text-left">Setup / Integration Fee</td>
+                            <td class="px-6 py-4 text-right font-bold text-green-600">FREE</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 text-left">Annual Maintenance</td>
+                            <td class="px-6 py-4 text-right font-bold text-green-600">FREE</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 text-left">Chargeback Processing</td>
+                            <td class="px-6 py-4 text-right">PKR 1,500 / case</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 text-left">Refund Processing</td>
+                            <td class="px-6 py-4 text-right font-bold text-green-600">FREE</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

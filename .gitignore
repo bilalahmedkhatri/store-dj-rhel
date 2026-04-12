@@ -220,3 +220,7 @@ media/
 node_modules/
 .env/
 antigravity-awesome-skills/
+.agents/
+.agent/
+.awesome-design/
+

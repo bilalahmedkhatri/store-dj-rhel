@@ -52,6 +52,38 @@ def return_policy(request):
 def payment_methods(request):
     return render(request, 'landing/payment_methods.html', get_mock_payment_methods_data())
 
+def complaints(request):
+    if request.method == 'POST':
+        messages.success(request, 'Your complaint has been registered. Reference ID: CMP-12345. We will get back to you within 48 hours.')
+        return redirect('complaints')
+    return render(request, 'landing/complaints.html')
+
+def aml_policy(request):
+    return render(request, 'landing/aml_policy.html')
+
+def acceptable_use(request):
+    return render(request, 'landing/acceptable_use.html')
+
+def merchant_agreement(request):
+    return render(request, 'landing/merchant_agreement.html')
+
+def pricing(request):
+    return render(request, 'landing/pricing.html')
+
+def kyc(request):
+    return render(request, 'landing/kyc.html')
+
+def refund_status(request):
+    return render(request, 'landing/refund_status.html')
+
+def security(request):
+    return render(request, 'landing/security.html')
+
+def cookie_policy(request):
+    return render(request, 'landing/cookie_policy.html')
+
+def status_page(request):
+    return render(request, 'landing/status.html')
 
 def error_404(request, exception):
     return render(request, 'landing/error.html', status=404)
