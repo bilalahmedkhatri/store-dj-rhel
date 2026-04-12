@@ -11,21 +11,9 @@
     >
       <h2 class="text-4xl font-bold mb-4">Welcome to Our Shop</h2>
       <div class="flex space-x-4">
-        <a
-          href="#"
-          class="bg-primary hover:bg-transparent text-white hover:text-primary border border-transparent hover:border-primary font-semibold px-4 py-2 rounded-full inline-block"
-          >Shop Now</a
-        >
-        <a
-          href="#"
-          class="bg-primary hover:bg-transparent text-white hover:text-primary border border-transparent hover:border-primary font-semibold px-4 py-2 rounded-full inline-block"
-          >New Arrivals</a
-        >
-        <a
-          href="#"
-          class="bg-primary hover:bg-transparent text-white hover:text-primary border border-transparent hover:border-primary font-semibold px-4 py-2 rounded-full inline-block"
-          >Sale</a
-        >
+        {% include 'components/button.html' with text="Shop Now" url="#" type="primary" size="md" %}
+        {% include 'components/button.html' with text="New Arrivals" url="#" type="primary" size="md" %}
+        {% include 'components/button.html' with text="Sale" url="#" type="primary" size="md" %}
       </div>
     </div>
   </div>

@@ -1,11 +1,11 @@
 {% extends 'landing/base.html' %}
 {% load static %}
 
-{% block title %}Shopping Cart - E-Sahulate{% endblock %}
+{% block title %}Shopping Cart - e-sahulat{% endblock %}
 
 {% block content %}
 <div class="min-h-screen bg-[#f9f9f9] text-neutral-900 font-sans selection:bg-neutral-200">
-  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-24">
+  <main class="mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-24">
 
     <!-- Header -->
     <div class="flex items-end justify-between mb-10">
@@ -28,7 +28,7 @@
         <i class="fas fa-shopping-bag"></i>
       </div>
       <h2 class="text-xl font-medium mb-2">Your cart is empty</h2>
-      <p class="text-neutral-500 mb-8 max-w-md mx-auto">
+      <p class="text-neutral-500 mb-8 mx-auto">
         Looks like you haven't added anything to your cart yet. Explore our collection to find something you love.
       </p>
       <a href="{% url 'products' %}"

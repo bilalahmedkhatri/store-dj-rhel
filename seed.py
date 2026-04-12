@@ -54,10 +54,13 @@ from app.models import (  # noqa: E402
 
 LANG = "en"
 SEED_TRANSLATIONS: list[tuple[str, str, str, str]] = [
-    # slug, name, description, position under parent (root first)
+    # slug, name, description, role
     ("seed-shop-root", "Shop", "Browse everything we offer.", "root"),
-    ("seed-electronics", "Electronics", "Gadgets and tech.", "child"),
-    ("seed-apparel", "Apparel", "Clothing and accessories.", "child"),
+    ("seed-electronics", "Electronics", "Gadgets, smartphones, and latest tech accessories.", "child"),
+    ("seed-fashion", "Fashion", "Trendy clothing, footwear, and stylish accessories for all.", "child"),
+    ("seed-home-kitchen", "Home & Kitchen", "Essential appliances, decor, and kitchenware for your home.", "child"),
+    ("seed-beauty-health", "Beauty & Health", "Skincare, makeup, and wellness products.", "child"),
+    ("seed-sports-outdoors", "Sports & Outdoors", "Gear for fitness, camping, and athletic performance.", "child"),
 ]
 
 
@@ -79,13 +82,10 @@ def add_collection_closure(collection: Collection, parent: Collection | None) ->
 
 
 def delete_seed_collections() -> None:
-    """Remove collections whose English slug is seed-* (children before root)."""
-    slugs_ordered = ["seed-apparel", "seed-electronics", "seed-shop-root"]
-    for slug in slugs_ordered:
-        trans = CollectionTranslation.objects.filter(
-            slug=slug, languagecode=LANG
-        ).first()
-        if not trans or not trans.baseid_id:
+    """Remove collections whose English slug starts with seed-."""
+    seed_trans = CollectionTranslation.objects.filter(slug__startswith="seed-", languagecode=LANG)
+    for trans in seed_trans:
+        if not trans.baseid:
             continue
         col = trans.baseid
         CollectionProductVariantsProductVariant.objects.filter(collectionid=col).delete()
@@ -96,7 +96,7 @@ def delete_seed_collections() -> None:
         CollectionTranslation.objects.filter(baseid=col).delete()
         cid = col.pk
         col.delete()
-        print(f"Removed collection slug={slug} (id was {cid})")
+        print(f"Removed collection slug={trans.slug} (id was {cid})")
 
 
 def link_collection_to_default_channel(collection: Collection) -> None:
@@ -130,7 +130,7 @@ def ensure_demo_asset() -> Asset:
     )
 
 
-def ensure_demo_products(min_variants: int = 4) -> list[ProductVariant]:
+def ensure_demo_products(min_variants: int = 10) -> list[ProductVariant]:
     """Create minimal products/variants if DB has too few."""
     existing = list(
         ProductVariant.objects.filter(
@@ -138,7 +138,7 @@ def ensure_demo_products(min_variants: int = 4) -> list[ProductVariant]:
             deletedat__isnull=True,
             productid__enabled=True,
             productid__deletedat__isnull=True,
-        ).order_by("id")[: max(min_variants, 8)]
+        ).order_by("id")[:50]
     )
     if len(existing) >= min_variants:
         return existing
@@ -147,10 +147,14 @@ def ensure_demo_products(min_variants: int = 4) -> list[ProductVariant]:
     now = timezone.now()
     asset = ensure_demo_asset()
     catalog = [
-        ("Seed Tee", "seed-tee", "Soft cotton tee.", 2499),
-        ("Seed Hoodie", "seed-hoodie", "Warm hoodie.", 5999),
-        ("Seed Cap", "seed-cap", "Adjustable cap.", 1499),
-        ("Seed Tote", "seed-tote", "Canvas tote.", 1999),
+        ("Wireless Headphones", "electronics-headphones", "Rich sound, clear mic.", 12000),
+        ("Smart Watch", "electronics-watch", "Track fitness and notifications.", 8500),
+        ("Cotton T-Shirt", "fashion-tee", "Soft and breathable cotton.", 1500),
+        ("Denim Jacket", "fashion-denim", "Classic style for all seasons.", 4500),
+        ("Air Fryer", "home-fryer", "Healthy cooking with less oil.", 18000),
+        ("Coffee Maker", "home-coffee", "Start your morning with fresh brew.", 9500),
+        ("Vitamin C Serum", "beauty-serum", "For glowing and healthy skin.", 2500),
+        ("Yoga Mat", "sports-mat", "Non-slip grip for your workouts.", 3000),
     ]
 
     for name, slug, desc, cents in catalog:
@@ -204,14 +208,14 @@ def ensure_demo_products(min_variants: int = 4) -> list[ProductVariant]:
             deletedat__isnull=True,
             productid__enabled=True,
             productid__deletedat__isnull=True,
-        ).order_by("id")[: max(min_variants, 8)]
+        ).order_by("id")
     )
 
 
-def ensure_collections() -> tuple[Collection, Collection, Collection]:
+def ensure_collections() -> dict[str, Collection]:
     now = timezone.now()
     root = None
-    children: list[Collection] = []
+    collections_map: dict[str, Collection] = {}
 
     for slug, name, description, role in SEED_TRANSLATIONS:
         trans = CollectionTranslation.objects.filter(
@@ -219,17 +223,22 @@ def ensure_collections() -> tuple[Collection, Collection, Collection]:
         ).first()
         if trans and trans.baseid:
             col = trans.baseid
+            collections_map[slug] = col
             if role == "root":
                 root = col
-            else:
-                children.append(col)
             continue
 
         parent = None
         is_root = role == "root"
-        position = 0 if is_root else len(children)
+        position = 0 if is_root else len(collections_map)
+        
         if not is_root and root is None:
-            raise RuntimeError("Seed root collection missing; run seed in order.")
+            # Try to find existing root if not in current map
+            root_trans = CollectionTranslation.objects.filter(slug="seed-shop-root", languagecode=LANG).first()
+            if root_trans:
+                root = root_trans.baseid
+            else:
+                raise RuntimeError("Seed root collection missing; run seed in order.")
 
         if not is_root:
             parent = root
@@ -257,57 +266,70 @@ def ensure_collections() -> tuple[Collection, Collection, Collection]:
         add_collection_closure(collection, parent)
         link_collection_to_default_channel(collection)
 
+        collections_map[slug] = collection
         if is_root:
             root = collection
-        else:
-            children.append(collection)
         print(f'Created collection "{name}" slug={slug} id={collection.id}')
 
-    if root is None or len(children) < 2:
-        raise RuntimeError("Failed to resolve root + two child collections.")
-    return root, children[0], children[1]
+    return collections_map
 
 
 def link_variants_to_categories(
-    electronics: Collection,
-    apparel: Collection,
+    collections_map: dict[str, Collection],
     variants: list[ProductVariant],
 ) -> None:
     if not variants:
         print("No variants to link; category pages will stay empty.")
         return
-    mid = max(1, len(variants) // 2)
-    bucket_e = variants[:mid]
-    bucket_a = variants[mid:] if len(variants) > mid else variants[:mid]
 
     linked = 0
-    for col, bucket in ((electronics, bucket_e), (apparel, bucket_a)):
-        for v in bucket:
+    for v in variants:
+        v_trans = ProductVariantTranslation.objects.filter(baseid=v, languagecode=LANG).first()
+        if not v_trans: continue
+        
+        target_slug = None
+        if "electronics" in v_trans.name.lower() or "watch" in v_trans.name.lower() or "headphone" in v_trans.name.lower():
+            target_slug = "seed-electronics"
+        elif "fashion" in v_trans.name.lower() or "shirt" in v_trans.name.lower() or "jacket" in v_trans.name.lower():
+            target_slug = "seed-fashion"
+        elif "home" in v_trans.name.lower() or "fryer" in v_trans.name.lower() or "coffee" in v_trans.name.lower():
+            target_slug = "seed-home-kitchen"
+        elif "beauty" in v_trans.name.lower() or "serum" in v_trans.name.lower():
+            target_slug = "seed-beauty-health"
+        elif "sports" in v_trans.name.lower() or "mat" in v_trans.name.lower():
+            target_slug = "seed-sports-outdoors"
+        
+        if target_slug and target_slug in collections_map:
+            col = collections_map[target_slug]
             _, created = CollectionProductVariantsProductVariant.objects.get_or_create(
                 collectionid=col,
                 productvariantid=v,
             )
-            if created:
-                linked += 1
-    print(f"Linked {linked} new collection-variant rows (skipped existing pairs).")
+            if created: linked += 1
+            
+            # Also link to root Shop
+            if "seed-shop-root" in collections_map:
+                _, created_root = CollectionProductVariantsProductVariant.objects.get_or_create(
+                    collectionid=collections_map["seed-shop-root"],
+                    productvariantid=v,
+                )
+                if created_root: linked += 1
+
+    print(f"Linked {linked} collection-variant rows.")
 
 
 def run_seed(*, reset: bool) -> None:
     with transaction.atomic():
         if reset:
             delete_seed_collections()
-        root, electronics, apparel = ensure_collections()
-        variants = ensure_demo_products(min_variants=4)
-        link_variants_to_categories(electronics, apparel, variants)
+        collections_map = ensure_collections()
+        variants = ensure_demo_products(min_variants=8)
+        link_variants_to_categories(collections_map, variants)
 
-    # Print URLs (slug route optional)
-    for slug in ("seed-electronics", "seed-apparel"):
-        t = CollectionTranslation.objects.filter(slug=slug, languagecode=LANG).first()
-        if t and t.baseid:
-            cid = t.baseid_id
-            print(
-                f"Open category: /category/{cid}/ or /category/{cid}/{t.slug}/"
-            )
+    # Print URLs
+    for slug, col in collections_map.items():
+        if slug == "seed-shop-root": continue
+        print(f"Category: {slug} -> /category/{col.id}/")
 
 
 def main() -> None:

@@ -1,0 +1,117 @@
+{% extends 'admin/base.html' %}
+{% load i18n unfold %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+    {% include "unfold/helpers/site_branding.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="flex flex-col gap-8">
+
+    {# ─── KPI Cards ─── #}
+    {% if kpi %}
+    <div>
+        {% component "unfold/components/title.html" %}
+            Overview
+        {% endcomponent %}
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+            {% for item in kpi %}
+                {% component "unfold/components/card.html" with icon=item.icon icon_class="text-primary-500" %}
+                    {% component "unfold/components/text.html" with class="text-xs uppercase tracking-widest text-base-400 dark:text-base-500 font-semibold mb-1" %}
+                        {{ item.title }}
+                    {% endcomponent %}
+                    {% component "unfold/components/title.html" %}
+                        {{ item.metric }}
+                    {% endcomponent %}
+                    {% if item.description %}
+                        {% component "unfold/components/text.html" with class="text-xs text-base-400 mt-1" %}
+                            {{ item.description }}
+                        {% endcomponent %}
+                    {% endif %}
+                {% endcomponent %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {# ─── Recent Orders ─── #}
+    {% if recent_orders %}
+    <div>
+        {% component "unfold/components/title.html" %}
+            Recent Orders
+        {% endcomponent %}
+
+        <div class="mt-4">
+            {% component "unfold/components/card.html" %}
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b border-base-200 dark:border-base-800 text-left">
+                            <th class="pb-3 pr-4 font-semibold text-base-500 text-xs uppercase tracking-wider">Order #</th>
+                            <th class="pb-3 pr-4 font-semibold text-base-500 text-xs uppercase tracking-wider">Customer</th>
+                            <th class="pb-3 pr-4 font-semibold text-base-500 text-xs uppercase tracking-wider">Status</th>
+                            <th class="pb-3 pr-4 font-semibold text-base-500 text-xs uppercase tracking-wider">Total</th>
+                            <th class="pb-3 font-semibold text-base-500 text-xs uppercase tracking-wider">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in recent_orders %}
+                        <tr class="border-b border-base-100 dark:border-base-800 hover:bg-base-50 dark:hover:bg-base-800 transition-colors">
+                            <td class="py-3 pr-4 font-mono font-medium text-primary-600 dark:text-primary-400">
+                                <a href="/admin/app/order/{{ order.id }}/change/" class="hover:underline">{{ order.code }}</a>
+                            </td>
+                            <td class="py-3 pr-4 text-base-700 dark:text-base-300">
+                                {% if order.customerid %}
+                                    {{ order.customerid.emailaddress|default:"—" }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+                            <td class="py-3 pr-4">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
+                                    {% if order.state == 'AddingItems' %}bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300
+                                    {% elif order.state == 'ArrangingPayment' %}bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300
+                                    {% elif order.state == 'PaymentAuthorized' %}bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300
+                                    {% elif order.state == 'PaymentSettled' %}bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300
+                                    {% elif order.state == 'Shipped' %}bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300
+                                    {% elif order.state == 'Delivered' %}bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-300
+                                    {% elif order.state == 'Cancelled' %}bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300
+                                    {% else %}bg-base-100 text-base-600 dark:bg-base-800 dark:text-base-400{% endif %}">
+                                    {{ order.state }}
+                                </span>
+                            </td>
+                            <td class="py-3 pr-4 font-medium text-base-800 dark:text-base-200">
+                                ${{ order.totalwithtax|floatformat:2|default:"0.00" }}
+                            </td>
+                            <td class="py-3 text-base-500 dark:text-base-400 text-xs">
+                                {{ order.orderplacedat|date:"M d, Y"|default:"—" }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="mt-4 -mb-4 -mx-4 px-4 py-3 border-t border-base-100 dark:border-base-800 bg-base-50 dark:bg-base-800/50 rounded-b-default">
+                    <a href="/admin/app/order/" class="text-sm text-primary-600 dark:text-primary-400 hover:underline font-medium">
+                        View all orders →
+                    </a>
+                </div>
+            {% endcomponent %}
+        </div>
+    </div>
+    {% endif %}
+
+    {# ─── Default App List ─── #}
+    <div class="flex flex-col lg:flex-row lg:gap-8">
+        <div class="grow">
+            {% component "unfold/components/title.html" with class="mb-4" %}
+                All Modules
+            {% endcomponent %}
+            {% include "unfold/helpers/app_list_default.html" %}
+        </div>
+        {% include "unfold/helpers/history.html" %}
+    </div>
+
+</div>
+{% endblock %}

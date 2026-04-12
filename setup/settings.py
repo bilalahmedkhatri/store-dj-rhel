@@ -35,6 +35,10 @@ ALLOWED_HOSTS = [os.getenv('DJANGO_ALLOWED_HOSTS'), 'localhost', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    "unfold",  # Must be before django.contrib.admin
+    "unfold.contrib.filters",
+    "unfold.contrib.forms",
+    "unfold.contrib.inlines",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,6 +48,88 @@ INSTALLED_APPS = [
     "app.apps.AppConfig",
     "dashboard.apps.DashboardConfig",
 ]
+
+# Unfold settings for a "Shopify Apps" aesthetic
+from django.templatetags.static import static
+UNFOLD = {
+    "SITE_TITLE": "e-sahulat Admin",
+    "SITE_HEADER": "e-sahulat",
+    "COLORS": {
+        "primary": {
+            "50": "240 253 244",
+            "100": "220 252 231",
+            "200": "187 247 208",
+            "300": "134 239 172",
+            "400": "74 222 128",
+            "500": "34 197 94",  # Shopify typically uses a distinctive green shade
+            "600": "22 163 74",
+            "700": "21 128 61",
+            "800": "22 101 52",
+            "900": "20 83 45",
+            "950": "5 46 22",
+        },
+    },
+    "SIDEBAR": {
+        "show_search": True,
+        "show_all_applications": True,
+        "navigation": [
+            {
+                "title": "Shop",
+                "separator": True,
+                "items": [
+                    {
+                        "title": "Orders",
+                        "icon": "shopping_cart",
+                        "link": "/admin/app/order/",
+                    },
+                    {
+                        "title": "Products",
+                        "icon": "inventory_2",
+                        "link": "/admin/app/product/",
+                    },
+                    {
+                        "title": "Customers",
+                        "icon": "group",
+                        "link": "/admin/app/customer/",
+                    },
+                ],
+            },
+            {
+                "title": "Sales Channels",
+                "separator": True,
+                "items": [
+                    {
+                        "title": "Promotions",
+                        "icon": "campaign",
+                        "link": "/admin/app/promotion/",
+                    },
+                    {
+                        "title": "Collections",
+                        "icon": "category",
+                        "link": "/admin/app/collection/",
+                    },
+                ],
+            },
+            {
+                "title": "Settings",
+                "separator": True,
+                "items": [
+                    {
+                        "title": "Global Settings",
+                        "icon": "settings",
+                        "link": "/admin/app/globalsettings/",
+                    },
+                    {
+                        "title": "Admins & Staff",
+                        "icon": "admin_panel_settings",
+                        "link": "/admin/app/user/",
+                    },
+                ],
+            },
+        ],
+    },
+    "DASHBOARD_CALLBACK": "app.admin_dashboard.dashboard_callback",
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
