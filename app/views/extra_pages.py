@@ -30,7 +30,7 @@ def contact_us(request):
             f'Contact Form: {subject}',
             f'From: {name} <{email}>\n\n{message}',
             email,
-            ['support@azeemlab.com'],
+            ['support@e-sahulate.com'],
             fail_silently=False,
         )
         messages.success(request, 'Your message has been sent. We\'ll get back to you soon.')

@@ -58,7 +58,7 @@ def get_mock_shop_filters() -> dict:
     return {
         "categories": ["Women", "Men", "Accessories", "Shoes", "Beauty"],
         "facet_groups": {
-            "brand": ["Azeem Lab", "Urban Fit", "Nova Wear"],
+            "brand": ["E-Sahulate", "Urban Fit", "Nova Wear"],
             "material": ["Cotton", "Denim", "Leather", "Polyester"],
         },
         "option_groups": {
@@ -147,7 +147,7 @@ def get_mock_contact_data() -> dict:
             "phone_label": "Phone",
             "phone": "+1 (123) 456-7890",
             "email_label": "Email",
-            "email": "support@azeemlab.com",
+            "email": "support@e-sahulate.com",
         },
         "business_hours": [
             "Monday - Friday: 9:00 AM - 6:00 PM",
@@ -165,11 +165,11 @@ def get_mock_contact_data() -> dict:
 
 def get_mock_about_data() -> dict:
     return {
-        "hero_title": "About Azeem Lab",
+        "hero_title": "About E-Sahulate",
         "hero_subtitle": "Crafting quality products with passion and precision since 2020",
         "story_title": "Our Story",
         "story_paragraphs": [
-            "Founded in 2020, Azeem Lab started with a simple mission: to bring high-quality, stylish products to customers who value both form and function.",
+            "Founded in 2020, E-Sahulate started with a simple mission: to bring high-quality, stylish products to customers who value both form and function.",
             "We believe that great design should be accessible to everyone. That is why we curate every product with a focus on durability, aesthetics, and affordability.",
             "Our team is dedicated to exceptional customer service and a seamless shopping experience.",
         ],
@@ -195,7 +195,7 @@ def get_mock_privacy_policy_data() -> dict:
             {"title": "How We Use Your Information", "bullets": ["Process and fulfill orders", "Communicate about orders", "Improve our services", "Send promotions (opt-out available)", "Regulatory reporting to SBP/FMU"]},
             {"title": "PCI DSS & Data Security", "body": "We apply industry-standard PCI DSS v4.0 controls to protect your payment data. Sensitive card information is never stored on our servers."},
             {"title": "AML Record Retention", "body": "In accordance with AML/CFT Regulations, we retain customer identification and transaction records for a minimum of 10 years."},
-            {"title": "Contact", "body": "For privacy questions or SBP CPD related queries, email privacy@azeemlab.com."},
+            {"title": "Contact", "body": "For privacy questions or SBP CPD related queries, email privacy@e-sahulate.com."},
         ],
     }
 
@@ -210,7 +210,7 @@ def get_mock_terms_data() -> dict:
             {"title": "Transaction Limits", "body": "Transactions are subject to limits defined by the State Bank of Pakistan (SBP) and your issuing bank."},
             {"title": "Liability Cap", "body": "Our liability for any transaction-related issue is capped at the total amount of the specific transaction in question."},
             {"title": "Orders and Payment", "body": "We may refuse or cancel orders when needed for fraud/security reasons as per AML/CFT guidelines."},
-            {"title": "Contact", "body": "For legal questions, email legal@azeemlab.com."},
+            {"title": "Contact", "body": "For legal questions, email legal@e-sahulate.com."},
         ],
     }
 
@@ -224,7 +224,7 @@ def get_mock_refund_policy_data() -> dict:
             {"title": "Standard Returns", "body": "Most unused items can be returned within 30 days of delivery."},
             {"title": "Refund Processing Timeline", "body": "Once approved, refunds are typically processed within 10-12 business days depending on your bank's cycle."},
             {"title": "Dispute Escalation", "body": "If a refund is not received within the stated timeline, please contact our Compliance Officer or escalate to the Banking Mohtasib Pakistan (BMP)."},
-            {"title": "Support", "body": "Need help? Contact returns@azeemlab.com."},
+            {"title": "Support", "body": "Need help? Contact returns@e-sahulate.com."},
         ],
     }
 
@@ -241,7 +241,7 @@ def get_mock_shipping_policy_data() -> dict:
         "sections": [
             {"title": "Order Processing", "body": "Orders are processed within 1-2 business days."},
             {"title": "Tracking", "body": "Tracking details are shared by email once your order ships."},
-            {"title": "Support", "body": "Shipping questions: shipping@azeemlab.com."},
+            {"title": "Support", "body": "Shipping questions: shipping@e-sahulate.com."},
         ],
     }
 
@@ -264,5 +264,5 @@ def get_mock_payment_methods_data() -> dict:
                 "description": "Pay through your JazzCash mobile account where available.",
             },
         ],
-        "security_note": "Payments are encrypted in transit. For payment issues, contact support@azeemlab.com.",
+        "security_note": "Payments are encrypted in transit. For payment issues, contact support@e-sahulate.com.",
     }
