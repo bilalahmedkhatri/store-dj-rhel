@@ -1,4 +1,4 @@
-from unfold.admin import ModelAdmin
+from unfold.admin import ModelAdmin, TabularInline
 from django.contrib import admin
 from .models import (
     Address, Administrator, Asset, AssetChannelsChannel, AssetTagsTag,
@@ -72,11 +72,33 @@ class ProductVariantPriceAdmin(ModelAdmin):
     list_filter = ('currencycode',)
     search_fields = ('variantid__sku',)
 
+class CollectionTranslationInline(TabularInline):
+    model = CollectionTranslation
+    extra = 0
+    fields = ('languagecode', 'name', 'slug', 'description')
+    readonly_fields = ('languagecode',)
+
+
 @admin.register(Collection)
 class CollectionAdmin(ModelAdmin):
-    list_display = ('id', 'isroot', 'position', 'parentid')
+    inlines = [CollectionTranslationInline]
+    list_display = ('collection_name', 'isroot', 'isprivate', 'position', 'parentid', 'product_variant_count')
     list_filter = ('isroot', 'isprivate')
-    search_fields = ('id',)
+    search_fields = ('collectiontranslation__name', 'collectiontranslation__slug')
+    ordering = ('isroot', 'position')
+
+    def collection_name(self, obj):
+        """Show English name from CollectionTranslation."""
+        t = obj.collectiontranslation_set.filter(languagecode='en').first()
+        return t.name if t else f"Collection #{obj.id}"
+    collection_name.short_description = 'Name'
+
+    def product_variant_count(self, obj):
+        """Count product variants linked to this collection."""
+        from app.models import CollectionProductVariantsProductVariant
+        return CollectionProductVariantsProductVariant.objects.filter(collectionid=obj).count()
+    product_variant_count.short_description = 'Variants'
+
 
 @admin.register(CollectionTranslation)
 class CollectionTranslationAdmin(ModelAdmin):

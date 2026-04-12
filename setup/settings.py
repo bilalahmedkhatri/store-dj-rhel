@@ -77,53 +77,51 @@ UNFOLD = {
                 "title": "Shop",
                 "separator": True,
                 "items": [
-                    {
-                        "title": "Orders",
-                        "icon": "shopping_cart",
-                        "link": "/admin/app/order/",
-                    },
-                    {
-                        "title": "Products",
-                        "icon": "inventory_2",
-                        "link": "/admin/app/product/",
-                    },
-                    {
-                        "title": "Customers",
-                        "icon": "group",
-                        "link": "/admin/app/customer/",
-                    },
+                    {"title": "Orders",    "icon": "shopping_cart",   "link": "/admin/app/order/"},
+                    {"title": "Customers", "icon": "group",           "link": "/admin/app/customer/"},
+                    {"title": "Payments",  "icon": "payments",        "link": "/admin/app/payment/"},
+                    {"title": "Refunds",   "icon": "undo",            "link": "/admin/app/refund/"},
                 ],
             },
             {
-                "title": "Sales Channels",
+                "title": "Catalog",
                 "separator": True,
                 "items": [
-                    {
-                        "title": "Promotions",
-                        "icon": "campaign",
-                        "link": "/admin/app/promotion/",
-                    },
-                    {
-                        "title": "Collections",
-                        "icon": "category",
-                        "link": "/admin/app/collection/",
-                    },
+                    {"title": "Products",          "icon": "inventory_2",   "link": "/admin/app/product/"},
+                    {"title": "Product Variants",  "icon": "layers",        "link": "/admin/app/productvariant/"},
+                    {"title": "Collections",       "icon": "category",      "link": "/admin/app/collection/"},
+                    {"title": "Facets",            "icon": "filter_list",   "link": "/admin/app/facet/"},
+                    {"title": "Facet Values",      "icon": "label",         "link": "/admin/app/facetvalue/"},
+                    {"title": "Tags",              "icon": "sell",          "link": "/admin/app/tag/"},
+                    {"title": "Assets / Media",    "icon": "photo_library", "link": "/admin/app/asset/"},
+                ],
+            },
+            {
+                "title": "Inventory",
+                "separator": True,
+                "items": [
+                    {"title": "Stock Levels",    "icon": "inventory",       "link": "/admin/app/stocklevel/"},
+                    {"title": "Stock Locations", "icon": "warehouse",       "link": "/admin/app/stocklocation/"},
+                    {"title": "Fulfillments",    "icon": "local_shipping",  "link": "/admin/app/fulfillment/"},
+                ],
+            },
+            {
+                "title": "Marketing",
+                "separator": True,
+                "items": [
+                    {"title": "Promotions", "icon": "campaign", "link": "/admin/app/promotion/"},
+                    {"title": "Channels",   "icon": "hub",      "link": "/admin/app/channel/"},
                 ],
             },
             {
                 "title": "Settings",
                 "separator": True,
                 "items": [
-                    {
-                        "title": "Global Settings",
-                        "icon": "settings",
-                        "link": "/admin/app/globalsettings/",
-                    },
-                    {
-                        "title": "Admins & Staff",
-                        "icon": "admin_panel_settings",
-                        "link": "/admin/app/user/",
-                    },
+                    {"title": "Global Settings",  "icon": "settings",             "link": "/admin/app/globalsettings/"},
+                    {"title": "Shipping Methods", "icon": "local_shipping",        "link": "/admin/app/shippingmethod/"},
+                    {"title": "Tax Categories",   "icon": "percent",               "link": "/admin/app/taxcategory/"},
+                    {"title": "Zones",            "icon": "map",                   "link": "/admin/app/zone/"},
+                    {"title": "Admins & Staff",   "icon": "admin_panel_settings",  "link": "/admin/app/user/"},
                 ],
             },
         ],
