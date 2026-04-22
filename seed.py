@@ -53,6 +53,8 @@ from app.models import (  # noqa: E402
 )
 
 LANG = "en"
+import random
+
 SEED_TRANSLATIONS: list[tuple[str, str, str, str]] = [
     # slug, name, description, role
     ("seed-shop-root", "Shop", "Browse everything we offer.", "root"),
@@ -61,6 +63,10 @@ SEED_TRANSLATIONS: list[tuple[str, str, str, str]] = [
     ("seed-home-kitchen", "Home & Kitchen", "Essential appliances, decor, and kitchenware for your home.", "child"),
     ("seed-beauty-health", "Beauty & Health", "Skincare, makeup, and wellness products.", "child"),
     ("seed-sports-outdoors", "Sports & Outdoors", "Gear for fitness, camping, and athletic performance.", "child"),
+    ("seed-men-eastern", "Men Eastern", "Traditional eastern wear for men.", "child"),
+    ("seed-men-western", "Men Western", "Western wear for men.", "child"),
+    ("seed-boys-western", "Boys Western", "Modern western wear for boys.", "child"),
+    ("seed-girls-western", "Girls Western", "Modern western wear for girls.", "child"),
 ]
 
 
@@ -130,36 +136,59 @@ def ensure_demo_asset() -> Asset:
     )
 
 
+def generate_clothing_products():
+    base_names = [
+        "Men Kurta", "Men Shalwar Kameez", "Men T-Shirt",
+        "Men Jeans", "Boys Kurta", "Girls Frock",
+        "Kids T-Shirt", "Kids Jeans"
+    ]
+
+    products = []
+    for i in range(30):
+        name = f"{random.choice(base_names)} {i+1}"
+        slug = name.lower().replace(" ", "-")
+        price = random.randint(1000, 5000)
+        products.append((name, slug, "High quality fabric", price * 100))
+
+    return products
+
+
 def ensure_demo_products(min_variants: int = 10) -> list[ProductVariant]:
     """Create minimal products/variants if DB has too few."""
-    existing = list(
-        ProductVariant.objects.filter(
-            enabled=True,
-            deletedat__isnull=True,
-            productid__enabled=True,
-            productid__deletedat__isnull=True,
-        ).order_by("id")[:50]
-    )
-    if len(existing) >= min_variants:
-        return existing
-
-    print("Creating demo products and variants for seeding…")
+    print("Ensuring demo products and variants (Safe Mode A)...")
     now = timezone.now()
     asset = ensure_demo_asset()
     catalog = [
-        ("Wireless Headphones", "electronics-headphones", "Rich sound, clear mic.", 12000),
-        ("Smart Watch", "electronics-watch", "Track fitness and notifications.", 8500),
-        ("Cotton T-Shirt", "fashion-tee", "Soft and breathable cotton.", 1500),
-        ("Denim Jacket", "fashion-denim", "Classic style for all seasons.", 4500),
-        ("Air Fryer", "home-fryer", "Healthy cooking with less oil.", 18000),
-        ("Coffee Maker", "home-coffee", "Start your morning with fresh brew.", 9500),
-        ("Vitamin C Serum", "beauty-serum", "For glowing and healthy skin.", 2500),
-        ("Yoga Mat", "sports-mat", "Non-slip grip for your workouts.", 3000),
+        ("Wireless Headphones", "electronics-headphones", "Rich sound, clear mic.", 1200000),
+        ("Smart Watch", "electronics-watch", "Track fitness and notifications.", 850000),
+        ("Cotton T-Shirt", "fashion-tee", "Soft and breathable cotton.", 150000),
+        ("Denim Jacket", "fashion-denim", "Classic style for all seasons.", 450000),
+        ("Air Fryer", "home-fryer", "Healthy cooking with less oil.", 1800000),
+        ("Coffee Maker", "home-coffee", "Start your morning with fresh brew.", 950000),
+        ("Vitamin C Serum", "beauty-serum", "For glowing and healthy skin.", 250000),
+        ("Yoga Mat", "sports-mat", "Non-slip grip for your workouts.", 300000),
     ]
 
+    catalog.extend(generate_clothing_products())
+
     for name, slug, desc, cents in catalog:
-        if ProductTranslation.objects.filter(slug=slug, languagecode=LANG).exists():
+        existing = ProductTranslation.objects.filter(
+            slug=slug,
+            languagecode=LANG
+        ).first()
+
+        if existing:
+            product = existing.baseid
+            ProductTranslation.objects.filter(
+                baseid=product,
+                languagecode=LANG
+            ).update(
+                name=name,
+                description=desc,
+                updatedat=now
+            )
             continue
+            
         product = Product.objects.create(
             createdat=now,
             updatedat=now,
@@ -218,17 +247,15 @@ def ensure_collections() -> dict[str, Collection]:
     collections_map: dict[str, Collection] = {}
 
     for slug, name, description, role in SEED_TRANSLATIONS:
+        collection = None
+
         trans = CollectionTranslation.objects.filter(
             slug=slug, languagecode=LANG
-        ).first()
-        if trans and trans.baseid:
-            col = trans.baseid
-            collections_map[slug] = col
-            if role == "root":
-                root = col
-            continue
+        ).select_related("baseid").first()
 
-        parent = None
+        if trans and trans.baseid:
+            collection = trans.baseid
+
         is_root = role == "root"
         position = 0 if is_root else len(collections_map)
         
@@ -240,36 +267,38 @@ def ensure_collections() -> dict[str, Collection]:
             else:
                 raise RuntimeError("Seed root collection missing; run seed in order.")
 
-        if not is_root:
-            parent = root
+        parent = None if is_root else root
 
-        collection = Collection.objects.create(
-            createdat=now,
-            updatedat=now,
-            isroot=is_root,
-            position=position,
-            isprivate=False,
-            filters="[]",
-            inheritfilters=False,
-            parentid=parent,
-            featuredassetid=None,
-        )
-        CollectionTranslation.objects.create(
-            createdat=now,
-            updatedat=now,
-            languagecode=LANG,
-            name=name,
-            slug=slug,
-            description=description,
+        if not collection:
+            collection = Collection.objects.create(
+                createdat=now,
+                updatedat=now,
+                isroot=is_root,
+                position=position,
+                isprivate=False,
+                filters="[]",
+                inheritfilters=False,
+                parentid=parent,
+                featuredassetid=None,
+            )
+            add_collection_closure(collection, parent)
+            link_collection_to_default_channel(collection)
+
+        CollectionTranslation.objects.update_or_create(
             baseid=collection,
+            languagecode=LANG,
+            defaults={
+                "name": name,
+                "slug": slug,
+                "description": description,
+                "updatedat": now,
+            },
         )
-        add_collection_closure(collection, parent)
-        link_collection_to_default_channel(collection)
 
         collections_map[slug] = collection
         if is_root:
             root = collection
-        print(f'Created collection "{name}" slug={slug} id={collection.id}')
+        print(f'Ensured collection "{name}" slug={slug} id={collection.id}')
 
     return collections_map
 
@@ -288,15 +317,24 @@ def link_variants_to_categories(
         if not v_trans: continue
         
         target_slug = None
-        if "electronics" in v_trans.name.lower() or "watch" in v_trans.name.lower() or "headphone" in v_trans.name.lower():
+        name_lower = v_trans.name.lower()
+        if "kurta" in name_lower or "shalwar" in name_lower:
+            target_slug = "seed-men-eastern"
+        elif "boy" in name_lower or "kids jeans" in name_lower or "kids t-shirt" in name_lower:
+            target_slug = "seed-boys-western"
+        elif "girl" in name_lower or "frock" in name_lower:
+            target_slug = "seed-girls-western"
+        elif "jeans" in name_lower or "t-shirt" in name_lower:
+            target_slug = "seed-men-western"
+        elif "electronics" in name_lower or "watch" in name_lower or "headphone" in name_lower:
             target_slug = "seed-electronics"
-        elif "fashion" in v_trans.name.lower() or "shirt" in v_trans.name.lower() or "jacket" in v_trans.name.lower():
+        elif "fashion" in name_lower or "shirt" in name_lower or "jacket" in name_lower:
             target_slug = "seed-fashion"
-        elif "home" in v_trans.name.lower() or "fryer" in v_trans.name.lower() or "coffee" in v_trans.name.lower():
+        elif "home" in name_lower or "fryer" in name_lower or "coffee" in name_lower:
             target_slug = "seed-home-kitchen"
-        elif "beauty" in v_trans.name.lower() or "serum" in v_trans.name.lower():
+        elif "beauty" in name_lower or "serum" in name_lower:
             target_slug = "seed-beauty-health"
-        elif "sports" in v_trans.name.lower() or "mat" in v_trans.name.lower():
+        elif "sports" in name_lower or "mat" in name_lower:
             target_slug = "seed-sports-outdoors"
         
         if target_slug and target_slug in collections_map:

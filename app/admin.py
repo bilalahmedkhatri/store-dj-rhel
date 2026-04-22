@@ -196,11 +196,74 @@ class ProductChannelsChannelInline(TabularInline):
     extra = 1
     tab = True
 
+class PerPageFilter(admin.SimpleListFilter):
+    title = 'Items per page'
+    parameter_name = 'per_page'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('10', '10'),
+            ('20', '20'),
+            ('50', '50'),
+        )
+
+    def queryset(self, request, queryset):
+        return queryset
+
+from django.db.models import Count, Min, Max, Prefetch
+
 @admin.register(Product)
 class ProductAdmin(ModelAdmin):
-    list_display  = ('display_image', 'product_name', 'display_enabled', 'variant_count', 'display_price_range')
-    list_filter   = ('enabled',)
+    list_display  = ('display_image', 'product_name', 'display_enabled', 'variant_count', 'display_price_range', 'display_actions')
+    list_filter   = ('enabled', PerPageFilter)
     search_fields = ('producttranslation__name',)
+    list_per_page = 20
+    list_select_related = ('featuredassetid',)
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        # Solve N+1 for translations and pricing
+        queryset = queryset.annotate(
+            _variant_count=Count('productvariant', distinct=True),
+            _min_price=Min('productvariant__productvariantprice__price'),
+            _max_price=Max('productvariant__productvariantprice__price'),
+        ).prefetch_related(
+            Prefetch(
+                'producttranslation_set',
+                queryset=ProductTranslation.objects.filter(languagecode='en'),
+                to_attr='en_translations'
+            )
+        )
+        return queryset
+
+    @display(description="Image")
+    def display_image(self, obj):
+        if obj.featuredassetid and obj.featuredassetid.preview:
+            return mark_safe(f'<img src="{obj.featuredassetid.preview}" class="w-10 h-10 object-cover rounded shadow-sm" />')
+        return mark_safe('<div class="w-10 h-10 bg-gray-100 rounded flex items-center justify-center text-gray-400">?</div>')
+
+    @display(description="Name")
+    def product_name(self, obj):
+        if hasattr(obj, 'en_translations') and obj.en_translations:
+            return obj.en_translations[0].name
+        return f"Product #{obj.id}"
+
+    @display(description="Enabled", boolean=True)
+    def display_enabled(self, obj):
+        return obj.enabled
+
+    @display(description="Variants", ordering='_variant_count')
+    def variant_count(self, obj):
+        return obj._variant_count
+
+    @display(description="Price Range", ordering='_min_price')
+    def display_price_range(self, obj):
+        min_p = obj._min_price
+        max_p = obj._max_price
+        if min_p is None: return "N/A"
+        if min_p == max_p: return format_currency(min_p)
+        return f"{format_currency(min_p)} - {format_currency(max_p)}"
+
     inlines       = [
         ProductTranslationInline, 
         ProductAssetInline, 
@@ -217,6 +280,23 @@ class ProductAdmin(ModelAdmin):
         }),
     )
 
+    @display(description="Actions")
+    def display_actions(self, obj):
+        from django.urls import reverse
+        change_url = reverse('admin:app_product_change', args=[obj.pk])
+        delete_url = reverse('admin:app_product_delete', args=[obj.pk])
+        
+        return mark_safe(f'''
+            <div class="flex items-center gap-2">
+                <a href="{change_url}" class="text-primary-600 hover:text-primary-700 transition-colors" title="Edit">
+                    <span class="material-symbols-outlined !text-[20px]">edit_square</span>
+                </a>
+                <a href="{delete_url}" class="text-red-600 hover:text-red-700 transition-colors" title="Delete">
+                    <span class="material-symbols-outlined !text-[20px]">delete</span>
+                </a>
+            </div>
+        ''')
+
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
         if not change:
@@ -227,33 +307,6 @@ class ProductAdmin(ModelAdmin):
                     productid=obj,
                     channelid=default_channel
                 )
-
-    @display(description="Image")
-    def display_image(self, obj):
-        if obj.featuredassetid and obj.featuredassetid.preview:
-            return mark_safe(f'<img src="{obj.featuredassetid.preview}" class="w-10 h-10 object-cover rounded shadow-sm" />')
-        return mark_safe('<div class="w-10 h-10 bg-gray-100 rounded flex items-center justify-center text-gray-400">?</div>')
-
-    @display(description="Name")
-    def product_name(self, obj):
-        t = obj.producttranslation_set.filter(languagecode='en').first()
-        return t.name if t else f"Product #{obj.id}"
-
-    @display(description="Enabled", boolean=True)
-    def display_enabled(self, obj):
-        return obj.enabled
-
-    @display(description="Variants")
-    def variant_count(self, obj):
-        return obj.productvariant_set.count()
-
-    @display(description="Price Range")
-    def display_price_range(self, obj):
-        prices = ProductVariantPrice.objects.filter(variantid__productid=obj).values_list('price', flat=True)
-        if not prices: return "N/A"
-        min_p, max_p = min(prices), max(prices)
-        if min_p == max_p: return format_currency(min_p)
-        return f"{format_currency(min_p)} - {format_currency(max_p)}"
 
 
 class ProductVariantTranslationInline(TabularInline):
