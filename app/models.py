@@ -12,8 +12,8 @@ import os
 
 
 class Address(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     fullname = models.CharField(max_length=100, db_column='fullName')  # Field name made lowercase.
     company = models.CharField(max_length=100)
     streetline1 = models.CharField(max_length=500, db_column='streetLine1')  # Field name made lowercase.
@@ -33,8 +33,8 @@ class Address(models.Model):
 
 
 class Administrator(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     deletedat = models.DateTimeField(db_column='deletedAt', blank=True, null=True)  # Field name made lowercase.
     firstname = models.CharField(db_column='firstName')  # Field name made lowercase.
     lastname = models.CharField(db_column='lastName')  # Field name made lowercase.
@@ -49,24 +49,25 @@ class Administrator(models.Model):
 class Asset(models.Model):
     createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
     updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
-    name = models.CharField(max_length=100)
-    type = models.CharField()
-    mimetype = models.CharField(db_column='mimeType')
+    name = models.CharField(max_length=100, null=True, blank=True)
+    type = models.CharField(null=True, blank=True)
+    mimetype = models.CharField(db_column='mimeType', null=True, blank=True)
     width = models.IntegerField(blank=True, null=True)
     height = models.IntegerField(blank=True, null=True)
     filesize = models.IntegerField(db_column='fileSize', blank=True, null=True)
-    source = models.CharField()
-    preview = models.CharField()
+    source = models.CharField(null=True, blank=True)
+    preview = models.CharField(null=True, blank=True)
     focalpoint = models.TextField(db_column='focalPoint', blank=True, null=True)
 
     def __str__(self):
         return f"{self.name} ({self.mimetype})"
 
     def clean(self):
-        valid_extensions = ['.jpg', '.jpeg', '.png', '.webp', '.svg']
-        ext = os.path.splitext(self.name)[1].lower()
-        if ext not in valid_extensions:
-            raise ValidationError(f'Unsupported file extension: {ext}. Allowed: {", ".join(valid_extensions)}')
+        if self.name:
+            valid_extensions = ['.jpg', '.jpeg', '.png', '.webp', '.svg']
+            ext = os.path.splitext(self.name)[1].lower()
+            if ext not in valid_extensions:
+                raise ValidationError(f'Unsupported file extension: {ext}. Allowed: {", ".join(valid_extensions)}')
 
     class Meta:
         managed = False
@@ -94,8 +95,8 @@ class AssetTagsTag(models.Model):
 
 
 class AuthenticationMethod(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     identifier = models.CharField(blank=True, null=True)
     passwordhash = models.CharField(db_column='passwordHash', blank=True, null=True)  # Field name made lowercase.
     verificationtoken = models.CharField(db_column='verificationToken', blank=True, null=True)  # Field name made lowercase.
@@ -114,8 +115,8 @@ class AuthenticationMethod(models.Model):
 
 
 class Channel(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     code = models.CharField(unique=True)
     token = models.CharField(unique=True)
     description = models.CharField(blank=True, null=True)
@@ -173,8 +174,8 @@ class Collection(models.Model):
 
 
 class CollectionAsset(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     assetid = models.ForeignKey('Asset', on_delete=models.CASCADE, db_column='assetId')  # Field name made lowercase.
     position = models.IntegerField()
     collectionid = models.ForeignKey('Collection', on_delete=models.CASCADE, db_column='collectionId')  # Field name made lowercase.
@@ -257,8 +258,8 @@ class CollectionTranslation(models.Model):
 
 
 class Customer(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     deletedat = models.DateTimeField(db_column='deletedAt', blank=True, null=True)  # Field name made lowercase.
     title = models.CharField(blank=True, null=True)
     firstname = models.CharField(db_column='firstName')  # Field name made lowercase.
@@ -283,8 +284,8 @@ class CustomerChannelsChannel(models.Model):
 
 
 class CustomerGroup(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     name = models.CharField()
 
     class Meta:
@@ -303,8 +304,8 @@ class CustomerGroupsCustomerGroup(models.Model):
 
 
 class Facet(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     isprivate = models.BooleanField(db_column='isPrivate')  # Field name made lowercase.
     code = models.CharField(unique=True)
 
@@ -324,8 +325,8 @@ class FacetChannelsChannel(models.Model):
 
 
 class FacetTranslation(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     languagecode = models.CharField(db_column='languageCode')  # Field name made lowercase.
     name = models.CharField()
     baseid = models.ForeignKey('Facet', on_delete=models.CASCADE, db_column='baseId', blank=True, null=True)  # Field name made lowercase.
@@ -336,8 +337,8 @@ class FacetTranslation(models.Model):
 
 
 class FacetValue(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     code = models.CharField()
     facetid = models.ForeignKey('Facet', on_delete=models.CASCADE, db_column='facetId')  # Field name made lowercase.
 
@@ -357,8 +358,8 @@ class FacetValueChannelsChannel(models.Model):
 
 
 class FacetValueTranslation(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     languagecode = models.CharField(db_column='languageCode')  # Field name made lowercase.
     name = models.CharField()
     baseid = models.ForeignKey('FacetValue', on_delete=models.CASCADE, db_column='baseId', blank=True, null=True)  # Field name made lowercase.
@@ -369,8 +370,8 @@ class FacetValueTranslation(models.Model):
 
 
 class Fulfillment(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     state = models.CharField()
     trackingcode = models.CharField(db_column='trackingCode')  # Field name made lowercase.
     method = models.CharField()
@@ -382,8 +383,8 @@ class Fulfillment(models.Model):
 
 
 class GlobalSettings(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     availablelanguages = models.TextField(db_column='availableLanguages')  # Field name made lowercase.
     trackinventory = models.BooleanField(db_column='trackInventory')  # Field name made lowercase.
     outofstockthreshold = models.IntegerField(db_column='outOfStockThreshold')  # Field name made lowercase.
@@ -394,8 +395,8 @@ class GlobalSettings(models.Model):
 
 
 class HistoryEntry(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     type = models.CharField()
     ispublic = models.BooleanField(db_column='isPublic')  # Field name made lowercase.
     data = models.TextField()
@@ -410,8 +411,8 @@ class HistoryEntry(models.Model):
 
 
 class JobRecord(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     queuename = models.CharField(db_column='queueName')  # Field name made lowercase.
     data = models.TextField(blank=True, null=True)
     state = models.CharField()
@@ -430,8 +431,8 @@ class JobRecord(models.Model):
 
 
 class JobRecordBuffer(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     bufferid = models.CharField(db_column='bufferId')  # Field name made lowercase.
     job = models.TextField()
 
@@ -450,8 +451,8 @@ class Migrations(models.Model):
 
 
 class Order(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     type = models.CharField()
     code = models.CharField(unique=True)
     state = models.CharField()
@@ -495,8 +496,8 @@ class OrderFulfillmentsFulfillment(models.Model):
 
 
 class OrderLine(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     quantity = models.IntegerField()
     orderplacedquantity = models.IntegerField(db_column='orderPlacedQuantity')  # Field name made lowercase.
     listpriceincludestax = models.BooleanField(db_column='listPriceIncludesTax')  # Field name made lowercase.
@@ -517,8 +518,8 @@ class OrderLine(models.Model):
 
 
 class OrderLineReference(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     quantity = models.IntegerField()
     fulfillmentid = models.ForeignKey('Fulfillment', on_delete=models.CASCADE, db_column='fulfillmentId', blank=True, null=True)  # Field name made lowercase.
     modificationid = models.ForeignKey('OrderModification', on_delete=models.CASCADE, db_column='modificationId', blank=True, null=True)  # Field name made lowercase.
@@ -532,8 +533,8 @@ class OrderLineReference(models.Model):
 
 
 class OrderModification(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     note = models.CharField()
     shippingaddresschange = models.TextField(db_column='shippingAddressChange', blank=True, null=True)  # Field name made lowercase.
     billingaddresschange = models.TextField(db_column='billingAddressChange', blank=True, null=True)  # Field name made lowercase.
@@ -558,8 +559,8 @@ class OrderPromotionsPromotion(models.Model):
 
 
 class Payment(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     method = models.CharField()
     state = models.CharField()
     errormessage = models.CharField(db_column='errorMessage', blank=True, null=True)  # Field name made lowercase.
@@ -574,8 +575,8 @@ class Payment(models.Model):
 
 
 class PaymentMethod(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     code = models.CharField()
     enabled = models.BooleanField()
     checker = models.TextField(blank=True, null=True)
@@ -597,8 +598,8 @@ class PaymentMethodChannelsChannel(models.Model):
 
 
 class PaymentMethodTranslation(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     languagecode = models.CharField(db_column='languageCode')  # Field name made lowercase.
     name = models.CharField()
     description = models.TextField()
@@ -626,11 +627,11 @@ class Product(models.Model):
 
 
 class ProductAsset(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
-    assetid = models.ForeignKey('Asset', on_delete=models.CASCADE, db_column='assetId')  # Field name made lowercase.
-    position = models.IntegerField()
-    productid = models.ForeignKey('Product', on_delete=models.CASCADE, db_column='productId')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
+    assetid = models.ForeignKey('Asset', on_delete=models.CASCADE, db_column='assetId')
+    position = models.IntegerField(null=True, blank=True)
+    productid = models.ForeignKey('Product', on_delete=models.CASCADE, db_column='productId')
 
     class Meta:
         managed = False
@@ -658,8 +659,8 @@ class ProductFacetValuesFacetValue(models.Model):
 
 
 class ProductOption(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     deletedat = models.DateTimeField(db_column='deletedAt', blank=True, null=True)  # Field name made lowercase.
     code = models.CharField()
     groupid = models.ForeignKey('ProductOptionGroup', on_delete=models.CASCADE, db_column='groupId')  # Field name made lowercase.
@@ -670,8 +671,8 @@ class ProductOption(models.Model):
 
 
 class ProductOptionGroup(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     deletedat = models.DateTimeField(db_column='deletedAt', blank=True, null=True)  # Field name made lowercase.
     code = models.CharField()
     productid = models.ForeignKey('Product', on_delete=models.CASCADE, db_column='productId', blank=True, null=True)  # Field name made lowercase.
@@ -682,8 +683,8 @@ class ProductOptionGroup(models.Model):
 
 
 class ProductOptionGroupTranslation(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     languagecode = models.CharField(db_column='languageCode')  # Field name made lowercase.
     name = models.CharField()
     baseid = models.ForeignKey('ProductOptionGroup', on_delete=models.CASCADE, db_column='baseId', blank=True, null=True)  # Field name made lowercase.
@@ -694,8 +695,8 @@ class ProductOptionGroupTranslation(models.Model):
 
 
 class ProductOptionTranslation(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     languagecode = models.CharField(db_column='languageCode')  # Field name made lowercase.
     name = models.CharField()
     baseid = models.ForeignKey('ProductOption', on_delete=models.CASCADE, db_column='baseId', blank=True, null=True)  # Field name made lowercase.
@@ -773,8 +774,8 @@ class ProductVariant(models.Model):
 
 
 class ProductVariantAsset(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     assetid = models.ForeignKey('Asset', on_delete=models.CASCADE, db_column='assetId')  # Field name made lowercase.
     position = models.IntegerField()
     productvariantid = models.ForeignKey('ProductVariant', on_delete=models.CASCADE, db_column='productVariantId')  # Field name made lowercase.
@@ -862,8 +863,8 @@ def sync_variant_translation(sender, instance, created, **kwargs):
 
 
 class Promotion(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     deletedat = models.DateTimeField(db_column='deletedAt', blank=True, null=True)  # Field name made lowercase.
     startsat = models.DateTimeField(db_column='startsAt', blank=True, null=True)  # Field name made lowercase.
     endsat = models.DateTimeField(db_column='endsAt', blank=True, null=True)  # Field name made lowercase.
@@ -891,8 +892,8 @@ class PromotionChannelsChannel(models.Model):
 
 
 class PromotionTranslation(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     languagecode = models.CharField(db_column='languageCode')  # Field name made lowercase.
     name = models.CharField()
     description = models.TextField()
@@ -904,8 +905,8 @@ class PromotionTranslation(models.Model):
 
 
 class Refund(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     method = models.CharField()
     reason = models.CharField(blank=True, null=True)
     state = models.CharField()
@@ -923,8 +924,8 @@ class Refund(models.Model):
 
 
 class Region(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     code = models.CharField()
     type = models.CharField()
     enabled = models.BooleanField()
@@ -937,8 +938,8 @@ class Region(models.Model):
 
 
 class RegionTranslation(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     languagecode = models.CharField(db_column='languageCode')  # Field name made lowercase.
     name = models.CharField()
     baseid = models.ForeignKey('Region', on_delete=models.CASCADE, db_column='baseId', blank=True, null=True)  # Field name made lowercase.
@@ -949,8 +950,8 @@ class RegionTranslation(models.Model):
 
 
 class Role(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     code = models.CharField()
     description = models.CharField()
     permissions = models.TextField()
@@ -971,8 +972,8 @@ class RoleChannelsChannel(models.Model):
 
 
 class ScheduledTaskRecord(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     taskid = models.CharField(db_column='taskId', unique=True)  # Field name made lowercase.
     enabled = models.BooleanField()
     lockedat = models.DateTimeField(db_column='lockedAt', blank=True, null=True)  # Field name made lowercase.
@@ -1019,8 +1020,8 @@ class SearchIndexItem(models.Model):
 
 
 class Seller(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     deletedat = models.DateTimeField(db_column='deletedAt', blank=True, null=True)  # Field name made lowercase.
     name = models.CharField()
 
@@ -1030,8 +1031,8 @@ class Seller(models.Model):
 
 
 class Session(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     token = models.CharField(unique=True)
     expires = models.DateTimeField()
     invalidated = models.BooleanField()
@@ -1047,8 +1048,8 @@ class Session(models.Model):
 
 
 class SettingsStoreEntry(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     key = models.CharField()
     value = models.TextField(blank=True, null=True)  # This field type is a guess.
     scope = models.CharField(blank=True, null=True)
@@ -1060,8 +1061,8 @@ class SettingsStoreEntry(models.Model):
 
 
 class ShippingLine(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     listpriceincludestax = models.BooleanField(db_column='listPriceIncludesTax')  # Field name made lowercase.
     adjustments = models.TextField()
     taxlines = models.TextField(db_column='taxLines')  # Field name made lowercase.
@@ -1075,8 +1076,8 @@ class ShippingLine(models.Model):
 
 
 class ShippingMethod(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     deletedat = models.DateTimeField(db_column='deletedAt', blank=True, null=True)  # Field name made lowercase.
     code = models.CharField()
     checker = models.TextField()
@@ -1099,8 +1100,8 @@ class ShippingMethodChannelsChannel(models.Model):
 
 
 class ShippingMethodTranslation(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     languagecode = models.CharField(db_column='languageCode')  # Field name made lowercase.
     name = models.CharField()
     description = models.CharField()
@@ -1112,8 +1113,8 @@ class ShippingMethodTranslation(models.Model):
 
 
 class StockLevel(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     stockonhand = models.IntegerField(db_column='stockOnHand')  # Field name made lowercase.
     stockallocated = models.IntegerField(db_column='stockAllocated')  # Field name made lowercase.
     productvariantid = models.ForeignKey('ProductVariant', on_delete=models.CASCADE, db_column='productVariantId')  # Field name made lowercase.
@@ -1126,8 +1127,8 @@ class StockLevel(models.Model):
 
 
 class StockLocation(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     name = models.CharField()
     description = models.CharField()
 
@@ -1147,8 +1148,8 @@ class StockLocationChannelsChannel(models.Model):
 
 
 class StockMovement(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     type = models.CharField()
     quantity = models.IntegerField()
     stocklocationid = models.ForeignKey('StockLocation', on_delete=models.CASCADE, db_column='stockLocationId')  # Field name made lowercase.
@@ -1162,8 +1163,8 @@ class StockMovement(models.Model):
 
 
 class Surcharge(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     description = models.CharField()
     listpriceincludestax = models.BooleanField(db_column='listPriceIncludesTax')  # Field name made lowercase.
     sku = models.CharField()
@@ -1178,8 +1179,8 @@ class Surcharge(models.Model):
 
 
 class Tag(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     value = models.CharField()
 
     class Meta:
@@ -1188,8 +1189,8 @@ class Tag(models.Model):
 
 
 class TaxCategory(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     name = models.CharField()
     isdefault = models.BooleanField(db_column='isDefault')  # Field name made lowercase.
 
@@ -1199,8 +1200,8 @@ class TaxCategory(models.Model):
 
 
 class TaxRate(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     name = models.CharField()
     enabled = models.BooleanField()
     value = models.DecimalField(max_digits=5, decimal_places=2)
@@ -1214,8 +1215,8 @@ class TaxRate(models.Model):
 
 
 class User(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     deletedat = models.DateTimeField(db_column='deletedAt', blank=True, null=True)  # Field name made lowercase.
     identifier = models.CharField()
     verified = models.BooleanField()
@@ -1226,8 +1227,8 @@ class User(models.Model):
         db_table = 'user'
 
 class Zone(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     name = models.CharField()
 
     class Meta:

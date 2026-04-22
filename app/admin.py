@@ -166,12 +166,20 @@ class ProductVariantInlineForm(forms.ModelForm):
                 )
         return instance
 
+class ProductAdminForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = '__all__'
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'featuredassetid' in self.fields:
+            self.fields['featuredassetid'].label = "Image Upload"
+
 class ProductTranslationInline(StackedInline):
     model = ProductTranslation
     extra = 1
-    exclude = _TS_FIELDS
-    readonly_fields = ('slug',)
-    tab = False # Keep on the main General page
+    fields = ('name', 'description')
+    tab = False
     classes = ['unfold-stacked-inline-compressed']
 
 class ProductAssetInline(TabularInline):
@@ -214,6 +222,7 @@ from django.db.models import Count, Min, Max, Prefetch
 
 @admin.register(Product)
 class ProductAdmin(ModelAdmin):
+    form = ProductAdminForm
     list_display  = ('display_image', 'product_name', 'display_enabled', 'variant_count', 'display_price_range', 'display_actions')
     list_filter   = ('enabled', PerPageFilter)
     search_fields = ('producttranslation__name',)
@@ -271,7 +280,7 @@ class ProductAdmin(ModelAdmin):
         ProductChannelsChannelInline
     ]
     exclude       = _TS_FIELDS + ('deletedat',)
-    autocomplete_fields = ('featuredassetid',)
+    raw_id_fields = ('featuredassetid',)
     
     fieldsets = (
         ("General Status", {
@@ -377,8 +386,7 @@ class ProductVariantAdmin(ModelAdmin):
 class CollectionTranslationInline(TabularInline):
     model         = CollectionTranslation
     extra         = 0
-    fields        = ('languagecode', 'name', 'slug', 'description')
-    readonly_fields = ('languagecode',)
+    fields        = ('name', 'slug', 'description')
     exclude       = _TS_FIELDS
 
 
@@ -483,20 +491,112 @@ class CustomerAdmin(ModelAdmin):
 
 
 # ─── Assets ──────────────────────────────────────────────────────────────────
+import os
+from django.conf import settings
+from django.core.files.storage import default_storage
+
+class AssetAdminForm(forms.ModelForm):
+    file_upload = forms.FileField(required=False, label="Upload New File", help_text="Upload an image to automatically set source and metadata.")
+
+    class Meta:
+        model = Asset
+        fields = '__all__'
+
+    def clean(self):
+        cleaned_data = super().clean()
+        file = cleaned_data.get('file_upload')
+        if file and not cleaned_data.get('name'):
+            # Set name early so model.clean() doesn't fail
+            self.instance.name = file.name
+            cleaned_data['name'] = file.name
+        return cleaned_data
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        file = self.cleaned_data.get('file_upload')
+        
+        if file:
+            import io
+            from PIL import Image
+            from django.core.files.base import ContentFile
+            
+            # 1. Open image
+            img = Image.open(file)
+            
+            # 2. Convert to RGB if necessary (to handle PNG/RGBA -> JPEG)
+            if img.mode in ("RGBA", "P"):
+                img = img.convert("RGB")
+            
+            # 3. Compress
+            output = io.BytesIO()
+            # You can change format to 'WEBP' for even better compression
+            img_format = 'JPEG'
+            img.save(output, format=img_format, quality=70, optimize=True)
+            output.seek(0)
+            
+            # 4. Save optimized file
+            optimized_file = ContentFile(output.read(), name=os.path.splitext(file.name)[0] + '.jpg')
+            
+            # Save file to media/assets/
+            folder = 'assets'
+            filename = default_storage.save(os.path.join(folder, optimized_file.name), optimized_file)
+            file_url = os.path.join(settings.MEDIA_URL, filename).replace('\\', '/')
+            
+            # Update source and preview
+            instance.source = file_url
+            instance.preview = file_url
+            instance.name = optimized_file.name
+            
+        if commit:
+            instance.save()
+        return instance
+
 @admin.register(Asset)
 class AssetAdmin(ModelAdmin):
-    list_display  = ('display_preview', 'name', 'type', 'mimetype', 'display_size')
+    form = AssetAdminForm
+    list_display  = ('display_preview', 'name', 'type', 'mimetype', 'display_size', 'display_actions')
     list_filter   = (
         ('type', ChoicesDropdownFilter),
         ('mimetype', ChoicesDropdownFilter),
     )
     search_fields = ('name',)
     exclude       = _TS_FIELDS
+    readonly_fields = ('width', 'height', 'filesize', 'mimetype')
+    
+    fieldsets = (
+        ("File Upload", {
+            "fields": ("file_upload",),
+        }),
+        ("Asset Details", {
+            "fields": (("name", "type"), ("mimetype", "filesize"), ("width", "height"), "source", "preview", "focalpoint"),
+        }),
+    )
+
+    @display(description="Actions")
+    def display_actions(self, obj):
+        from django.urls import reverse
+        change_url = reverse('admin:app_asset_change', args=[obj.pk])
+        delete_url = reverse('admin:app_asset_delete', args=[obj.pk])
+        
+        return mark_safe(f'''
+            <div class="flex items-center gap-2">
+                <a href="{change_url}" class="text-primary-600 hover:text-primary-700 transition-colors" title="Edit">
+                    <span class="material-symbols-outlined !text-[20px]">edit_square</span>
+                </a>
+                <a href="{delete_url}" class="text-red-600 hover:text-red-700 transition-colors" title="Delete">
+                    <span class="material-symbols-outlined !text-[20px]">delete</span>
+                </a>
+            </div>
+        ''')
 
     @display(description="Preview")
     def display_preview(self, obj):
         if obj.preview:
-            return mark_safe(f'<img src="{obj.preview}" class="w-10 h-10 object-cover rounded shadow-sm" />')
+            url = obj.preview
+            # If it's a relative path starting with 'assets/', prepend MEDIA_URL
+            if not url.startswith(('http', '/', 'https')):
+                url = f"{settings.MEDIA_URL}{url}"
+            return mark_safe(f'<img src="{url}" class="w-10 h-10 object-cover rounded shadow-sm" />')
         return "No Preview"
 
     @display(description="Size")

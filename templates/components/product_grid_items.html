@@ -4,10 +4,11 @@
     <div class="bg-gray-100 rounded-md overflow-hidden">
       <img src="{{ product.image_url }}" alt="{{ product.name }}" class="w-full h-44 md:h-56 object-cover group-hover:scale-105 transition duration-300">
     </div>
-    <p class="text-xs text-gray-700 mt-2 line-clamp-2">{{ product.description|default:"New season style with premium finish." }}</p>
+    <p class="text-xs text-gray-700 mt-2 line-clamp-2">{{ product.name|default:"New season style with premium finish." }}</p>
+    {% comment %} <p class="text-xs text-gray-700 mt-2 line-clamp-2">test {{ product.description|default:"New season style with premium finish." }}</p> {% endcomment %}
     <div class="flex items-center justify-between mt-1">
       <p class="text-sm font-semibold text-gray-900">${{ product.price }}</p>
-      <span class="text-[10px] text-gray-500 uppercase">{{ product.variant_label|default:"hot" }}</span>
+      {% comment %} <span class="text-[10px] text-gray-500 uppercase">varaint {{ product.variant_label|default:"hot" }}</span> {% endcomment %}
     </div>
     </a>
     <form method="post" action="{% url 'cart_add' %}" class="mt-2">

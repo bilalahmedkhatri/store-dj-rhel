@@ -70,6 +70,55 @@ def update_search_index(sender, instance, **kwargs):
 
     threading.Thread(target=run_index_update).start()
 
+from django.db.models.signals import post_save, pre_save
+
+@receiver(pre_save, sender=Asset)
+def populate_asset_metadata(sender, instance, **kwargs):
+    """
+    Automatically detect and populate metadata for Assets before saving.
+    """
+    if instance.source and (not instance.width or not instance.height or not instance.filesize):
+        try:
+            import os
+            from PIL import Image
+            import mimetypes
+            from django.conf import settings
+
+            # 1. Resolve Path
+            file_path = instance.source
+            # If it's a URL/path starting with MEDIA_URL, convert to local path
+            if file_path.startswith(settings.MEDIA_URL):
+                relative_path = file_path.replace(settings.MEDIA_URL, '', 1)
+                file_path = os.path.join(settings.MEDIA_ROOT, relative_path)
+            
+            if os.path.exists(file_path):
+                # 2. Detect MimeType
+                if not instance.mimetype:
+                    mime, _ = mimetypes.guess_type(file_path)
+                    instance.mimetype = mime or 'application/octet-stream'
+
+                # 3. Get FileSize
+                if not instance.filesize:
+                    instance.filesize = os.path.getsize(file_path)
+
+                # 4. Get Dimensions for images
+                if instance.mimetype.startswith('image/'):
+                    with Image.open(file_path) as img:
+                        instance.width, instance.height = img.size
+                        if not instance.type:
+                            instance.type = 'IMAGE'
+                
+                # 5. Ensure Name is set
+                if not instance.name:
+                    instance.name = os.path.basename(file_path)
+
+                # 6. Set Preview if missing (fallback to source)
+                if not instance.preview:
+                    instance.preview = instance.source
+
+        except Exception as e:
+            print(f"Error populating asset metadata: {e}")
+
 @receiver(post_save, sender=Asset)
 def optimize_asset_image(sender, instance, created, **kwargs):
     """
