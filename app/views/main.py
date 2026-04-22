@@ -1,6 +1,28 @@
+from django.http import Http404, FileResponse
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.shortcuts import get_object_or_404, render
 from django.db.models import Prefetch
-from django.http import Http404
-from django.shortcuts import render, get_object_or_404
+from ..models import MerchantProfile
+import os
+
+@login_required
+@user_passes_test(lambda u: u.is_staff)
+def serve_merchant_document(request, merchant_id, doc_type):
+    """
+    Securely serve merchant documents only to staff members.
+    doc_type can be 'cnic_front', 'cnic_back', or 'utility_bill'.
+    """
+    merchant = get_object_or_404(MerchantProfile, pk=merchant_id)
+    
+    file_field = getattr(merchant, doc_type, None)
+    if not file_field or not file_field.name:
+        raise Http404("Document not found")
+        
+    file_path = file_field.path
+    if not os.path.exists(file_path):
+        raise Http404("File not found on disk")
+        
+    return FileResponse(open(file_path, 'rb'), content_type='application/pdf' if file_path.endswith('.pdf') else 'image/jpeg')
 
 from ..models import (
     Collection,
@@ -17,39 +39,80 @@ def index(request):
     """
     Renders the home page with featured products.
     """
-    products = Product.objects.all()[:8]
+    lang = "en"
+    variants = (
+        ProductVariant.objects.filter(
+            enabled=True,
+            deletedat__isnull=True,
+            productid__enabled=True,
+            productid__deletedat__isnull=True,
+        )
+        .select_related(
+            "productid",
+            "productid__featuredassetid",
+            "featuredassetid",
+        )
+        .prefetch_related(
+            Prefetch(
+                "productid__producttranslation_set",
+                ProductTranslation.objects.filter(languagecode=lang),
+            ),
+            Prefetch(
+                "productvarianttranslation_set",
+                ProductVariantTranslation.objects.filter(languagecode=lang),
+            ),
+            "productvariantprice_set",
+        )
+        .distinct()
+        .order_by("id")[:20]
+    )
+
+    placeholder_image = "/static/images/products/product.jpg"
+    seen_product_ids = set()
     product_list = []
-    
-    for product in products:
-        try:
-            translation = ProductTranslation.objects.filter(baseid=product, languagecode='en').first()
-            if not translation:
-                continue
-                
-            variant = ProductVariant.objects.filter(productid=product).first()
-            if not variant:
-                continue
-                
-            price_obj = ProductVariantPrice.objects.filter(variantid=variant).first()
-            price = price_obj.price / 100 if price_obj else 0.0
-            
-            image_url = 'https://via.placeholder.com/400'
-            if product.featuredassetid:
-                image_url = product.featuredassetid.preview
-            
-            product_list.append({
-                'name': translation.name,
-                'price': f"{price:.2f}",
-                'image_url': image_url,
-                'slug': translation.slug
-            })
-        except Exception:
+
+    for variant in variants:
+        product = variant.productid
+        if not product or product.id in seen_product_ids:
             continue
+
+        translations = list(variant.productid.producttranslation_set.all())
+        if not translations:
+            continue
+        pt = translations[0]
+        seen_product_ids.add(product.id)
+
+        vt_list = list(variant.productvarianttranslation_set.all())
+        variant_label = vt_list[0].name if vt_list and vt_list[0].name else ""
+
+        prices = list(variant.productvariantprice_set.all())
+        price_cents = prices[0].price if prices else None
+        price_display = f"{(price_cents / 100):.2f}" if price_cents is not None else "0.00"
+
+        if variant.featuredassetid and variant.featuredassetid.preview:
+            image_url = variant.featuredassetid.preview
+        elif product.featuredassetid and product.featuredassetid.preview:
+            image_url = product.featuredassetid.preview
+        else:
+            image_url = placeholder_image
+
+        product_list.append({
+            "name": pt.name,
+            "slug": pt.slug,
+            "variant_label": variant_label,
+            "price": price_display,
+            "image_url": image_url,
+            "description": pt.description if hasattr(pt, 'description') else ""
+        })
+
+    if len(product_list) > 10:
+        product_list = product_list[:10]
     
+    print('fetching data from db', product_list)
     mock_products = get_mock_products()
-    if len(product_list) < 8:
+    if len(product_list) < 10:
         for mp in mock_products:
-            if len(product_list) >= 8:
+            if len(product_list) >= 10:
                 break
             if not any(p.get('slug') == mp.get('slug') for p in product_list):
                 product_list.append(mp)
@@ -87,10 +150,11 @@ def index(request):
             if not any(c.get('name') == mc.get('name') for c in categories):
                 categories.append(mc)
 
-    popular_products = product_list[:4]
-    latest_products = product_list[4:8]
+    popular_products = product_list[:5]
+    latest_products = product_list[5:10]
     
     return render(request, 'landing/body.html', {
+        'products': product_list,
         'popular_products': popular_products,
         'latest_products': latest_products,
         'categories': categories,
@@ -276,3 +340,70 @@ def all_products(request):
 
     context = {"products": product_items}
     return render(request, 'landing/all_products.html', context)
+
+
+def load_more_products(request):
+    """API endpoint to load more products on scroll/click"""
+    try:
+        offset = int(request.GET.get('offset', 10))
+        limit = int(request.GET.get('limit', 10))
+    except ValueError:
+        offset, limit = 10, 10
+
+    lang = "en"
+    variants = (
+        ProductVariant.objects.filter(
+            enabled=True,
+            deletedat__isnull=True,
+            productid__enabled=True,
+            productid__deletedat__isnull=True,
+        )
+        .select_related("productid", "productid__featuredassetid", "featuredassetid")
+        .prefetch_related(
+            Prefetch("productid__producttranslation_set", ProductTranslation.objects.filter(languagecode=lang)),
+            Prefetch("productvarianttranslation_set", ProductVariantTranslation.objects.filter(languagecode=lang)),
+            "productvariantprice_set",
+        )
+        .distinct()
+        .order_by("id")[offset:offset+limit]
+    )
+
+    placeholder_image = "/static/images/products/product.jpg"
+    product_list = []
+    seen_product_ids = set()
+
+    for variant in variants:
+        product = variant.productid
+        if not product or product.id in seen_product_ids:
+            continue
+
+        translations = list(variant.productid.producttranslation_set.all())
+        if not translations:
+            continue
+        pt = translations[0]
+        seen_product_ids.add(product.id)
+
+        vt_list = list(variant.productvarianttranslation_set.all())
+        variant_label = vt_list[0].name if vt_list and vt_list[0].name else ""
+
+        prices = list(variant.productvariantprice_set.all())
+        price_cents = prices[0].price if prices else None
+        price_display = f"{(price_cents / 100):.2f}" if price_cents is not None else "0.00"
+
+        if variant.featuredassetid and variant.featuredassetid.preview:
+            image_url = variant.featuredassetid.preview
+        elif product.featuredassetid and product.featuredassetid.preview:
+            image_url = product.featuredassetid.preview
+        else:
+            image_url = placeholder_image
+
+        product_list.append({
+            "name": pt.name,
+            "slug": pt.slug,
+            "variant_label": variant_label,
+            "price": price_display,
+            "image_url": image_url,
+            "description": pt.description if hasattr(pt, 'description') else ""
+        })
+
+    return render(request, 'components/product_grid_items.html', {'products': product_list})

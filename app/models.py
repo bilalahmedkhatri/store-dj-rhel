@@ -6,19 +6,22 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+from django.utils.text import slugify
+from django.core.exceptions import ValidationError
+import os
 
 
 class Address(models.Model):
     createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
     updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
-    fullname = models.CharField(db_column='fullName')  # Field name made lowercase.
-    company = models.CharField()
-    streetline1 = models.CharField(db_column='streetLine1')  # Field name made lowercase.
+    fullname = models.CharField(max_length=100, db_column='fullName')  # Field name made lowercase.
+    company = models.CharField(max_length=100)
+    streetline1 = models.CharField(max_length=500, db_column='streetLine1')  # Field name made lowercase.
     streetline2 = models.CharField(db_column='streetLine2')  # Field name made lowercase.
-    city = models.CharField()
-    province = models.CharField()
-    postalcode = models.CharField(db_column='postalCode')  # Field name made lowercase.
-    phonenumber = models.CharField(db_column='phoneNumber')  # Field name made lowercase.
+    city = models.CharField(max_length=100)
+    province = models.CharField(max_length=100)
+    postalcode = models.CharField(max_length=10, db_column='postalCode')  # Field name made lowercase.
+    phonenumber = models.CharField(max_length=15, db_column='phoneNumber')  # Field name made lowercase.
     defaultshippingaddress = models.BooleanField(db_column='defaultShippingAddress')  # Field name made lowercase.
     defaultbillingaddress = models.BooleanField(db_column='defaultBillingAddress')  # Field name made lowercase.
     customerid = models.ForeignKey('Customer', on_delete=models.CASCADE, db_column='customerId', blank=True, null=True)  # Field name made lowercase.
@@ -44,17 +47,26 @@ class Administrator(models.Model):
 
 
 class Asset(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
-    name = models.CharField()
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
+    name = models.CharField(max_length=100)
     type = models.CharField()
-    mimetype = models.CharField(db_column='mimeType')  # Field name made lowercase.
-    width = models.IntegerField()
-    height = models.IntegerField()
-    filesize = models.IntegerField(db_column='fileSize')  # Field name made lowercase.
+    mimetype = models.CharField(db_column='mimeType')
+    width = models.IntegerField(blank=True, null=True)
+    height = models.IntegerField(blank=True, null=True)
+    filesize = models.IntegerField(db_column='fileSize', blank=True, null=True)
     source = models.CharField()
     preview = models.CharField()
-    focalpoint = models.TextField(db_column='focalPoint', blank=True, null=True)  # Field name made lowercase.
+    focalpoint = models.TextField(db_column='focalPoint', blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.mimetype})"
+
+    def clean(self):
+        valid_extensions = ['.jpg', '.jpeg', '.png', '.webp', '.svg']
+        ext = os.path.splitext(self.name)[1].lower()
+        if ext not in valid_extensions:
+            raise ValidationError(f'Unsupported file extension: {ext}. Allowed: {", ".join(valid_extensions)}')
 
     class Meta:
         managed = False
@@ -124,8 +136,8 @@ class Channel(models.Model):
 
 
 class Collection(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
     isroot = models.BooleanField(db_column='isRoot')  # Field name made lowercase.
     position = models.IntegerField()
     isprivate = models.BooleanField(db_column='isPrivate')  # Field name made lowercase.
@@ -133,6 +145,15 @@ class Collection(models.Model):
     inheritfilters = models.BooleanField(db_column='inheritFilters')  # Field name made lowercase.
     parentid = models.ForeignKey('Collection', on_delete=models.CASCADE, db_column='parentId', blank=True, null=True)  # Field name made lowercase.
     featuredassetid = models.ForeignKey('Asset', on_delete=models.CASCADE, db_column='featuredAssetId', blank=True, null=True)  # Field name made lowercase.
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def name(self):
+        """Property to get the English name of the collection"""
+        trans = self.collectiontranslation_set.filter(languagecode='en').first()
+        return trans.name if trans else f"Collection #{self.id}"
 
     def get_translation(self, language_code='en'):
         """Get collection translation for specific language"""
@@ -214,13 +235,21 @@ class CollectionProductVariantsProductVariant(models.Model):
 
 
 class CollectionTranslation(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
-    languagecode = models.CharField(db_column='languageCode')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
+    languagecode = models.CharField(db_column='languageCode', default='en')
     name = models.CharField()
-    slug = models.CharField()
+    slug = models.CharField(blank=True)
     description = models.TextField()
-    baseid = models.ForeignKey('Collection', on_delete=models.CASCADE, db_column='baseId', blank=True, null=True)  # Field name made lowercase.
+    baseid = models.ForeignKey('Collection', on_delete=models.CASCADE, db_column='baseId', blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.languagecode})"
+
+    def save(self, *args, **kwargs):
+        if not self.slug and self.name:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     class Meta:
         managed = False
@@ -581,11 +610,15 @@ class PaymentMethodTranslation(models.Model):
 
 
 class Product(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
-    deletedat = models.DateTimeField(db_column='deletedAt', blank=True, null=True)  # Field name made lowercase.
-    enabled = models.BooleanField()
-    featuredassetid = models.ForeignKey('Asset', on_delete=models.CASCADE, db_column='featuredAssetId', blank=True, null=True)  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
+    deletedat = models.DateTimeField(db_column='deletedAt', blank=True, null=True)
+    enabled = models.BooleanField(default=True)
+    featuredassetid = models.ForeignKey('Asset', on_delete=models.CASCADE, db_column='featuredAssetId', blank=True, null=True)
+
+    def __str__(self):
+        trans = self.producttranslation_set.filter(languagecode='en').first()
+        return trans.name if trans else f"Product #{self.id}"
 
     class Meta:
         managed = False
@@ -673,13 +706,18 @@ class ProductOptionTranslation(models.Model):
 
 
 class ProductTranslation(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
-    languagecode = models.CharField(db_column='languageCode')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
+    languagecode = models.CharField(db_column='languageCode', default='en')
     name = models.CharField()
-    slug = models.CharField()
+    slug = models.CharField(blank=True)
     description = models.TextField()
-    baseid = models.ForeignKey('Product', on_delete=models.CASCADE, db_column='baseId', blank=True, null=True)  # Field name made lowercase.
+    baseid = models.ForeignKey('Product', on_delete=models.CASCADE, db_column='baseId', blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug and self.name:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     class Meta:
         managed = False
@@ -687,23 +725,26 @@ class ProductTranslation(models.Model):
 
 
 class ProductVariant(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
-    deletedat = models.DateTimeField(db_column='deletedAt', blank=True, null=True)  # Field name made lowercase.
-    enabled = models.BooleanField()
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
+    deletedat = models.DateTimeField(db_column='deletedAt', blank=True, null=True)
+    enabled = models.BooleanField(default=True)
     sku = models.CharField()
-    outofstockthreshold = models.IntegerField(db_column='outOfStockThreshold')  # Field name made lowercase.
-    useglobaloutofstockthreshold = models.BooleanField(db_column='useGlobalOutOfStockThreshold')  # Field name made lowercase.
-    trackinventory = models.CharField(db_column='trackInventory')  # Field name made lowercase.
-    featuredassetid = models.ForeignKey('Asset', on_delete=models.CASCADE, db_column='featuredAssetId', blank=True, null=True)  # Field name made lowercase.
-    taxcategoryid = models.ForeignKey('TaxCategory', on_delete=models.CASCADE, db_column='taxCategoryId', blank=True, null=True)  # Field name made lowercase.
-    productid = models.ForeignKey('Product', on_delete=models.CASCADE, db_column='productId', blank=True, null=True)  # Field name made lowercase.
+    outofstockthreshold = models.IntegerField(db_column='outOfStockThreshold', default=0)
+    useglobaloutofstockthreshold = models.BooleanField(db_column='useGlobalOutOfStockThreshold', default=True)
+    trackinventory = models.CharField(db_column='trackInventory', default='INHERIT')
+    featuredassetid = models.ForeignKey('Asset', on_delete=models.CASCADE, db_column='featuredAssetId', blank=True, null=True)
+    taxcategoryid = models.ForeignKey('TaxCategory', on_delete=models.CASCADE, db_column='taxCategoryId', blank=True, null=True)
+    productid = models.ForeignKey('Product', on_delete=models.CASCADE, db_column='productId', blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.sku}"
 
     def get_translation(self, language_code='en'):
         """Get product variant translation"""
         try:
             return self.productvarianttranslation_set.get(languagecode=language_code)
-        except ProductVariantTranslation.DoesNotExist:
+        except Exception:
             return None
     
     def get_name(self, language_code='en'):
@@ -711,22 +752,20 @@ class ProductVariant(models.Model):
         translation = self.get_translation(language_code)
         if translation and translation.name:
             return translation.name
-        return f"Product {self.id}"
+        return f"Variant {self.sku}"
     
     def get_product_name(self, language_code='en'):
         """Get parent product name"""
-        if self.product:
-            translation = self.product.producttranslation_set.filter(languagecode=language_code).first()
+        if self.productid:
+            translation = self.productid.producttranslation_set.filter(languagecode=language_code).first()
             if translation:
                 return translation.name
         return self.get_name(language_code)
     
     def get_price(self):
         """Get price (adjust based on your price model)"""
-        # Assuming you have a ProductVariantPrice model
         price = self.productvariantprice_set.filter(channelid__isnull=True).first()
         return price.price if price else 0
-    
     
     class Meta:
         managed = False
@@ -776,12 +815,15 @@ class ProductVariantOptionsProductOption(models.Model):
 
 
 class ProductVariantPrice(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
-    currencycode = models.CharField(db_column='currencyCode')  # Field name made lowercase.
-    channelid = models.IntegerField(db_column='channelId', blank=True, null=True)  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
+    currencycode = models.CharField(db_column='currencyCode', default='PKR')
+    channelid = models.IntegerField(db_column='channelId', blank=True, null=True)
     price = models.IntegerField()
-    variantid = models.ForeignKey('ProductVariant', on_delete=models.CASCADE, db_column='variantId', blank=True, null=True)  # Field name made lowercase.
+    variantid = models.ForeignKey('ProductVariant', on_delete=models.CASCADE, db_column='variantId', blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.price} {self.currencycode}"
 
     class Meta:
         managed = False
@@ -789,15 +831,34 @@ class ProductVariantPrice(models.Model):
 
 
 class ProductVariantTranslation(models.Model):
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
-    languagecode = models.CharField(db_column='languageCode')  # Field name made lowercase.
+    createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
+    updatedat = models.DateTimeField(db_column='updatedAt', auto_now=True)
+    languagecode = models.CharField(db_column='languageCode', default='en')
     name = models.CharField()
-    baseid = models.ForeignKey('ProductVariant', on_delete=models.CASCADE, db_column='baseId', blank=True, null=True)  # Field name made lowercase.
+    baseid = models.ForeignKey('ProductVariant', on_delete=models.CASCADE, db_column='baseId', blank=True, null=True)
+
+    def __str__(self):
+        return self.name
 
     class Meta:
         managed = False
         db_table = 'product_variant_translation'
+
+# Signals for automation
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+@receiver(post_save, sender=ProductTranslation)
+def sync_variant_translation(sender, instance, created, **kwargs):
+    """Automatically update variant translations when product translation is saved"""
+    if instance.baseid:
+        variants = ProductVariant.objects.filter(productid=instance.baseid)
+        for variant in variants:
+            ProductVariantTranslation.objects.update_or_create(
+                baseid=variant,
+                languagecode=instance.languagecode,
+                defaults={'name': instance.name}
+            )
 
 
 class Promotion(models.Model):

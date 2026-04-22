@@ -5,6 +5,23 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.conf import settings
+import os
+
+def verify_signature(payload_body, signature_header):
+    """
+    Verify the HMAC-SHA256 signature from GoPayFast.
+    """
+    secret = os.environ.get("PAYFAST_SECURED_KEY", "YOUR_SECURED_KEY")
+    if not signature_header:
+        return False
+    
+    expected_signature = hmac.new(
+        secret.encode('utf-8'),
+        payload_body,
+        hashlib.sha256
+    ).hexdigest()
+    
+    return hmac.compare_digest(expected_signature, signature_header)
 
 @csrf_exempt
 @require_POST
@@ -12,10 +29,11 @@ def gopayfast_webhook(request):
     """
     Handle incoming webhooks from GoPayFast.
     """
-    # In a real scenario, verify the signature/checksum
-    # signature = request.headers.get('X-PayFast-Signature')
-    # if not verify_signature(request.body, signature):
-    #     return HttpResponseBadRequest("Invalid signature")
+    signature = request.headers.get('X-PayFast-Signature')
+    
+    if not verify_signature(request.body, signature):
+        # In production, we should log this attempt
+        return HttpResponseBadRequest("Invalid signature")
 
     try:
         data = json.loads(request.body)
@@ -30,9 +48,11 @@ def gopayfast_webhook(request):
             handle_refund_processed(payload)
         
         return HttpResponse("Webhook processed", status=200)
+    except json.JSONDecodeError:
+        return HttpResponseBadRequest("Invalid JSON")
     except Exception as e:
         # Log the error
-        return HttpResponse("Error processing webhook", status=500)
+        return HttpResponse(f"Error processing webhook: {str(e)}", status=500)
 
 def handle_payment_success(data):
     # Update order status in database

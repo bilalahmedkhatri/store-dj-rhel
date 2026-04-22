@@ -29,3 +29,25 @@ def send_order_confirmation_email(user_email, context):
     except Exception as e:
         print(f"Error sending email: {e}")
         return False
+
+def send_merchant_welcome_email(user_email, context):
+    """
+    Sends a welcome email to verified merchants.
+    'context' should contain: merchant_name, merchant_id, merchant_type, verification_date, dashboard_url
+    """
+    subject = 'Welcome to e-sahulat - Your Merchant Account is Verified!'
+    from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@storedjreheel.com')
+    to = [user_email]
+
+    html_content = render_to_string('emails/merchant_welcome.html', context)
+    text_content = strip_tags(html_content)
+
+    msg = EmailMultiAlternatives(subject, text_content, from_email, to)
+    msg.attach_alternative(html_content, "text/html")
+    
+    try:
+        msg.send()
+        return True
+    except Exception as e:
+        print(f"Error sending merchant welcome email: {e}")
+        return False

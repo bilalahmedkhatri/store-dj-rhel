@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to e-sahulat - Merchant Verification Successful</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f9fafb;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background-color: #22c55e; /* Shopify/e-sahulat Green */
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            color: #ffffff;
+            margin: 0;
+            font-size: 24px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .header p {
+            color: #dcfce7;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .greeting {
+            font-size: 20px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 12px;
+        }
+        .message {
+            font-size: 16px;
+            color: #4b5563;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .info-card {
+            background-color: #f3f4f6;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        .label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #6b7280;
+        }
+        .value {
+            font-size: 14px;
+            font-weight: 700;
+            color: #111827;
+        }
+        .section-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #9ca3af;
+            margin-bottom: 8px;
+        }
+        .footer {
+            background-color: #f9fafb;
+            padding: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+        .button {
+            display: inline-block;
+            background-color: #22c55e;
+            color: #ffffff !important;
+            padding: 14px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>e-sahulat</h1>
+            <p>Merchant Partnership Verified</p>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <div class="greeting">Congratulations, {{ merchant_name }}!</div>
+            <p class="message">
+                We are pleased to inform you that your merchant profile has been successfully verified. You now have full access to the e-sahulat marketplace tools to list your products and manage your business.
+            </p>
+
+            <div class="section-title">Merchant Details</div>
+            <div class="info-card">
+                <div class="info-row">
+                    <span class="label">Merchant ID</span>
+                    <span class="value">{{ merchant_id }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Business Type</span>
+                    <span class="value">{{ merchant_type|title }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Verification Date</span>
+                    <span class="value">{{ verification_date|date:"F d, Y" }}</span>
+                </div>
+            </div>
+
+            <p class="message">
+                Next steps: Log in to your dashboard to complete your shop setup, set up your payment preferences, and start adding products.
+            </p>
+
+            <center>
+                <a href="{{ dashboard_url }}" class="button">Go to Dashboard</a>
+            </center>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>&copy; 2026 e-sahulat. All rights reserved.</p>
+            <p>The Future of Pakistani Marketplace</p>
+            <div style="margin-top: 15px;">
+                <a href="{{ privacy_url|default:'#' }}">Privacy Policy</a>
+                <a href="{{ terms_url|default:'#' }}">Merchant Agreement</a>
+                <a href="{{ support_url|default:'#' }}">Support Center</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

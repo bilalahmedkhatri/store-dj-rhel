@@ -24,7 +24,7 @@ urlpatterns = [
     path('category/<int:category_id>/', views.category_detail, name='category_detail'),
     path('category/<int:category_id>/<slug:slug>/', views.category_detail, name='category_detail_slug'),
     path('catalog/', views.all_products, name='all_products'),
-
+    path('api/load-more-products/', views.main.load_more_products, name='load_more_products'),
     # extra pages
     path('about-us/', views.about_us, name='about_us'),
     path('contact-us/', views.contact_us, name='contact_us'),
@@ -46,4 +46,5 @@ urlpatterns = [
     path('cookie-policy/', views.cookie_policy, name='cookie_policy'),
     path('status/', views.status_page, name='status_page'),
     path('webhooks/gopayfast/', views.gopayfast_webhook, name='gopayfast_webhook'),
+    path('protected/merchant-docs/<int:merchant_id>/<str:doc_type>/', views.serve_merchant_document, name='serve_merchant_document'),
 ]

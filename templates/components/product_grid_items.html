@@ -1,0 +1,30 @@
+  {% for product in products %}
+  <div class="group block">
+    <a href="/products/{{ product.slug }}/" class="block">
+    <div class="bg-gray-100 rounded-md overflow-hidden">
+      <img src="{{ product.image_url }}" alt="{{ product.name }}" class="w-full h-44 md:h-56 object-cover group-hover:scale-105 transition duration-300">
+    </div>
+    <p class="text-xs text-gray-700 mt-2 line-clamp-2">{{ product.description|default:"New season style with premium finish." }}</p>
+    <div class="flex items-center justify-between mt-1">
+      <p class="text-sm font-semibold text-gray-900">${{ product.price }}</p>
+      <span class="text-[10px] text-gray-500 uppercase">{{ product.variant_label|default:"hot" }}</span>
+    </div>
+    </a>
+    <form method="post" action="{% url 'cart_add' %}" class="mt-2">
+      {% csrf_token %}
+      <input type="hidden" name="slug" value="{{ product.slug }}">
+      <input type="hidden" name="name" value="{{ product.name }}">
+      <input type="hidden" name="image_url" value="{{ product.image_url }}">
+      <input type="hidden" name="price" value="{{ product.price }}">
+      <input type="hidden" name="variant" value="{{ product.variant_label|default:'Default' }}">
+      <input type="hidden" name="quantity" value="1">
+      <button type="submit" class="w-full py-2 text-xs font-semibold border border-gray-300 rounded hover:border-black">Add to Basket</button>
+    </form>
+  </div>
+  {% empty %}
+    {% if request.GET.offset == '0' or not request.GET.offset %}
+    <div class="col-span-full py-16 text-center bg-gray-50 border border-dashed border-gray-300 rounded-lg">
+      <p class="text-gray-500">No products found.</p>
+    </div>
+    {% endif %}
+  {% endfor %}
