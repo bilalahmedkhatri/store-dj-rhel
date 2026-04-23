@@ -35,9 +35,9 @@ from .models import (
 )
 
 # ─── Admin Branding ───────────────────────────────────────────────────────────
-admin.site.site_header = "e-sahulat Administration"
-admin.site.site_title  = "e-sahulat Admin Portal"
-admin.site.index_title = "Welcome to e-sahulat Management Dashboard"
+admin.site.site_header = "mukhtaleefweart Administration"
+admin.site.site_title  = "mukhtaleefweart Admin Portal"
+admin.site.index_title = "Welcome to mukhtaleefweart Management Dashboard"
 
 # Fields to always exclude from add/change forms across all admins
 _TS_FIELDS = ('createdat', 'updatedat')

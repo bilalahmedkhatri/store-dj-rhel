@@ -1,4 +1,4 @@
-# e-sahulat Admin Management Guide
+# mukhtaleefweart Admin Management Guide
 
 This guide explains how to add and manage store data through the Django Admin panel following the project's translation-based architecture.
 
