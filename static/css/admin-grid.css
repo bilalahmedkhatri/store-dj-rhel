@@ -1,0 +1,120 @@
+/* Grid view for Asset selection in Admin - Optimized for Unfold */
+
+/* Target both regular and popup views for Asset model */
+.model-asset .results, 
+.popup.model-asset .results {
+    margin: 0 !important;
+}
+
+.model-asset .results table,
+.popup.model-asset .results table {
+    display: block !important;
+    border: none !important;
+}
+
+.model-asset .results table thead,
+.popup.model-asset .results table thead {
+    display: none !important; /* Hide headers */
+}
+
+.model-asset .results table tbody,
+.popup.model-asset .results table tbody {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
+    gap: 20px !important;
+    padding: 20px !important;
+}
+
+.model-asset .results table tr,
+.popup.model-asset .results table tr {
+    display: flex !important;
+    flex-direction: column !important;
+    background: white !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    transition: all 0.3s ease !important;
+    height: 100% !important;
+    position: relative !important;
+    cursor: pointer !important;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1) !important;
+}
+
+.model-asset .results table tr:hover,
+.popup.model-asset .results table tr:hover {
+    border-color: #10b981 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1) !important;
+}
+
+.model-asset .results table td,
+.popup.model-asset .results table td {
+    display: block !important;
+    padding: 10px !important;
+    border: none !important;
+    width: 100% !important;
+    text-align: center !important;
+}
+
+/* Make image container at the top */
+.model-asset .results table td.field-display_preview,
+.model-asset .results table td.column-display_preview {
+    padding: 0 !important;
+    height: 160px !important;
+    background: #f9fafb !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.model-asset .results table td.field-display_preview img,
+.model-asset .results table td.column-display_preview img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    max-width: none !important;
+    max-height: none !important;
+    border-radius: 0 !important;
+}
+
+/* Hide specific columns to keep grid clean */
+.model-asset .results table td.column-type,
+.model-asset .results table td.column-mimetype,
+.model-asset .results table td.column-display_size,
+.model-asset .results table td.column-display_actions,
+.model-asset .results table td.field-type,
+.model-asset .results table td.field-mimetype,
+.model-asset .results table td.field-display_size,
+.model-asset .results table td.field-display_actions {
+    display: none !important;
+}
+
+.model-asset .results table td.field-name,
+.model-asset .results table td.column-name {
+    font-size: 13px !important;
+    color: #111827 !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+}
+
+/* CRITICAL: Selection link in popup must cover entire card */
+.popup.model-asset .results table tr th a,
+.popup.model-asset .results table tr td a {
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 50 !important;
+    color: transparent !important;
+    font-size: 0 !important;
+    background: transparent !important;
+    display: block !important;
+}
+
+/* Checkbox/Selection row hide if any */
+.model-asset .results table .action-checkbox-column,
+.model-asset .results table .action-checkbox {
+    display: none !important;
+}

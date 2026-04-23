@@ -281,13 +281,24 @@ class ProductAdmin(ModelAdmin):
     ]
     exclude       = _TS_FIELDS + ('deletedat',)
     raw_id_fields = ('featuredassetid',)
+    readonly_fields = ('selected_image_display',)
     
     fieldsets = (
         ("General Status", {
-            "fields": (("enabled", "featuredassetid"),),
+            "fields": (("enabled", "featuredassetid", "selected_image_display"),),
             "classes": ["unfold-fieldset-compact"],
         }),
     )
+
+    @display(description="Selected Image")
+    def selected_image_display(self, obj):
+        if obj.featuredassetid:
+            url = obj.featuredassetid.preview
+            if not (url.startswith('http') or url.startswith('/')):
+                from django.conf import settings
+                url = f"{settings.MEDIA_URL}{url}"
+            return mark_safe(f'<div class="flex items-center gap-2"><img src="{url}" class="w-10 h-10 object-cover rounded shadow-sm" /> <span>{obj.featuredassetid.name}</span></div>')
+        return "No image selected"
 
     @display(description="Actions")
     def display_actions(self, obj):
@@ -555,6 +566,7 @@ class AssetAdminForm(forms.ModelForm):
 class AssetAdmin(ModelAdmin):
     form = AssetAdminForm
     list_display  = ('display_preview', 'name', 'type', 'mimetype', 'display_size', 'display_actions')
+    list_display_links = ('display_preview', 'name') # Make preview clickable too
     list_filter   = (
         ('type', ChoicesDropdownFilter),
         ('mimetype', ChoicesDropdownFilter),
@@ -562,6 +574,11 @@ class AssetAdmin(ModelAdmin):
     search_fields = ('name',)
     exclude       = _TS_FIELDS
     readonly_fields = ('width', 'height', 'filesize', 'mimetype')
+    
+    class Media:
+        css = {
+            'all': ('css/admin-grid.css',)
+        }
     
     fieldsets = (
         ("File Upload", {

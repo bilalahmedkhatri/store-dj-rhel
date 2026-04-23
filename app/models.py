@@ -60,7 +60,7 @@ class Asset(models.Model):
     focalpoint = models.TextField(db_column='focalPoint', blank=True, null=True)
 
     def __str__(self):
-        return f"{self.name} ({self.mimetype})"
+        return f"{self.name}"
 
     def clean(self):
         if self.name:
