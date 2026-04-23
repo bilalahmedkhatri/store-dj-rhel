@@ -12,7 +12,10 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 from dotenv  import load_dotenv 
+import dj_database_url
 import os
+
+
 load_dotenv()
 
 
@@ -167,14 +170,19 @@ WSGI_APPLICATION = 'setup.wsgi.application'
 try:
     if os.getenv('DATABASE_HOST'):
         DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql',
-                'NAME': os.getenv('DATABASE_NAME'),
-                'USER': os.getenv('DATABASE_USER'),
-                'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-                'HOST': os.getenv('DATABASE_HOST'),
-                'PORT': os.getenv('DATABASE_PORT'),
-            }
+            # 'default': {
+            #     'ENGINE': 'django.db.backends.postgresql',
+            #     'NAME': os.getenv('DATABASE_NAME'),
+            #     'USER': os.getenv('DATABASE_USER'),
+            #     'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+            #     'HOST': os.getenv('DATABASE_HOST'),
+            #     'PORT': os.getenv('DATABASE_PORT'),
+            # }
+            'default': dj_database_url.config(
+                default=os.getenv('DATABASE_HOST'),
+                conn_max_age=600,
+                conn_health_checks=True,
+            )
         }
 except Exception:
     if not os.getenv('DATABASE_HOST'):
