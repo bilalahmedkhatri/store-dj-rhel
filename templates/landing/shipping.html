@@ -12,7 +12,7 @@
 
         <div class="prose prose-lg text-gray-600 max-w-none">
             <h2>Shipping Options & Rates</h2>
-            <table class="w-full text-sm border-collapse">
+            <table class="w-full text-sm border-collapse mb-5">
                 <thead><tr><th class="border p-2 text-left">Method</th><th class="border p-2 text-left">Delivery Time</th><th class="border p-2 text-left">Cost</th></tr></thead>
                 <tbody>
                     {% for row in shipping_rows %}
@@ -22,7 +22,7 @@
             </table>
 
             {% for section in sections %}
-            <h2>{{ section.title }}</h2>
+            <h2 class="mt-5 font-black" >{{ section.title }}</h2>
             <p>{{ section.body }}</p>
             {% endfor %}
         </div>

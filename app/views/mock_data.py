@@ -143,11 +143,11 @@ def get_mock_contact_data() -> dict:
         "contact_subheading": "We'd love to hear from you. Send us a message and we'll respond within 24 hours.",
         "contact_info": {
             "address_label": "Address",
-            "address": "123 Fashion Street, Downtown, New York, NY 10001",
+            "address": "Second extension, Defence Phase 2, Karachi",
             "phone_label": "Phone",
-            "phone": "+1 (123) 456-7890",
+            "phone": "+92 331 42 44 144",
             "email_label": "Email",
-            "email": "support@mukhtaleefweart.com",
+            "email": "najeeb.back74@gmail.com",
         },
         "business_hours": [
             "Monday - Friday: 9:00 AM - 6:00 PM",
@@ -233,8 +233,8 @@ def get_mock_shipping_policy_data() -> dict:
         "title": "Shipping Information",
         "subtitle": "Fast, reliable delivery worldwide",
         "shipping_rows": [
-            {"method": "Standard Shipping", "time": "3-5 business days", "cost": "$5.99 (Free over $100)"},
-            {"method": "Express Shipping", "time": "1-2 business days", "cost": "$14.99"},
+            {"method": "Standard Shipping", "time": "3-5 business days", "cost": "Rs. 199 (Free over Rs. 7000)"},
+            {"method": "Express Shipping", "time": "1-2 business days", "cost": "Rs. 399"},
             {"method": "International Standard", "time": "7-14 business days", "cost": "Calculated at checkout"},
         ],
         "sections": [

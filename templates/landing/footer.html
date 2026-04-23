@@ -18,7 +18,7 @@
             <ul class="space-y-2 text-sm text-gray-600">
               <li><a href="{% url 'shipping_policy' %}" class="hover:text-black">Shipping Info</a></li>
               <li><a href="{% url 'return_policy' %}" class="hover:text-black">Returns & Refunds</a></li>
-              <li><a href="{% url 'complaints' %}" class="hover:text-black text-red-600 font-semibold">Grievance Redressal</a></li>
+              <li><a href="{% url 'complaints' %}" class="hover:text-black">Complaints</a></li>
               <li><a href="{% url 'refund_status' %}" class="hover:text-black">Track Refund</a></li>
               <li><a href="{% url 'status_page' %}" class="hover:text-black">System Status</a></li>
             </ul>
@@ -30,7 +30,7 @@
               <li><a href="{% url 'faqs' %}" class="hover:text-black">FAQ</a></li>
               <li><a href="{% url 'pricing' %}" class="hover:text-black">Pricing & Fees</a></li>
               <li><a href="{% url 'security' %}" class="hover:text-black">Security & Trust</a></li>
-              <li><a href="{% url 'kyc' %}" class="hover:text-black">KYC Verification</a></li>
+              {% comment %} <li><a href="{% url 'kyc' %}" class="hover:text-black">KYC Verification</a></li> {% endcomment %}
             </ul>
           </div>
         </div>
