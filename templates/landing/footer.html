@@ -52,7 +52,7 @@
             <input type="email" placeholder="Your Email Address" class="flex-1 h-10 px-3 border border-gray-300 bg-white text-sm focus:outline-none">
             <button type="button" class="h-10 px-5 bg-black text-white text-sm font-semibold">Subscribe</button>
           </div>
-          <div class="flex">
+          {% comment %} <div class="flex">
             <span class="h-10 px-3 border border-gray-300 bg-white text-sm flex items-center text-gray-500">UZ +998</span>
             <input type="text" placeholder="Your phone number for SMS" class="flex-1 h-10 px-3 border-t border-b border-gray-300 bg-white text-sm focus:outline-none">
             <button type="button" class="h-10 px-5 bg-black text-white text-sm font-semibold">Subscribe</button>
@@ -62,7 +62,7 @@
             <input type="text" placeholder="WhatsApp Account" class="flex-1 h-10 px-3 border-t border-b border-gray-300 bg-white text-sm focus:outline-none">
             <button type="button" class="h-10 px-5 bg-black text-white text-sm font-semibold">Subscribe</button>
           </div>
-        </div>
+        </div> {% endcomment %}
         <p class="text-xs text-gray-500 mt-4">
           By clicking the SUBSCRIBE button, you are agreeing to our
           <a href="{% url 'privacy_policy' %}" class="underline">Privacy & Cookie Policy</a>
@@ -74,7 +74,7 @@
       <h4 class="text-xs font-bold uppercase mb-3">We Accept</h4>
       <div class="flex flex-wrap items-center gap-3">
         <img src="{% static 'images/social_icons/visa.svg' %}" alt="visa" class="h-6">
-        <img src="{% static 'images/social_icons/paypal.svg' %}" alt="paypal" class="h-6">
+        {% comment %} <img src="{% static 'images/social_icons/paypal.svg' %}" alt="paypal" class="h-6"> {% endcomment %}
       </div>
     </div>
   </div>
