@@ -179,9 +179,8 @@ def get_mock_about_data() -> dict:
             {"title": "Global Community", "description": "Serving customers across the world."},
         ],
         "team": [
-            {"name": "Azeem Ahmed", "role": "Founder & CEO", "image": "images/team-1.jpg"},
-            {"name": "Sarah Khan", "role": "Lead Designer", "image": "images/team-2.jpg"},
-            {"name": "Michael Lee", "role": "Customer Support", "image": "images/team-3.jpg"},
+            {"name": "Najeeb", "role": "Founder & CEO", "image": "images/team/najeed.jpeg"},
+            {"name": "Abdul Qadeer", "role": "Lead Designer", "image": "images/team/abdul.jpeg"},
         ],
     }
 

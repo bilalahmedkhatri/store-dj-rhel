@@ -67,6 +67,11 @@ SEED_TRANSLATIONS: list[tuple[str, str, str, str]] = [
     ("seed-men-western", "Men Western", "Western wear for men.", "child"),
     ("seed-boys-western", "Boys Western", "Modern western wear for boys.", "child"),
     ("seed-girls-western", "Girls Western", "Modern western wear for girls.", "child"),
+    ("seed-premium", "Premium Collection", "High-end designer inspired apparel.", "child"),
+    ("seed-footwear", "Footwear", "Shoes, sneakers, and formal boots.", "child"),
+    ("seed-accessories", "Accessories", "Belts, bags, and fashion jewelry.", "child"),
+    ("seed-summer", "Summer Essentials", "Lightweight fabrics for the warm season.", "child"),
+    ("seed-new-arrivals", "New Arrivals", "Check out our latest stock.", "child"),
 ]
 
 
@@ -159,6 +164,7 @@ def ensure_demo_products(min_variants: int = 10) -> list[ProductVariant]:
     now = timezone.now()
     asset = ensure_demo_asset()
     catalog = [
+        ("Loewe Inspired Taupe Co-ord Set", "loewe-coord-set", "Premium polyester-viscose blend two-piece set. Features utility pockets and matching trousers.", 1250000),
         ("Wireless Headphones", "electronics-headphones", "Rich sound, clear mic.", 1200000),
         ("Smart Watch", "electronics-watch", "Track fitness and notifications.", 850000),
         ("Cotton T-Shirt", "fashion-tee", "Soft and breathable cotton.", 150000),
