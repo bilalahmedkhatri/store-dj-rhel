@@ -203,6 +203,7 @@ def product_detail_view(request, slug):
             'image': variant.featuredassetid.preview if variant.featuredassetid else images[0]
         })
 
+
     # Get Facet Values (Specifications)
     facet_links = ProductFacetValuesFacetValue.objects.filter(productid=product)
     facets = []
