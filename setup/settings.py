@@ -233,7 +233,13 @@ STATICFILES_DIRS = [
 ]
 
 MEDIA_URL = 'media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+
+# Vercel / Serverless Handling: /var/task is read-only. Use /tmp for transient uploads.
+# For permanent storage, configure S3 or Cloudinary.
+if os.getenv('VERCEL') == '1':
+    MEDIA_ROOT = Path('/tmp/media')
+else:
+    MEDIA_ROOT = BASE_DIR / 'media'
 
 # Email Settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
