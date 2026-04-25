@@ -507,9 +507,16 @@ from django.conf import settings
 from django.core.files.storage import default_storage
 
 class AssetAdminForm(forms.ModelForm):
-    file_upload = forms.FileField(required=False, label="Upload New File", help_text="Upload an image to automatically set source and metadata.")
+    file_upload = forms.FileField(
+        required=False, 
+        label="Upload New File", 
+        help_text="Upload an image to automatically set source and metadata.",
+        widget=forms.ClearableFileInput(attrs={
+            'class': 'unfold-file-input border rounded-lg text-black cursor-pointer px-3 py-2',
+        })
+    )
 
-    class Meta:
+    class Meta: 
         model = Asset
         fields = '__all__'
 
@@ -534,29 +541,35 @@ class AssetAdminForm(forms.ModelForm):
             # 1. Open image
             img = Image.open(file)
             
-            # 2. Convert to RGB if necessary (to handle PNG/RGBA -> JPEG)
+            # 2. Convert to RGB if necessary
             if img.mode in ("RGBA", "P"):
                 img = img.convert("RGB")
             
             # 3. Compress
             output = io.BytesIO()
-            # You can change format to 'WEBP' for even better compression
-            img_format = 'JPEG'
-            img.save(output, format=img_format, quality=70, optimize=True)
+            img.save(output, format='JPEG', quality=75, optimize=True)
             output.seek(0)
             
-            # 4. Save optimized file
+            # 4. Create ContentFile
             optimized_file = ContentFile(output.read(), name=os.path.splitext(file.name)[0] + '.jpg')
             
-            # Save file to media/assets/
-            folder = 'assets'
-            filename = default_storage.save(os.path.join(folder, optimized_file.name), optimized_file)
-            file_url = os.path.join(settings.MEDIA_URL, filename).replace('\\', '/')
+            # 5. Save using default_storage (Cloudinary)
+            # Cloudinary storage returns the public URL or the path that can be converted to a URL
+            filename = default_storage.save(f"assets/{optimized_file.name}", optimized_file)
             
-            # Update source and preview
+            # 6. Get the public URL from the storage
+            file_url = default_storage.url(filename)
+            
+            # Update source and preview with the ACTUAL cloud URL
             instance.source = file_url
             instance.preview = file_url
             instance.name = optimized_file.name
+            
+            # Ensure required fields are not null to prevent IntegrityError
+            if not instance.type:
+                instance.type = 'IMAGE'
+            if not instance.mimetype:
+                instance.mimetype = 'image/jpeg'
             
         if commit:
             instance.save()
@@ -579,13 +592,11 @@ class AssetAdmin(ModelAdmin):
         css = {
             'all': ('css/admin-grid.css',)
         }
+        js = ('js/admin-loading.js',)
     
     fieldsets = (
         ("File Upload", {
             "fields": ("file_upload",),
-        }),
-        ("Asset Details", {
-            "fields": (("name", "type"), ("mimetype", "filesize"), ("width", "height"), "source", "preview", "focalpoint"),
         }),
     )
 
