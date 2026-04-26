@@ -205,8 +205,8 @@ def dashboard_callback(request, context):
         "kpi": [
             {
                 "title": "Total Revenue",
-                "metric": f"${total_revenue:,.2f}",
-                "sub": f"${month_revenue:,.2f} this month",
+                "metric": f"Rs. {total_revenue:,.2f}",
+                "sub": f"Rs. {month_revenue:,.2f} this month",
                 "icon": "payments",
                 "color": "green",
             },
@@ -235,10 +235,10 @@ def dashboard_callback(request, context):
 
         # Secondary stats row
         "stats": [
-            {"label": "Settled Payments",  "value": f"${total_collected:,.2f}", "icon": "check_circle"},
+            {"label": "Settled Payments",  "value": f"Rs. {total_collected:,.2f}", "icon": "check_circle"},
             {"label": "Failed Payments",   "value": str(payments_error.count()),  "icon": "cancel",       "alert": payments_error.count() > 0},
             {"label": "Pending Refunds",   "value": str(refunds_pending),          "icon": "undo",         "alert": refunds_pending > 0},
-            {"label": "Total Refunded",    "value": f"${refunds_total:,.2f}",      "icon": "currency_exchange"},
+            {"label": "Total Refunded",    "value": f"Rs. {refunds_total:,.2f}",      "icon": "currency_exchange"},
             {"label": "Out-of-Stock SKUs", "value": str(out_of_stock_count),       "icon": "warning",      "alert": out_of_stock_count > 0},
             {"label": "Low Stock SKUs",    "value": str(low_stock_count),          "icon": "inventory",    "alert": low_stock_count > 0},
         ],

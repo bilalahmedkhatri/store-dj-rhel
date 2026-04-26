@@ -41,9 +41,9 @@
                     </div>
                     
                     <div class="flex flex-wrap items-baseline gap-3 mb-6">
-                        <span class="text-3xl md:text-4xl font-black text-primary">${{ price_display }}</span>
+                        <span class="text-3xl md:text-4xl font-black text-primary">Rs. {{ price_display }}</span>
                         {% if old_price %}
-                        <span class="text-gray-400 line-through text-lg font-medium">${{ old_price }}</span>
+                        <span class="text-gray-400 line-through text-lg font-medium">Rs. {{ old_price }}</span>
                         {% endif %}
                     </div>
 
@@ -191,7 +191,7 @@
                         <div class="space-y-6">
                             <div>
                                 <h4 class="font-bold text-gray-900 mb-2 flex items-center gap-2"><i class="fas fa-truck text-primary"></i> Shipping Information</h4>
-                                <p class="text-gray-600">Free standard shipping on orders over $100. Estimated delivery: 3-5 business days. Express shipping available at checkout.</p>
+                                <p class="text-gray-600">Free standard shipping on orders over Rs. 100. Estimated delivery: 3-5 business days. Express shipping available at checkout.</p>
                             </div>
                             <div>
                                 <h4 class="font-bold text-gray-900 mb-2 flex items-center gap-2"><i class="fas fa-undo-alt text-primary"></i> Returns Policy</h4>
@@ -252,19 +252,19 @@
                 <!-- Product Card 1 (example, replace with dynamic data) -->
                 <div class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all">
                     <div class="aspect-square bg-gray-100 overflow-hidden"><img src="{% static 'images/product1.jpg' %}" alt="Related product" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"></div>
-                    <div class="p-4"><h4 class="font-bold text-gray-900 mb-1">Classic Leather Watch</h4><p class="text-primary font-bold">$89.00</p><div class="flex text-yellow-400 text-sm mt-1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div></div>
+                    <div class="p-4"><h4 class="font-bold text-gray-900 mb-1">Classic Leather Watch</h4><p class="text-primary font-bold">Rs. 89.00</p><div class="flex text-yellow-400 text-sm mt-1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div></div>
                 </div>
                 <div class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all">
                     <div class="aspect-square bg-gray-100 overflow-hidden"><img src="{% static 'images/product2.jpg' %}" alt="Related product" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"></div>
-                    <div class="p-4"><h4 class="font-bold text-gray-900 mb-1">Sport Digital Watch</h4><p class="text-primary font-bold">$149.00</p><div class="flex text-yellow-400 text-sm mt-1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div></div>
+                    <div class="p-4"><h4 class="font-bold text-gray-900 mb-1">Sport Digital Watch</h4><p class="text-primary font-bold">Rs. 149.00</p><div class="flex text-yellow-400 text-sm mt-1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div></div>
                 </div>
                 <div class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all">
                     <div class="aspect-square bg-gray-100 overflow-hidden"><img src="{% static 'images/product3.jpg' %}" alt="Related product" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"></div>
-                    <div class="p-4"><h4 class="font-bold text-gray-900 mb-1">Gold Premium Watch</h4><p class="text-primary font-bold">$299.00</p><div class="flex text-yellow-400 text-sm mt-1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div></div>
+                    <div class="p-4"><h4 class="font-bold text-gray-900 mb-1">Gold Premium Watch</h4><p class="text-primary font-bold">Rs. 299.00</p><div class="flex text-yellow-400 text-sm mt-1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div></div>
                 </div>
                 <div class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all">
                     <div class="aspect-square bg-gray-100 overflow-hidden"><img src="{% static 'images/product4.jpg' %}" alt="Related product" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"></div>
-                    <div class="p-4"><h4 class="font-bold text-gray-900 mb-1">Minimalist Watch</h4><p class="text-primary font-bold">$79.00</p><div class="flex text-yellow-400 text-sm mt-1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div></div>
+                    <div class="p-4"><h4 class="font-bold text-gray-900 mb-1">Minimalist Watch</h4><p class="text-primary font-bold">Rs. 79.00</p><div class="flex text-yellow-400 text-sm mt-1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div></div>
                 </div>
             </div>
         </div>

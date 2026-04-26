@@ -1,6 +1,5 @@
 import os
 import django
-import random
 import sys
 import cloudinary.uploader
 from django.utils import timezone
@@ -25,34 +24,36 @@ except Exception as e:
 from app.models import Asset, Collection, CollectionTranslation
 
 def seed_category_images():
-    # 2. Define High-End Fashion URLs for Categories
-    # These are curated from Unsplash fashion collections
+    # Curated High-End Men's Fashion Visuals
     category_visuals = {
-        "seed-premium": "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1200",
-        "seed-footwear": "https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=1200",
-        "seed-accessories": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1200",
-        "seed-summer": "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=1200",
-        "seed-new-arrivals": "https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=1200",
-        "seed-fashion": "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1200",
-        "seed-electronics": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1200",
-        "seed-men-eastern": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=1200", # Stylized placeholder
-        "seed-men-western": "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?q=80&w=1200",
+        "seed-suits": "https://images.unsplash.com/photo-1594932224828-b4b059b6f6ee?q=80&w=1200",
+        "seed-formal-shirts": "https://images.unsplash.com/photo-1621072156002-e2fcced0b170?q=80&w=1200",
+        "seed-casual-shirts": "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?q=80&w=1200",
+        "seed-tshirts": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1200",
+        "seed-hoodies": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=1200",
+        "seed-outerwear": "https://images.unsplash.com/photo-1551028719-00167b16eac5?q=80&w=1200",
+        "seed-eastern": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=1200",
+        "seed-denim": "https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=1200",
+        "seed-chinos": "https://images.unsplash.com/photo-1624371414361-e6e8eaad858e?q=80&w=1200",
+        "seed-trousers": "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?q=80&w=1200",
+        "seed-shorts": "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?q=80&w=1200",
+        "seed-activewear": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1200",
+        "seed-innerwear": "https://images.unsplash.com/photo-1582738411706-bfc8e691d1c2?q=80&w=1200",
+        "seed-accessories": "https://images.unsplash.com/photo-1627123424574-724758594e93?q=80&w=1200",
     }
 
-    print(f"Starting Category Image Seeding via Cloudinary...")
+    print(f"Starting Men's Fashion Category Image Seeding via Cloudinary...")
 
     for slug, url in category_visuals.items():
-        # Check if collection exists
         trans = CollectionTranslation.objects.filter(slug=slug, languagecode='en').first()
         if not trans or not trans.baseid:
-            print(f"   Skipping {slug}: Collection not found in DB.")
+            print(f"   Skipping {slug}: Collection not found.")
             continue
 
         collection = trans.baseid
         print(f"Processing '{trans.name}'...")
 
         try:
-            # 1. Upload Remote URL directly to Cloudinary
             upload_result = cloudinary.uploader.upload(
                 url,
                 folder="categories/",
@@ -63,7 +64,6 @@ def seed_category_images():
             
             cloud_url = upload_result.get('secure_url')
 
-            # 2. Create Asset Record
             asset = Asset.objects.create(
                 createdat=timezone.now(),
                 updatedat=timezone.now(),
@@ -77,7 +77,6 @@ def seed_category_images():
                 preview=cloud_url
             )
 
-            # 3. Link Asset to Collection
             collection.featuredassetid = asset
             collection.save()
             

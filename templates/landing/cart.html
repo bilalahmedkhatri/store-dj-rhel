@@ -60,7 +60,7 @@
                       <h3 class="text-lg font-medium text-neutral-900">{{ item.product.name }}</h3>
                       <p class="text-sm text-neutral-500 mt-1">{{ item.variant }}</p>
                     </div>
-                    <p class="text-lg font-medium" data-item-total>${{ item.total_price|floatformat:2 }}</p>
+                    <p class="text-lg font-medium" data-item-total>Rs. {{ item.total_price|floatformat:2 }}</p>
                   </div>
 
                   <div class="mt-auto pt-6 flex items-center justify-between">
@@ -102,27 +102,27 @@
           <div class="space-y-4 text-sm mb-6">
             <div class="flex justify-between text-neutral-600">
               <span>Subtotal</span>
-              <span id="summary-subtotal" class="font-medium text-neutral-900">${{ subtotal|floatformat:2 }}</span>
+              <span id="summary-subtotal" class="font-medium text-neutral-900">Rs. {{ subtotal|floatformat:2 }}</span>
             </div>
             <div class="flex justify-between text-neutral-600">
               <span>Shipping</span>
               <span id="summary-shipping" class="font-medium text-neutral-900">
-                {% if shipping == 0 %}Free{% else %}${{ shipping|floatformat:2 }}{% endif %}
+                {% if shipping == 0 %}Free{% else %}Rs. {{ shipping|floatformat:2 }}{% endif %}
               </span>
             </div>
             <div class="flex justify-between text-neutral-600">
               <span>Estimated Tax</span>
-              <span id="summary-tax" class="font-medium text-neutral-900">${{ tax|floatformat:2 }}</span>
+              <span id="summary-tax" class="font-medium text-neutral-900">Rs. {{ tax|floatformat:2 }}</span>
             </div>
           </div>
 
           <div class="border-t border-neutral-100 pt-6 mb-8">
             <div class="flex justify-between items-end">
               <span class="text-base font-medium">Total</span>
-              <span id="summary-total" class="text-2xl font-medium">${{ total|floatformat:2 }}</span>
+              <span id="summary-total" class="text-2xl font-medium">Rs. {{ total|floatformat:2 }}</span>
             </div>
             <p id="free-shipping-note" class="text-xs text-neutral-500 mt-2{% if shipping == 0 %} hidden{% endif %}">
-              Add ${{ amount_to_free_shipping|floatformat:2 }} more for free shipping.
+              Add Rs. {{ amount_to_free_shipping|floatformat:2 }} more for free shipping.
             </p>
           </div>
 

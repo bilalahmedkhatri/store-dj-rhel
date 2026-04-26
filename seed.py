@@ -37,6 +37,16 @@ except ImportError:
 
 django.setup()
 
+from django.conf import settings
+import cloudinary
+import cloudinary.uploader
+cloudinary.config(
+    cloud_name=settings.CLOUDINARY_STORAGE['CLOUD_NAME'],
+    api_key=settings.CLOUDINARY_STORAGE['API_KEY'],
+    api_secret=settings.CLOUDINARY_STORAGE['API_SECRET'],
+    secure=True
+)
+
 from app.models import (  # noqa: E402
     Asset,
     Channel,
@@ -58,20 +68,20 @@ import random
 SEED_TRANSLATIONS: list[tuple[str, str, str, str]] = [
     # slug, name, description, role
     ("seed-shop-root", "Shop", "Browse everything we offer.", "root"),
-    ("seed-electronics", "Electronics", "Gadgets, smartphones, and latest tech accessories.", "child"),
-    ("seed-fashion", "Fashion", "Trendy clothing, footwear, and stylish accessories for all.", "child"),
-    ("seed-home-kitchen", "Home & Kitchen", "Essential appliances, decor, and kitchenware for your home.", "child"),
-    ("seed-beauty-health", "Beauty & Health", "Skincare, makeup, and wellness products.", "child"),
-    ("seed-sports-outdoors", "Sports & Outdoors", "Gear for fitness, camping, and athletic performance.", "child"),
-    ("seed-men-eastern", "Men Eastern", "Traditional eastern wear for men.", "child"),
-    ("seed-men-western", "Men Western", "Western wear for men.", "child"),
-    ("seed-boys-western", "Boys Western", "Modern western wear for boys.", "child"),
-    ("seed-girls-western", "Girls Western", "Modern western wear for girls.", "child"),
-    ("seed-premium", "Premium Collection", "High-end designer inspired apparel.", "child"),
-    ("seed-footwear", "Footwear", "Shoes, sneakers, and formal boots.", "child"),
-    ("seed-accessories", "Accessories", "Belts, bags, and fashion jewelry.", "child"),
-    ("seed-summer", "Summer Essentials", "Lightweight fabrics for the warm season.", "child"),
-    ("seed-new-arrivals", "New Arrivals", "Check out our latest stock.", "child"),
+    ("seed-suits", "Premium Suits & Blazers", "Elegant suits and blazers for formal occasions.", "child"),
+    ("seed-formal-shirts", "Formal Shirts", "Crisp formal shirts for a professional look.", "child"),
+    ("seed-casual-shirts", "Casual Shirts", "Comfortable and stylish casual shirts.", "child"),
+    ("seed-tshirts", "T-Shirts & Polos", "Essential t-shirts and polo shirts for everyday wear.", "child"),
+    ("seed-hoodies", "Hoodies & Sweatshirts", "Warm and cozy hoodies and sweatshirts.", "child"),
+    ("seed-outerwear", "Jackets & Coats", "Stylish jackets and coats for all seasons.", "child"),
+    ("seed-eastern", "Traditional Eastern Wear", "Traditional kurtas, shalwar kameez, and more.", "child"),
+    ("seed-denim", "Jeans & Denim", "Durable and trendy denim jeans and jackets.", "child"),
+    ("seed-chinos", "Chinos & Casual Pants", "Versatile chinos and casual pants.", "child"),
+    ("seed-trousers", "Dress Trousers", "Formal dress trousers for a sharp look.", "child"),
+    ("seed-shorts", "Shorts", "Comfortable shorts for casual and active wear.", "child"),
+    ("seed-activewear", "Activewear & Gym", "High-performance gear for your workouts.", "child"),
+    ("seed-innerwear", "Innerwear & Socks", "Comfortable innerwear and essential socks.", "child"),
+    ("seed-accessories", "Men's Accessories (Belts & Wallets)", "Premium belts, wallets, and other accessories.", "child"),
 ]
 
 
@@ -122,38 +132,51 @@ def link_collection_to_default_channel(collection: Collection) -> None:
 
 
 def ensure_demo_asset() -> Asset:
-    preview = "/static/images/products/product.jpg"
-    existing = Asset.objects.filter(preview=preview).order_by("id").first()
+    # Use a high-quality fashion placeholder URL
+    remote_url = "https://images.unsplash.com/photo-1594932224828-b4b059b6f6ee?q=80&w=800"
+    
+    # Check if we already have a cloud asset with this name
+    existing = Asset.objects.filter(name="Default Seed Asset").first()
     if existing:
         return existing
+        
+    print("Uploading default seed asset to Cloudinary...")
+    upload_result = cloudinary.uploader.upload(
+        remote_url,
+        folder="assets/seed/",
+        public_id="default_seed_image",
+        overwrite=True
+    )
+    
+    cloud_url = upload_result.get('secure_url')
     now = timezone.now()
     return Asset.objects.create(
         createdat=now,
         updatedat=now,
-        name="Seed storefront image",
+        name="Default Seed Asset",
         type="IMAGE",
         mimetype="image/jpeg",
-        width=800,
-        height=800,
-        filesize=1,
-        source=preview,
-        preview=preview,
+        width=upload_result.get('width', 800),
+        height=upload_result.get('height', 800),
+        filesize=upload_result.get('bytes', 0),
+        source=cloud_url,
+        preview=cloud_url,
     )
 
 
 def generate_clothing_products():
     base_names = [
-        "Men Kurta", "Men Shalwar Kameez", "Men T-Shirt",
-        "Men Jeans", "Boys Kurta", "Girls Frock",
-        "Kids T-Shirt", "Kids Jeans"
+        "Slim Fit Kurta", "Classic Shalwar Kameez", "Graphic T-Shirt",
+        "Slim Fit Jeans", "Casual Button-Down Shirt", "Cotton Chinos",
+        "Performance Polo", "Straight Fit Trousers"
     ]
 
     products = []
     for i in range(30):
         name = f"{random.choice(base_names)} {i+1}"
         slug = name.lower().replace(" ", "-")
-        price = random.randint(1000, 5000)
-        products.append((name, slug, "High quality fabric", price * 100))
+        price = random.randint(1500, 8000)
+        products.append((name, slug, "Premium quality fabric and stitching.", price * 100))
 
     return products
 
@@ -165,14 +188,14 @@ def ensure_demo_products(min_variants: int = 10) -> list[ProductVariant]:
     asset = ensure_demo_asset()
     catalog = [
         ("Loewe Inspired Taupe Co-ord Set", "loewe-coord-set", "Premium polyester-viscose blend two-piece set. Features utility pockets and matching trousers.", 1250000),
-        ("Wireless Headphones", "electronics-headphones", "Rich sound, clear mic.", 1200000),
-        ("Smart Watch", "electronics-watch", "Track fitness and notifications.", 850000),
-        ("Cotton T-Shirt", "fashion-tee", "Soft and breathable cotton.", 150000),
-        ("Denim Jacket", "fashion-denim", "Classic style for all seasons.", 450000),
-        ("Air Fryer", "home-fryer", "Healthy cooking with less oil.", 1800000),
-        ("Coffee Maker", "home-coffee", "Start your morning with fresh brew.", 950000),
-        ("Vitamin C Serum", "beauty-serum", "For glowing and healthy skin.", 250000),
-        ("Yoga Mat", "sports-mat", "Non-slip grip for your workouts.", 300000),
+        ("Oxford Formal Shirt", "formal-shirt-oxford", "Classic white oxford shirt for formal occasions.", 350000),
+        ("Slim Fit Navy Blazer", "navy-blazer-slim", "Tailored navy blazer for a sharp professional look.", 850000),
+        ("Classic Blue Denim Jacket", "denim-jacket-classic", "Timeless denim jacket with a comfortable fit.", 450000),
+        ("Premium Wool Mix Suit", "wool-suit-premium", "High-quality wool blend suit for weddings and events.", 1850000),
+        ("Urban Pull-Over Hoodie", "urban-hoodie-gray", "Soft cotton fleece hoodie for casual comfort.", 320000),
+        ("Performance Gym Tee", "active-tee-black", "Moisture-wicking fabric for intense workouts.", 220000),
+        ("Classic Leather Belt", "leather-belt-brown", "Genuine leather belt with a polished buckle.", 150000),
+        ("Cotton Lounge Shorts", "lounge-shorts-navy", "Breathable cotton shorts for relaxed days.", 180000),
     ]
 
     catalog.extend(generate_clothing_products())
@@ -322,42 +345,68 @@ def link_variants_to_categories(
         v_trans = ProductVariantTranslation.objects.filter(baseid=v, languagecode=LANG).first()
         if not v_trans: continue
         
-        target_slug = None
+        target_slugs = []
         name_lower = v_trans.name.lower()
-        if "kurta" in name_lower or "shalwar" in name_lower:
-            target_slug = "seed-men-eastern"
-        elif "boy" in name_lower or "kids jeans" in name_lower or "kids t-shirt" in name_lower:
-            target_slug = "seed-boys-western"
-        elif "girl" in name_lower or "frock" in name_lower:
-            target_slug = "seed-girls-western"
-        elif "jeans" in name_lower or "t-shirt" in name_lower:
-            target_slug = "seed-men-western"
-        elif "electronics" in name_lower or "watch" in name_lower or "headphone" in name_lower:
-            target_slug = "seed-electronics"
-        elif "fashion" in name_lower or "shirt" in name_lower or "jacket" in name_lower:
-            target_slug = "seed-fashion"
-        elif "home" in name_lower or "fryer" in name_lower or "coffee" in name_lower:
-            target_slug = "seed-home-kitchen"
-        elif "beauty" in name_lower or "serum" in name_lower:
-            target_slug = "seed-beauty-health"
-        elif "sports" in name_lower or "mat" in name_lower:
-            target_slug = "seed-sports-outdoors"
         
-        if target_slug and target_slug in collections_map:
-            col = collections_map[target_slug]
-            _, created = CollectionProductVariantsProductVariant.objects.get_or_create(
-                collectionid=col,
-                productvariantid=v,
-            )
-            if created: linked += 1
+        # Mapping Logic
+        if "kurta" in name_lower or "shalwar" in name_lower or "eastern" in name_lower:
+            target_slugs.append("seed-eastern")
+        
+        if "suit" in name_lower or "blazer" in name_lower or "loewe" in name_lower:
+            target_slugs.append("seed-suits")
             
-            # Also link to root Shop
-            if "seed-shop-root" in collections_map:
-                _, created_root = CollectionProductVariantsProductVariant.objects.get_or_create(
-                    collectionid=collections_map["seed-shop-root"],
+        if "formal shirt" in name_lower:
+            target_slugs.append("seed-formal-shirts")
+        elif "shirt" in name_lower:
+            target_slugs.append("seed-casual-shirts")
+            
+        if "jeans" in name_lower or "denim" in name_lower:
+            target_slugs.append("seed-denim")
+            
+        if "t-shirt" in name_lower or "polo" in name_lower or "tee" in name_lower:
+            target_slugs.append("seed-tshirts")
+            
+        if "jacket" in name_lower or "coat" in name_lower or "outerwear" in name_lower:
+            target_slugs.append("seed-outerwear")
+            
+        if "pant" in name_lower or "chino" in name_lower:
+            target_slugs.append("seed-chinos")
+            
+        if "trouser" in name_lower:
+            target_slugs.append("seed-trousers")
+
+        if "hoodie" in name_lower or "sweatshirt" in name_lower:
+            target_slugs.append("seed-hoodies")
+
+        if "short" in name_lower:
+            target_slugs.append("seed-shorts")
+
+        if "activewear" in name_lower or "gym" in name_lower or "sport" in name_lower:
+            target_slugs.append("seed-activewear")
+
+        if "innerwear" in name_lower or "socks" in name_lower or "brief" in name_lower:
+            target_slugs.append("seed-innerwear")
+
+        if "belt" in name_lower or "wallet" in name_lower or "accessory" in name_lower or "accessories" in name_lower:
+            target_slugs.append("seed-accessories")
+        
+        # Deduplicate and Link
+        for target_slug in set(target_slugs):
+            if target_slug in collections_map:
+                col = collections_map[target_slug]
+                _, created = CollectionProductVariantsProductVariant.objects.get_or_create(
+                    collectionid=col,
                     productvariantid=v,
                 )
-                if created_root: linked += 1
+                if created: linked += 1
+            
+        # Also link to root Shop
+        if "seed-shop-root" in collections_map:
+            _, created_root = CollectionProductVariantsProductVariant.objects.get_or_create(
+                collectionid=collections_map["seed-shop-root"],
+                productvariantid=v,
+            )
+            if created_root: linked += 1
 
     print(f"Linked {linked} collection-variant rows.")
 

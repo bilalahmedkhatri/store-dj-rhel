@@ -156,21 +156,21 @@
                         <div class="item-name">{{ item.product.name }}</div>
                         <div class="item-qty">Quantity: {{ item.quantity }}</div>
                     </div>
-                    <div class="item-price">${{ item.total_price|floatformat:2 }}</div>
+                    <div class="item-price">Rs. {{ item.total_price|floatformat:2 }}</div>
                 </div>
                 {% endfor %}
 
                 <div class="summary-row">
                     <span style="color: #6b7280;">Subtotal</span>
-                    <span style="color: #111827;">${{ subtotal|floatformat:2 }}</span>
+                    <span style="color: #111827;">Rs. {{ subtotal|floatformat:2 }}</span>
                 </div>
                 <div class="summary-row">
                     <span style="color: #6b7280;">Shipping</span>
-                    <span style="color: #111827;">${{ shipping|floatformat:2 }}</span>
+                    <span style="color: #111827;">Rs. {{ shipping|floatformat:2 }}</span>
                 </div>
                 <div class="total-row">
                     <span>Total</span>
-                    <span>${{ total|floatformat:2 }}</span>
+                    <span>Rs. {{ total|floatformat:2 }}</span>
                 </div>
             </div>
 

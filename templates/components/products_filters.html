@@ -48,8 +48,8 @@
       <div class="mt-3">
         <input type="range" min="{{ filters.price_min|floatformat:0 }}" max="{{ filters.price_max|floatformat:0 }}" class="w-full accent-black">
         <div class="flex justify-between text-xs text-gray-500 mt-2">
-          <span>${{ filters.price_min|floatformat:0 }}</span>
-          <span>${{ filters.price_max|floatformat:0 }}</span>
+          <span>Rs. {{ filters.price_min|floatformat:0 }}</span>
+          <span>Rs. {{ filters.price_max|floatformat:0 }}</span>
         </div>
       </div>
     </details>

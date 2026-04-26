@@ -172,7 +172,7 @@
                     <div class="flex items-center justify-between">
                       <p class="text-sm font-semibold text-gray-900">Standard Shipping</p>
                       <p class="text-sm font-bold text-gray-900" id="shipping-std-price">
-                        {% if shipping == 0 %}Free{% else %}${{ shipping|floatformat:2 }}{% endif %}
+                        {% if shipping == 0 %}Free{% else %}Rs. {{ shipping|floatformat:2 }}{% endif %}
                       </p>
                     </div>
                     <p class="text-xs text-gray-500 mt-0.5">Estimated 5–7 business days</p>
@@ -187,7 +187,7 @@
                   <div class="flex-1">
                     <div class="flex items-center justify-between">
                       <p class="text-sm font-semibold text-gray-900">Express Shipping</p>
-                      <p class="text-sm font-bold text-gray-900">$24.99</p>
+                      <p class="text-sm font-bold text-gray-900">Rs. 24.99</p>
                     </div>
                     <p class="text-xs text-gray-500 mt-0.5">Estimated 1–3 business days</p>
                   </div>
@@ -204,7 +204,7 @@
                         Overnight
                         <span class="ml-2 text-[10px] font-bold bg-yellow-400 text-gray-900 px-1.5 py-0.5 rounded-full">POPULAR</span>
                       </p>
-                      <p class="text-sm font-bold text-gray-900">$39.99</p>
+                      <p class="text-sm font-bold text-gray-900">Rs. 39.99</p>
                     </div>
                     <p class="text-xs text-gray-500 mt-0.5">Next business day by 10am</p>
                   </div>
@@ -394,7 +394,7 @@
                     <p class="text-sm font-semibold text-gray-900 truncate">{{ item.product.name }}</p>
                     <p class="text-xs text-gray-400">{{ item.variant }} · Qty {{ item.quantity }}</p>
                   </div>
-                  <p class="text-sm font-bold text-gray-900">${{ item.total_price|floatformat:2 }}</p>
+                  <p class="text-sm font-bold text-gray-900">Rs. {{ item.total_price|floatformat:2 }}</p>
                 </div>
                 {% empty %}
                 <p class="text-sm text-gray-500 py-4">Your cart is empty.</p>
@@ -445,7 +445,7 @@
                 <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-gray-900 text-white text-[10px] font-bold rounded-full flex items-center justify-center">{{ item.quantity }}</span>
               </div>
               <p class="flex-1 text-sm text-gray-700 min-w-0 truncate">{{ item.product.name }}</p>
-              <p class="text-sm font-semibold text-gray-900">${{ item.total_price|floatformat:2 }}</p>
+              <p class="text-sm font-semibold text-gray-900">Rs. {{ item.total_price|floatformat:2 }}</p>
             </div>
             {% empty %}
             <p class="text-sm text-gray-400">No items.</p>
@@ -463,7 +463,7 @@
               </button>
             </div>
             <p class="text-xs text-green-600 mt-1.5 hidden" id="coupon-success">
-              ✓ Coupon applied! You saved $0.00.
+              ✓ Coupon applied! You saved Rs. 0.00.
             </p>
           </div>
 
@@ -471,28 +471,28 @@
           <div class="space-y-3 text-sm">
             <div class="flex justify-between text-gray-600">
               <span>Subtotal</span>
-              <span class="font-semibold text-gray-900" id="co-subtotal">${{ subtotal|floatformat:2 }}</span>
+              <span class="font-semibold text-gray-900" id="co-subtotal">Rs. {{ subtotal|floatformat:2 }}</span>
             </div>
             <div class="flex justify-between text-gray-600">
               <span>Shipping</span>
               <span class="font-semibold text-gray-900" id="co-shipping">
-                {% if shipping == 0 %}Free{% else %}${{ shipping|floatformat:2 }}{% endif %}
+                {% if shipping == 0 %}Free{% else %}Rs. {{ shipping|floatformat:2 }}{% endif %}
               </span>
             </div>
             <div class="flex justify-between text-gray-600">
               <span>Tax (8%)</span>
-              <span class="font-semibold text-gray-900" id="co-tax">${{ tax|floatformat:2 }}</span>
+              <span class="font-semibold text-gray-900" id="co-tax">Rs. {{ tax|floatformat:2 }}</span>
             </div>
           </div>
 
           <div class="border-t border-gray-100 mt-4 pt-4">
             <div class="flex justify-between items-baseline">
               <span class="text-base font-semibold text-gray-900">Total</span>
-              <span class="text-2xl font-black text-gray-900" id="co-total">${{ total|floatformat:2 }}</span>
+              <span class="text-2xl font-black text-gray-900" id="co-total">Rs. {{ total|floatformat:2 }}</span>
             </div>
             {% if shipping > 0 %}
             <p class="text-xs text-gray-400 mt-1.5">
-              Add ${{ amount_to_free_shipping|floatformat:2 }} more for <span class="text-green-600 font-semibold">free shipping</span>.
+              Add Rs. {{ amount_to_free_shipping|floatformat:2 }} more for <span class="text-green-600 font-semibold">free shipping</span>.
             </p>
             {% endif %}
           </div>
