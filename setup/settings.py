@@ -56,8 +56,8 @@ INSTALLED_APPS = [
 # Unfold settings for a "Shopify Apps" aesthetic
 from django.templatetags.static import static
 UNFOLD = {
-    "SITE_TITLE": "mukhtaleefweart Admin",
-    "SITE_HEADER": "mukhtaleefweart",
+    "SITE_TITLE": "MukhtaleefWear Admin",
+    "SITE_HEADER": "MukhtaleefWear",
     "COLORS": {
         "primary": {
             "50": "240 253 244",

@@ -1,4 +1,4 @@
-# mukhtaleefweart Admin Management Guide
+# MukhtaleefWear Admin Management Guide
 
 This guide explains how to add and manage store data through the Django Admin panel following the project's translation-based architecture.
 

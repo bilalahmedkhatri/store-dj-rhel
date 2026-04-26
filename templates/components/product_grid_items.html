@@ -7,7 +7,7 @@
     <p class="text-xs text-gray-700 mt-2 line-clamp-2">{{ product.name|default:"New season style with premium finish." }}</p>
     {% comment %} <p class="text-xs text-gray-700 mt-2 line-clamp-2">test {{ product.description|default:"New season style with premium finish." }}</p> {% endcomment %}
     <div class="flex items-center justify-between mt-1">
-      <p class="text-sm font-semibold text-gray-900">${{ product.price }}</p>
+      <p class="text-sm font-semibold text-gray-900">Rs. {{ product.price }}</p>
       {% comment %} <span class="text-[10px] text-gray-500 uppercase">varaint {{ product.variant_label|default:"hot" }}</span> {% endcomment %}
     </div>
     </a>

@@ -35,7 +35,7 @@ def send_merchant_welcome_email(user_email, context):
     Sends a welcome email to verified merchants.
     'context' should contain: merchant_name, merchant_id, merchant_type, verification_date, dashboard_url
     """
-    subject = 'Welcome to mukhtaleefweart - Your Merchant Account is Verified!'
+    subject = 'Welcome to MukhtaleefWear - Your Merchant Account is Verified!'
     from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@storedjreheel.com')
     to = [user_email]
 
