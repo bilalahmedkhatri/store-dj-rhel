@@ -537,6 +537,7 @@ class AssetAdminForm(forms.ModelForm):
             import io
             from PIL import Image
             from django.core.files.base import ContentFile
+            import cloudinary.uploader
             
             # 1. Open image
             img = Image.open(file)
@@ -545,27 +546,30 @@ class AssetAdminForm(forms.ModelForm):
             if img.mode in ("RGBA", "P"):
                 img = img.convert("RGB")
             
-            # 3. Compress
+            # 3. Compress/Process locally before upload
             output = io.BytesIO()
             img.save(output, format='JPEG', quality=75, optimize=True)
             output.seek(0)
             
-            # 4. Create ContentFile
-            optimized_file = ContentFile(output.read(), name=os.path.splitext(file.name)[0] + '.jpg')
+            # 4. Upload DIRECTLY to Cloudinary via SDK
+            # This bypasses Django storage entirely for the upload
+            upload_result = cloudinary.uploader.upload(
+                output,
+                folder="assets/",
+                public_id=os.path.splitext(file.name)[0],
+                overwrite=True,
+                resource_type="image"
+            )
             
-            # 5. Save using default_storage (Cloudinary)
-            # Cloudinary storage returns the public URL or the path that can be converted to a URL
-            filename = default_storage.save(f"assets/{optimized_file.name}", optimized_file)
+            # 5. Get the absolute secure URL
+            file_url = upload_result.get('secure_url')
             
-            # 6. Get the public URL from the storage
-            file_url = default_storage.url(filename)
-            
-            # Update source and preview with the ACTUAL cloud URL
+            # Update model fields with the CLOUD URL
             instance.source = file_url
             instance.preview = file_url
-            instance.name = optimized_file.name
+            instance.name = file.name
             
-            # Ensure required fields are not null to prevent IntegrityError
+            # Ensure required fields are not null
             if not instance.type:
                 instance.type = 'IMAGE'
             if not instance.mimetype:
@@ -597,6 +601,9 @@ class AssetAdmin(ModelAdmin):
     fieldsets = (
         ("File Upload", {
             "fields": ("file_upload",),
+        }),
+        ("File Details", {
+            "fields": ("name", "source"),
         }),
     )
 
