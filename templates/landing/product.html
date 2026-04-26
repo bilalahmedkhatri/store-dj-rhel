@@ -41,7 +41,7 @@
                     </div>
                     
                     <div class="flex flex-wrap items-baseline gap-3 mb-6">
-                        <span class="text-3xl md:text-4xl font-black text-primary">Rs. {{ price_display }}</span>
+                        <span class="text-3xl md:text-4xl font-black">Rs. {{ price_display }}</span>
                         {% if old_price %}
                         <span class="text-gray-400 line-through text-lg font-medium">Rs. {{ old_price }}</span>
                         {% endif %}
@@ -214,7 +214,7 @@
                             <div class="text-center md:text-left">
                                 <div class="text-5xl font-black text-primary">4.8</div>
                                 <div class="flex text-yellow-400 justify-center md:justify-start my-2"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
-                                <p class="text-gray-500 text-sm">Based on 120 reviews</p>
+                                <p class="text-gray-500 text-sm">Based on 10 reviews</p>
                             </div>
                             <div class="flex-1 space-y-2">
                                 <div class="flex items-center gap-2"><span class="text-sm w-8">5 ★</span><div class="flex-1 h-2 bg-gray-200 rounded-full"><div class="h-full bg-yellow-400 rounded-full" style="width: 85%"></div></div><span class="text-sm text-gray-500">85%</span></div>
@@ -244,28 +244,14 @@
 
         <!-- Related Products Section -->
         <div class="mt-16 md:mt-20 lg:mt-24">
-            <div class="flex justify-between items-center mb-6 md:mb-8">
-                <h3 class="text-2xl md:text-3xl font-black text-gray-900">You May Also Like</h3>
-                <a href="/products/" class="text-primary font-semibold hover:underline flex items-center gap-1">View All <i class="fas fa-arrow-right text-sm"></i></a>
+            <div class="flex justify-between items-center mb-6 md:mb-8 border-b border-gray-100 pb-4">
+                <h3 class="text-2xl md:text-3xl font-black text-gray-900 uppercase tracking-tight">You May Also Like</h3>
+                <a href="{% url 'all_products' %}" class="text-primary font-bold hover:text-secondary transition-colors flex items-center gap-2 text-sm">
+                    View All <i class="fas fa-arrow-right"></i>
+                </a>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                <!-- Product Card 1 (example, replace with dynamic data) -->
-                <div class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all">
-                    <div class="aspect-square bg-gray-100 overflow-hidden"><img src="{% static 'images/product1.jpg' %}" alt="Related product" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"></div>
-                    <div class="p-4"><h4 class="font-bold text-gray-900 mb-1">Classic Leather Watch</h4><p class="text-primary font-bold">Rs. 89.00</p><div class="flex text-yellow-400 text-sm mt-1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div></div>
-                </div>
-                <div class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all">
-                    <div class="aspect-square bg-gray-100 overflow-hidden"><img src="{% static 'images/product2.jpg' %}" alt="Related product" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"></div>
-                    <div class="p-4"><h4 class="font-bold text-gray-900 mb-1">Sport Digital Watch</h4><p class="text-primary font-bold">Rs. 149.00</p><div class="flex text-yellow-400 text-sm mt-1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div></div>
-                </div>
-                <div class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all">
-                    <div class="aspect-square bg-gray-100 overflow-hidden"><img src="{% static 'images/product3.jpg' %}" alt="Related product" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"></div>
-                    <div class="p-4"><h4 class="font-bold text-gray-900 mb-1">Gold Premium Watch</h4><p class="text-primary font-bold">Rs. 299.00</p><div class="flex text-yellow-400 text-sm mt-1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div></div>
-                </div>
-                <div class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all">
-                    <div class="aspect-square bg-gray-100 overflow-hidden"><img src="{% static 'images/product4.jpg' %}" alt="Related product" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"></div>
-                    <div class="p-4"><h4 class="font-bold text-gray-900 mb-1">Minimalist Watch</h4><p class="text-primary font-bold">Rs. 79.00</p><div class="flex text-yellow-400 text-sm mt-1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div></div>
-                </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                {% include 'components/product_grid_items.html' with products=related_products %}
             </div>
         </div>
     </div>

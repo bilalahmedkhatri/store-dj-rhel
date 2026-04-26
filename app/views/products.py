@@ -230,6 +230,26 @@ def product_detail_view(request, slug):
                 'id': opt.id
             })
 
+    # Get Related Products (Random 4)
+    related_qs = Product.objects.filter(enabled=True).exclude(id=product.id).order_by('?')[:4]
+    related_products = []
+    for rp in related_qs:
+        rt = ProductTranslation.objects.filter(baseid=rp, languagecode='en').first()
+        if not rt: continue
+        rv = ProductVariant.objects.filter(productid=rp, enabled=True).first()
+        if not rv: continue
+        rp_price_obj = ProductVariantPrice.objects.filter(variantid=rv).first()
+        rp_price = rp_price_obj.price / 100 if rp_price_obj else 0.0
+        related_products.append({
+            'name': rt.name,
+            'price': f"{rp_price:.2f}",
+            'image_url': rp.featuredassetid.preview if rp.featuredassetid else '/static/images/products/product.jpg',
+            'slug': rt.slug
+        })
+
+    if not related_products:
+        related_products = get_mock_products()[:4]
+
     context = {
         'product': product,
         'name': translation.name,
@@ -243,7 +263,8 @@ def product_detail_view(request, slug):
         'facets': facets,
         'options': option_list,
         'detailed_variants': detailed_variants,
-        'variants_count': variants.count()
+        'variants_count': variants.count(),
+        'related_products': related_products
     }
     
     return render(request, 'landing/product.html', context)
