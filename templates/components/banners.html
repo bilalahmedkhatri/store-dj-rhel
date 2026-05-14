@@ -90,7 +90,7 @@
           class="category-banner relative overflow-hidden rounded-lg shadow-lg group"
         >
           <img
-            src="{% if category.image_url %}{{ category.image_url }}{% elif category.featuredassetid %}{{ category.featuredassetid.source }}{% else %}{% static 'images/default-category.jpg' %}{% endif %}"
+            src="{{ category.image_url }}"
             alt="{% if category.name %}{{ category.name }}{% else %}{{ category.get_name }}{% endif %}"
             class="w-full h-auto"
           />

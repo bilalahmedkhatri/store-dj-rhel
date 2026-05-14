@@ -1,47 +1,55 @@
-from django.shortcuts import render
 from django.http import Http404
+from django.shortcuts import render
+
 from ..models import (
-    Product, ProductTranslation, ProductVariant, ProductVariantPrice,
-    ProductAsset, Asset, ProductFacetValuesFacetValue, FacetValue,
-    FacetValueTranslation, ProductOption, ProductOptionTranslation,
-    ProductVariantOptionsProductOption, Collection, CollectionTranslation
+    Asset,
+    Collection,
+    CollectionTranslation,
+    FacetValue,
+    FacetValueTranslation,
+    Product,
+    ProductAsset,
+    ProductFacetValuesFacetValue,
+    ProductOption,
+    ProductOptionTranslation,
+    ProductTranslation,
+    ProductVariant,
+    ProductVariantOptionsProductOption,
+    ProductVariantPrice,
 )
+from .image_utils import resolve_fallback_image, resolve_product_image
 from .mock_data import get_mock_products, get_mock_shop_filters
 
+
 def products_view(request):
-    """
-    Renders the products listing page with dynamic data from the database.
-    """
     products = Product.objects.filter(enabled=True)
     product_list = []
-    
+
     for product in products:
         try:
-            translation = ProductTranslation.objects.filter(baseid=product, languagecode='en').first()
+            translation = ProductTranslation.objects.filter(
+                baseid=product, languagecode="en"
+            ).first()
             if not translation:
                 continue
-                
-            variant = ProductVariant.objects.filter(productid=product, enabled=True).first()
+            variant = ProductVariant.objects.filter(
+                productid=product, enabled=True
+            ).first()
             if not variant:
                 continue
-                
-            price_obj = ProductVariantPrice.objects.filter(variantid=variant).first()
-            # Assuming price is stored in cents/smallest currency unit
+            price_obj = ProductVariantPrice.objects.filter(
+                variantid=variant
+            ).first()
             price = price_obj.price / 100 if price_obj else 0.0
-            
-            image_url = '/static/images/products/product.jpg'
-            if product.featuredassetid:
-                image_url = product.featuredassetid.preview
-            
+            image_url = resolve_product_image(variant, product, translation.slug)
             product_list.append({
-                'name': translation.name,
-                'description': translation.description,
-                'price': f"{price:.2f}",
-                'image_url': image_url,
-                'slug': translation.slug
+                "name": translation.name,
+                "description": translation.description,
+                "price": f"{price:.2f}",
+                "image_url": image_url,
+                "slug": translation.slug,
             })
         except Exception as e:
-            # Log error or skip product
             print(f"Error processing product {product.id}: {e}")
             continue
             
@@ -53,44 +61,67 @@ def products_view(request):
         "price_max": 0.0,
     }
 
-    # Category filter: Collection + CollectionTranslation
     category_names = []
-    for category in Collection.objects.filter(isprivate=False).order_by("position")[:12]:
-        trans = CollectionTranslation.objects.filter(baseid=category, languagecode="en").first()
+    for category in (
+        Collection.objects.filter(isprivate=False)
+        .order_by("position")[:12]
+    ):
+        trans = CollectionTranslation.objects.filter(
+            baseid=category, languagecode="en"
+        ).first()
         if trans and trans.name:
             category_names.append(trans.name)
     filters["categories"] = category_names
 
-    # Facet filters: Product -> FacetValueTranslation grouped by facet code
     facet_groups = {}
-    facet_links = ProductFacetValuesFacetValue.objects.filter(productid__in=products[:100]).select_related("facetvalueid__facetid")
+    facet_links = (
+        ProductFacetValuesFacetValue.objects
+        .filter(productid__in=products[:100])
+        .select_related("facetvalueid__facetid")
+    )
     for link in facet_links:
         facet = link.facetvalueid.facetid
         if not facet:
             continue
         facet_key = facet.code.lower()
-        trans = FacetValueTranslation.objects.filter(baseid=link.facetvalueid, languagecode="en").first()
+        trans = FacetValueTranslation.objects.filter(
+            baseid=link.facetvalueid, languagecode="en"
+        ).first()
         if not trans or not trans.name:
             continue
         facet_groups.setdefault(facet_key, set()).add(trans.name)
-    filters["facet_groups"] = {k: sorted(list(v))[:10] for k, v in facet_groups.items()}
+    filters["facet_groups"] = {
+        k: sorted(list(v))[:10] for k, v in facet_groups.items()
+    }
 
-    # Option filters: Product options grouped by group code
     option_groups = {}
-    variant_ids = ProductVariant.objects.filter(productid__in=products[:100], enabled=True).values_list("id", flat=True)
-    variant_options = ProductVariantOptionsProductOption.objects.filter(productvariantid__in=variant_ids).select_related("productoptionid__groupid")
+    variant_ids = (
+        ProductVariant.objects
+        .filter(productid__in=products[:100], enabled=True)
+        .values_list("id", flat=True)
+    )
+    variant_options = (
+        ProductVariantOptionsProductOption.objects
+        .filter(productvariantid__in=variant_ids)
+        .select_related("productoptionid__groupid")
+    )
     for vo in variant_options:
         if not vo.productoptionid or not vo.productoptionid.groupid:
             continue
         group_key = vo.productoptionid.groupid.code.lower()
-        trans = ProductOptionTranslation.objects.filter(baseid=vo.productoptionid, languagecode="en").first()
+        trans = ProductOptionTranslation.objects.filter(
+            baseid=vo.productoptionid, languagecode="en"
+        ).first()
         if not trans or not trans.name:
             continue
         option_groups.setdefault(group_key, set()).add(trans.name)
-    filters["option_groups"] = {k: sorted(list(v))[:10] for k, v in option_groups.items()}
+    filters["option_groups"] = {
+        k: sorted(list(v))[:10] for k, v in option_groups.items()
+    }
 
-    # Price filter bounds from ProductVariantPrice
-    prices = ProductVariantPrice.objects.filter(variantid__productid__in=products).values_list("price", flat=True)
+    prices = ProductVariantPrice.objects.filter(
+        variantid__productid__in=products
+    ).values_list("price", flat=True)
     price_values = [p / 100 for p in prices if p is not None]
     if price_values:
         filters["price_min"] = float(min(price_values))
@@ -105,31 +136,31 @@ def products_view(request):
     ):
         filters = get_mock_shop_filters()
 
-    return render(
-        request,
-        "landing/products.html",
-        {
-            "products": product_list,
-            "filters": filters,
-        },
-    )
+    return render(request, "landing/products.html", {
+        "products": product_list,
+        "filters": filters,
+    })
+
 
 def product_detail_view(request, slug):
-    """
-    Renders the product detail page for a specific product slug.
-    """
-    translation = ProductTranslation.objects.filter(slug=slug, languagecode='en').first()
+    translation = ProductTranslation.objects.filter(
+        slug=slug, languagecode="en"
+    ).first()
     if not translation:
-        mock = next((item for item in get_mock_products() if item["slug"] == slug), None)
+        mock = next(
+            (item for item in get_mock_products() if item["slug"] == slug),
+            None,
+        )
         if not mock:
             raise Http404("Product not found")
+        fallback_img = resolve_fallback_image(slug)
         context = {
             "product": None,
             "name": mock["name"],
             "description": mock["description"],
             "slug": mock["slug"],
-            "images": [mock["image_url"]],
-            "main_image": mock["image_url"],
+            "images": [fallback_img],
+            "main_image": fallback_img,
             "min_price": mock["price"],
             "max_price": mock["price"],
             "price_display": mock["price"],
@@ -141,131 +172,161 @@ def product_detail_view(request, slug):
                 {"group": "Color", "name": "Black", "id": 1},
                 {"group": "Color", "name": "Silver", "id": 2},
             ],
-            "detailed_variants": [
-                {
-                    "id": 1,
-                    "sku": "MOCK-001",
-                    "price": mock["price"],
-                    "options": mock.get("variant_label", "Standard"),
-                    "image": mock["image_url"],
-                }
-            ],
+            "detailed_variants": [{
+                "id": 1,
+                "sku": "MOCK-001",
+                "price": mock["price"],
+                "options": mock.get("variant_label", "Standard"),
+                "image": fallback_img,
+            }],
             "variants_count": 1,
         }
         return render(request, "landing/product.html", context)
     product = translation.baseid
-    
-    # Get all variants for this product
-    variants = ProductVariant.objects.filter(productid=product, enabled=True)
-    
-    # Get images from product assets
-    product_assets = ProductAsset.objects.filter(productid=product).order_by('position')
+
+    variants = ProductVariant.objects.filter(
+        productid=product, enabled=True
+    )
+
+    product_assets = ProductAsset.objects.filter(
+        productid=product
+    ).order_by("position")
     images = [pa.assetid.preview for pa in product_assets]
-    
-    # Add featured asset of product if not already there
+
     if product.featuredassetid and product.featuredassetid.preview not in images:
         images.insert(0, product.featuredassetid.preview)
-        
-    # Add images from variants if they have specific ones
+
     for variant in variants:
-        if variant.featuredassetid and variant.featuredassetid.preview not in images:
+        if (
+            variant.featuredassetid
+            and variant.featuredassetid.preview not in images
+        ):
             images.append(variant.featuredassetid.preview)
 
     if not images:
-        images = ['/static/images/products/product.jpg']
+        images = [resolve_fallback_image(translation.slug)]
 
-    # Get price range and primary price
     prices = ProductVariantPrice.objects.filter(variantid__in=variants)
     price_values = [p.price / 100 for p in prices]
-    
+
     min_price = min(price_values) if price_values else 0.0
     max_price = max(price_values) if price_values else 0.0
-    
-    # Detailed variants list for the template
+
     detailed_variants = []
     for variant in variants:
         v_price_obj = prices.filter(variantid=variant).first()
         v_price = v_price_obj.price / 100 if v_price_obj else 0.0
-        
-        # Get options for this specific variant
-        v_opts = ProductVariantOptionsProductOption.objects.filter(productvariantid=variant)
+        v_opts = ProductVariantOptionsProductOption.objects.filter(
+            productvariantid=variant
+        )
         v_opt_names = []
         for vo in v_opts:
-            vo_trans = ProductOptionTranslation.objects.filter(baseid=vo.productoptionid, languagecode='en').first()
+            vo_trans = ProductOptionTranslation.objects.filter(
+                baseid=vo.productoptionid, languagecode="en"
+            ).first()
             if vo_trans:
                 v_opt_names.append(vo_trans.name)
-        
+        v_image = (
+            variant.featuredassetid.preview
+            if variant.featuredassetid
+            else images[0]
+        )
         detailed_variants.append({
-            'id': variant.id,
-            'sku': variant.sku,
-            'price': f"{v_price:.2f}",
-            'options': ", ".join(v_opt_names),
-            'image': variant.featuredassetid.preview if variant.featuredassetid else images[0]
+            "id": variant.id,
+            "sku": variant.sku,
+            "price": f"{v_price:.2f}",
+            "options": ", ".join(v_opt_names),
+            "image": v_image,
         })
 
-
-    # Get Facet Values (Specifications)
-    facet_links = ProductFacetValuesFacetValue.objects.filter(productid=product)
+    facet_links = ProductFacetValuesFacetValue.objects.filter(
+        productid=product
+    )
     facets = []
     for link in facet_links:
-        f_trans = FacetValueTranslation.objects.filter(baseid=link.facetvalueid, languagecode='en').first()
+        f_trans = FacetValueTranslation.objects.filter(
+            baseid=link.facetvalueid, languagecode="en"
+        ).first()
         if f_trans:
             facets.append({
-                'group': link.facetvalueid.facetid.code,
-                'name': f_trans.name
+                "group": link.facetvalueid.facetid.code,
+                "name": f_trans.name,
             })
 
-    # Get Product Options (e.g. Size, Color)
-    variant_options = ProductVariantOptionsProductOption.objects.filter(productvariantid__in=variants)
-    unique_options_ids = variant_options.values_list('productoptionid', flat=True).distinct()
+    variant_options = ProductVariantOptionsProductOption.objects.filter(
+        productvariantid__in=variants
+    )
+    unique_options_ids = variant_options.values_list(
+        "productoptionid", flat=True
+    ).distinct()
     unique_options = ProductOption.objects.filter(id__in=unique_options_ids)
-    
+
     option_list = []
     for opt in unique_options:
-        opt_trans = ProductOptionTranslation.objects.filter(baseid=opt, languagecode='en').first()
+        opt_trans = ProductOptionTranslation.objects.filter(
+            baseid=opt, languagecode="en"
+        ).first()
         if opt_trans:
             option_list.append({
-                'group': opt.groupid.code,
-                'name': opt_trans.name,
-                'id': opt.id
+                "group": opt.groupid.code,
+                "name": opt_trans.name,
+                "id": opt.id,
             })
 
-    # Get Related Products (Random 4)
-    related_qs = Product.objects.filter(enabled=True).exclude(id=product.id).order_by('?')[:4]
+    related_qs = (
+        Product.objects.filter(enabled=True)
+        .exclude(id=product.id)
+        .order_by("?")[:4]
+    )
     related_products = []
     for rp in related_qs:
-        rt = ProductTranslation.objects.filter(baseid=rp, languagecode='en').first()
-        if not rt: continue
-        rv = ProductVariant.objects.filter(productid=rp, enabled=True).first()
-        if not rv: continue
-        rp_price_obj = ProductVariantPrice.objects.filter(variantid=rv).first()
+        rt = ProductTranslation.objects.filter(
+            baseid=rp, languagecode="en"
+        ).first()
+        if not rt:
+            continue
+        rv = ProductVariant.objects.filter(
+            productid=rp, enabled=True
+        ).first()
+        if not rv:
+            continue
+        rp_price_obj = ProductVariantPrice.objects.filter(
+            variantid=rv
+        ).first()
         rp_price = rp_price_obj.price / 100 if rp_price_obj else 0.0
+        rp_image = resolve_product_image(rv, rp, rt.slug)
         related_products.append({
-            'name': rt.name,
-            'price': f"{rp_price:.2f}",
-            'image_url': rp.featuredassetid.preview if rp.featuredassetid else '/static/images/products/product.jpg',
-            'slug': rt.slug
+            "name": rt.name,
+            "price": f"{rp_price:.2f}",
+            "image_url": rp_image,
+            "slug": rt.slug,
         })
 
     if not related_products:
         related_products = get_mock_products()[:4]
 
+    price_display = (
+        f"{min_price:.2f}"
+        if min_price == max_price
+        else f"{min_price:.2f} - {max_price:.2f}"
+    )
+
     context = {
-        'product': product,
-        'name': translation.name,
-        'description': translation.description,
-        'slug': translation.slug,
-        'images': images,
-        'main_image': images[0],
-        'min_price': f"{min_price:.2f}",
-        'max_price': f"{max_price:.2f}",
-        'price_display': f"{min_price:.2f}" if min_price == max_price else f"{min_price:.2f} - {max_price:.2f}",
-        'facets': facets,
-        'options': option_list,
-        'detailed_variants': detailed_variants,
-        'variants_count': variants.count(),
-        'related_products': related_products
+        "product": product,
+        "name": translation.name,
+        "description": translation.description,
+        "slug": translation.slug,
+        "images": images,
+        "main_image": images[0],
+        "min_price": f"{min_price:.2f}",
+        "max_price": f"{max_price:.2f}",
+        "price_display": price_display,
+        "facets": facets,
+        "options": option_list,
+        "detailed_variants": detailed_variants,
+        "variants_count": variants.count(),
+        "related_products": related_products,
     }
-    
-    return render(request, 'landing/product.html', context)
+
+    return render(request, "landing/product.html", context)
 

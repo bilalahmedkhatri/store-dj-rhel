@@ -5,7 +5,7 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
 
       {% for product in popular_products|slice:":4" %}
-      <a href="/product/{{ product.slug }}/" class="bg-gray-50 rounded-lg p-2 block hover:shadow-sm transition">
+      <a href="/products/{{ product.slug }}/" class="bg-gray-50 rounded-lg p-2 block hover:shadow-sm transition">
         <img src="{{ product.image_url }}" alt="{{ product.name }}" class="w-full h-28 object-cover rounded-md" />
         <h3 class="text-sm font-semibold">{{ product.name|truncatechars:20 }}</h3>
       </a>
