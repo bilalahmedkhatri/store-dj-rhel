@@ -143,7 +143,7 @@ def get_mock_contact_data() -> dict:
         "contact_subheading": "We'd love to hear from you. Send us a message and we'll respond within 24 hours.",
         "contact_info": {
             "address_label": "Address",
-            "address": "Second extension, Defence Phase 2, Karachi",
+            "address": "Shop #16, Mezzanine floor, Abdullah Haroon Road, Saddar Karachi, 74400",
             "phone_label": "Phone",
             "phone": "+92 331 42 44 144",
             "email_label": "Email",
