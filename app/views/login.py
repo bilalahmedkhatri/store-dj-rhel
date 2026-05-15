@@ -11,19 +11,10 @@ def login_view(request):
             login(request, user)
             return redirect('index')
         else:
-            # If form is invalid, keep the login_form with errors
-            register_form = UserRegistrationForm()
-            return render(request, 'landing/register.html', {
-                'login_form': form, 
-                'register_form': register_form
-            })
+            return render(request, 'landing/login.html', {'login_form': form})
     else:
         form = CustomAuthenticationForm()
-        register_form = UserRegistrationForm()
-    return render(request, 'landing/register.html', {
-        'login_form': form, 
-        'register_form': register_form
-    })
+    return render(request, 'landing/login.html', {'login_form': form})
 
 def logout_view(request):
     logout(request)
