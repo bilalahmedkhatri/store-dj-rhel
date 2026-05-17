@@ -175,16 +175,34 @@ class ProductAdminForm(forms.ModelForm):
         if 'featuredassetid' in self.fields:
             self.fields['featuredassetid'].label = "Image Upload"
 
+from unfold.widgets import UnfoldAdminTextareaWidget
+from django.db import models
+
 class ProductTranslationInline(StackedInline):
     model = ProductTranslation
-    extra = 1
+    extra = 0
+    verbose_name = "Translation"
+    verbose_name_plural = "Translations"
     fields = ('name', 'description')
     tab = False
     classes = ['unfold-stacked-inline-compressed']
+    formfield_overrides = {
+        models.TextField: {
+            "widget": UnfoldAdminTextareaWidget(
+                attrs={
+                    "rows": 1,
+                    "style": "resize: none; overflow: hidden; min-height: 42px;",
+                    "oninput": "this.style.height = ''; this.style.height = this.scrollHeight + 'px'",
+                }
+            )
+        }
+    }
 
 class ProductAssetInline(TabularInline):
     model = ProductAsset
-    extra = 3
+    extra = 0
+    verbose_name = "Asset"
+    verbose_name_plural = "Assets"
     exclude = _TS_FIELDS
     autocomplete_fields = ('assetid',)
     tab = True
@@ -192,10 +210,16 @@ class ProductAssetInline(TabularInline):
 class ProductVariantInline(StackedInline):
     model = ProductVariant
     form = ProductVariantInlineForm
-    extra = 1
+    extra = 0
+    verbose_name = "Variant"
+    verbose_name_plural = "Variants"
     show_change_link = True
     exclude = _TS_FIELDS + ('deletedat',)
-    fields = (('sku', 'name', 'price'), ('enabled', 'trackinventory', 'taxcategoryid'))
+    fields = (
+        ('sku', 'price'),
+        ('name', 'taxcategoryid'),
+        ('enabled', 'trackinventory')
+    )
     tab = True
     classes = ['unfold-stacked-inline-compressed']
 
@@ -280,12 +304,16 @@ class ProductAdmin(ModelAdmin):
         ProductChannelsChannelInline
     ]
     exclude       = _TS_FIELDS + ('deletedat',)
-    raw_id_fields = ('featuredassetid',)
+    autocomplete_fields = ('featuredassetid',)
     readonly_fields = ('selected_image_display',)
     
     fieldsets = (
         ("General Status", {
-            "fields": (("enabled", "featuredassetid", "selected_image_display"),),
+            "fields": (
+                "enabled",
+                "featuredassetid",
+                "selected_image_display",
+            ),
             "classes": ["unfold-fieldset-compact"],
         }),
     )

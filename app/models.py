@@ -637,6 +637,9 @@ class ProductAsset(models.Model):
         managed = False
         db_table = 'product_asset'
 
+    def __str__(self):
+        return ""
+
 
 class ProductChannelsChannel(models.Model):
     productid = models.OneToOneField('Product', on_delete=models.CASCADE, db_column='productId', primary_key=True)  # Field name made lowercase.
@@ -724,6 +727,9 @@ class ProductTranslation(models.Model):
         managed = False
         db_table = 'product_translation'
 
+    def __str__(self):
+        return self.name or f"Product Translation {self.pk}"
+
 
 class ProductVariant(models.Model):
     createdat = models.DateTimeField(db_column='createdAt', auto_now_add=True)
@@ -739,7 +745,7 @@ class ProductVariant(models.Model):
     productid = models.ForeignKey('Product', on_delete=models.CASCADE, db_column='productId', blank=True, null=True)
 
     def __str__(self):
-        return f"{self.sku}"
+        return ""
 
     def get_translation(self, language_code='en'):
         """Get product variant translation"""
