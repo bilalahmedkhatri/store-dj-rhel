@@ -262,6 +262,11 @@ STORAGES = {
 # WhiteNoise settings (keep middleware for serving, but use default storage for collecting)
 WHITENOISE_MANIFEST_STRICT = False 
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'app.auth_backends.EmailBackend',
+]
+
 # Legacy settings required by django-cloudinary-storage for compatibility
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'

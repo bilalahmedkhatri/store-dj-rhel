@@ -10,7 +10,7 @@
             <!-- Product Gallery (same as before) -->
             <div class="w-full lg:w-1/2">
                 <div class="lg:sticky lg:top-24">
-                    <div class="bg-gray-50 rounded-2xl md:rounded-3xl overflow-hidden mb-4 aspect-[4/5]">
+                    <div class="bg-gray-50 md:rounded-3xl overflow-hidden mb-4 aspect-[4/5]">
                         <img id="main-product-image" src="{{ main_image }}" alt="{{ name }}" 
                              class="w-full h-full object-cover transition-all duration-500 hover:scale-105">
                     </div>
@@ -29,7 +29,7 @@
 
             <!-- Product Info: MukhtaleefWear  Buy Box -->
             <div class="w-full lg:w-1/2">
-                <div class="lg:sticky lg:top-24 bg-white p-6 sm:p-8 rounded-2xl md:rounded-3xl border border-gray-100 shadow-sm">
+                <div class="lg:sticky lg:top-24 bg-white p-6 sm:p-8 md:rounded-3xl border border-gray-100 shadow-sm">
                     <div class="mb-6">
                         <h1 class="text-2xl sm:text-3xl font-black mb-2 text-gray-900 leading-tight">{{ name }}</h1>
                         <div class="flex items-center gap-2">
@@ -134,7 +134,7 @@
             <div class="space-y-8 md:space-y-0">
                 <!-- Product Details Tab -->
                 <div id="details" class="tab-content active">
-                    <div class="bg-gray-50 rounded-2xl p-6 md:p-8">
+                    <div class="bg-gray-50 p-6 md:p-8">
                         <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:hidden">Product Details</h3>
                         <div class="prose prose-sm md:prose-base max-w-none text-gray-600">
                             <p>{{ detailed_description|default:description|safe }}</p>
@@ -150,7 +150,7 @@
 
                 <!-- Specifications Tab (enhanced) -->
                 <div id="specs" class="tab-content hidden">
-                    <div class="bg-gray-50 rounded-2xl p-6 md:p-8">
+                    <div class="bg-gray-50 p-6 md:p-8">
                         <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:hidden">Specifications</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
@@ -186,7 +186,7 @@
 
                 <!-- Shipping & Returns Tab -->
                 <div id="shipping" class="tab-content hidden">
-                    <div class="bg-gray-50 rounded-2xl p-6 md:p-8">
+                    <div class="bg-gray-50 p-6 md:p-8">
                         <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:hidden">Shipping & Returns</h3>
                         <div class="space-y-6">
                             <div>
@@ -207,7 +207,7 @@
 
                 <!-- Reviews Tab -->
                 <div id="reviews" class="tab-content hidden">
-                    <div class="bg-gray-50 rounded-2xl p-6 md:p-8">
+                    <div class="bg-gray-50 p-6 md:p-8">
                         <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:hidden">Customer Reviews</h3>
                         <!-- Summary -->
                         <div class="flex flex-col md:flex-row gap-8 mb-8 pb-6 border-b border-gray-200">

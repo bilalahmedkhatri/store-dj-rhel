@@ -1,0 +1,174 @@
+{% extends 'landing/base.html' %}
+{% load static %}
+
+{% block title %}My Profile - MukhtaleefWear{% endblock %}
+
+{% block content %}
+<div class="bg-white min-h-screen py-12">
+  <div class="container mx-auto px-4">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-4">
+      <div>
+        <h1 class="text-3xl font-black text-gray-900 uppercase tracking-tight text-center md:text-left">My Account</h1>
+        <p class="text-gray-500 mt-1 text-center md:text-left text-sm">Review your account and delivery information.</p>
+      </div>
+      <div class="flex items-center justify-center md:justify-end gap-3">
+        <a href="{% url 'dashboard' %}" class="px-6 py-2 bg-gray-50 text-gray-900 text-xs font-black uppercase tracking-widest border border-gray-100 transition-all">
+          Overview
+        </a>
+      </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto" x-data="{ editing: false }">
+      {% if messages %}
+      <div class="mb-8">
+        {% for message in messages %}
+        <div class="p-4 bg-gray-900 text-white text-sm font-bold uppercase tracking-wider text-center">
+          {{ message }}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="bg-white border-t border-gray-100">
+        <!-- Profile Summary Bar -->
+        <div class="flex flex-col md:flex-row items-center justify-between p-8 bg-gray-50 mb-12 gap-6">
+          <div class="flex items-center gap-6">
+            <div class="w-20 h-20 bg-gray-900 flex items-center justify-center text-3xl font-black text-white">
+              {{ customer.firstname|first|upper }}
+            </div>
+            <div>
+              <h2 class="text-2xl font-black text-gray-900 uppercase tracking-tight">{{ customer.firstname }} {{ customer.lastname }}</h2>
+              <p class="text-gray-500 font-bold text-sm tracking-wide">{{ user.email }}</p>
+            </div>
+          </div>
+          <button @click="editing = true" x-show="!editing" class="px-10 py-3 bg-gray-900 text-white text-xs font-black uppercase tracking-widest transition-all">
+            Edit Profile
+          </button>
+        </div>
+
+        <!-- Editable Form -->
+        <form method="POST" action="{% url 'profile' %}" id="profile-form">
+          {% csrf_token %}
+          
+          <div class="space-y-12">
+            <!-- Account Section -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pb-12 border-b border-gray-100">
+              <div class="md:col-span-1">
+                <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest">Account Info</h3>
+              </div>
+              <div class="md:col-span-2 space-y-8">
+                <!-- Full Name -->
+                <div>
+                  <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Account Holder</label>
+                  <input type="text" name="fullname" value="{{ form.fullname.value|default:'' }}" 
+                         :readonly="!editing"
+                         class="w-full transition-all duration-300 font-bold text-gray-900 p-0 border-none bg-transparent focus:ring-0"
+                         :class="editing ? 'border-b !border-gray-200 !pb-2 focus:!border-gray-900' : ''"
+                         placeholder="Not provided">
+                  {% if form.fullname.errors %}<p class="text-red-500 text-[10px] mt-1">{{ form.fullname.errors.0 }}</p>{% endif %}
+                </div>
+
+                <!-- Email -->
+                <div>
+                  <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Email (System)</label>
+                  <div class="font-bold text-gray-400 p-0">{{ user.email }}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Delivery Section -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pb-12 border-b border-gray-100">
+              <div class="md:col-span-1">
+                <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest">Delivery Details</h3>
+              </div>
+              <div class="md:col-span-2 space-y-8">
+                <!-- Street Address -->
+                <div>
+                  <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Shipping Address</label>
+                  <input type="text" name="streetline1" value="{{ form.streetline1.value|default:'' }}" 
+                         :readonly="!editing"
+                         class="w-full transition-all duration-300 font-bold text-gray-900 p-0 border-none bg-transparent focus:ring-0"
+                         :class="editing ? 'border-b !border-gray-200 !pb-2 focus:!border-gray-900' : ''"
+                         placeholder="No address saved">
+                  {% if form.streetline1.errors %}<p class="text-red-500 text-[10px] mt-1">{{ form.streetline1.errors.0 }}</p>{% endif %}
+                </div>
+
+                <div class="grid grid-cols-2 gap-8">
+                  <!-- City -->
+                  <div>
+                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">City</label>
+                    <input type="text" name="city" value="{{ form.city.value|default:'' }}" 
+                           :readonly="!editing"
+                           class="w-full transition-all duration-300 font-bold text-gray-900 p-0 border-none bg-transparent focus:ring-0"
+                           :class="editing ? 'border-b !border-gray-200 !pb-2 focus:!border-gray-900' : ''"
+                           placeholder="Enter city">
+                  </div>
+                  <!-- Province -->
+                  <div>
+                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Province</label>
+                    <input type="text" name="province" value="{{ form.province.value|default:'' }}" 
+                           :readonly="!editing"
+                           class="w-full transition-all duration-300 font-bold text-gray-900 p-0 border-none bg-transparent focus:ring-0"
+                           :class="editing ? 'border-b !border-gray-200 !pb-2 focus:!border-gray-900' : ''"
+                           placeholder="Enter province">
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-8">
+                  <!-- Postal -->
+                  <div>
+                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Postal Code</label>
+                    <input type="text" name="postalcode" value="{{ form.postalcode.value|default:'' }}" 
+                           :readonly="!editing"
+                           class="w-full transition-all duration-300 font-bold text-gray-900 p-0 border-none bg-transparent focus:ring-0"
+                           :class="editing ? 'border-b !border-gray-200 !pb-2 focus:!border-gray-900' : ''"
+                           placeholder="Postal code">
+                  </div>
+                  <!-- Phone -->
+                  <div>
+                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Primary Phone</label>
+                    <input type="text" name="phonenumber" value="{{ form.phonenumber.value|default:'' }}" 
+                           :readonly="!editing"
+                           class="w-full transition-all duration-300 font-bold text-gray-900 p-0 border-none bg-transparent focus:ring-0"
+                           :class="editing ? 'border-b !border-gray-200 !pb-2 focus:!border-gray-900' : ''"
+                           placeholder="Phone number">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Hidden Defaults -->
+            <div class="hidden">
+              <input type="checkbox" name="defaultshippingaddress" checked>
+              <input type="checkbox" name="defaultbillingaddress" checked>
+            </div>
+          </div>
+
+          <!-- Edit Mode Actions -->
+          <div x-show="editing" x-transition class="fixed bottom-0 left-0 w-full bg-white border-t border-gray-100 p-6 z-50 shadow-2xl">
+            <div class="container mx-auto max-w-4xl flex gap-4">
+              <button type="button" @click="editing = false; window.location.reload()" class="flex-1 px-6 py-4 bg-gray-50 text-gray-900 text-xs font-black uppercase tracking-widest transition-all text-center">
+                Cancel
+              </button>
+              <button type="submit" class="flex-1 px-6 py-4 bg-gray-900 text-white text-xs font-black uppercase tracking-widest transition-all shadow-xl shadow-gray-200">
+                Confirm Changes
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Extra specificity to ensure clean look */
+  .profile-input[readonly] {
+    cursor: default !important;
+    user-select: text;
+  }
+</style>
+{% endblock %}

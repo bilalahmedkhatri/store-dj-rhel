@@ -6,6 +6,7 @@ from .login import login_view, logout_view
 from .cart import cart_view, add_to_cart_view, cart_update_view, cart_remove_view
 from .checkout import checkout_view, payment_success_view, payment_failed_view, payment_pending_view, receipt_view
 from .webhooks import gopayfast_webhook
+from .dashboard import dashboard_view, add_address_view, profile_view
 from .extra_pages import (
     faqs,
     about_us,

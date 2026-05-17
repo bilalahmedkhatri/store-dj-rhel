@@ -8,8 +8,9 @@ def login_view(request):
         form = CustomAuthenticationForm(data=request.POST)
         if form.is_valid():
             user = form.get_user()
-            login(request, user)
-            return redirect('index')
+            # Specify the backend explicitly to avoid ValueError
+            login(request, user, backend='app.auth_backends.EmailBackend')
+            return redirect('dashboard')
         else:
             return render(request, 'landing/login.html', {'login_form': form})
     else:

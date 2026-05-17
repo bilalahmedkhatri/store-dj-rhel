@@ -1,0 +1,97 @@
+{% extends 'landing/base.html' %}
+{% load static %}
+
+{% block title %}Profile Details - MukhtaleefWear{% endblock %}
+
+{% block content %}
+<section id="profile-detail-page" class="bg-gray-50 py-16 min-h-screen flex items-center">
+  <div class="container mx-auto px-4">
+    <div class="flex flex-col items-center justify-center">
+      <div class="w-full max-w-2xl bg-white p-8 md:p-12 border border-gray-200 shadow-xl">
+        <div class="mb-8">
+          <h2 class="text-3xl font-black text-gray-900 mb-2 text-center">Profile Details</h2>
+          <p class="text-gray-500 text-center text-sm">Update your account and shipping information.</p>
+        </div>
+
+        <form method="POST" class="space-y-6">
+          {% csrf_token %}
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="form-group md:col-span-2">
+              <label for="{{ form.fullname.id_for_label }}" class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                {{ form.fullname.label }} <span class="text-red-500">*</span>
+              </label>
+              {{ form.fullname }}
+              {% if form.fullname.errors %}<p class="text-red-500 text-xs mt-1">{{ form.fullname.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div class="form-group md:col-span-2">
+              <label for="{{ form.streetline1.id_for_label }}" class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                Address <span class="text-red-500">*</span>
+              </label>
+              {{ form.streetline1 }}
+              {% if form.streetline1.errors %}<p class="text-red-500 text-xs mt-1">{{ form.streetline1.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.city.id_for_label }}" class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                {{ form.city.label }} <span class="text-red-500">*</span>
+              </label>
+              {{ form.city }}
+              {% if form.city.errors %}<p class="text-red-500 text-xs mt-1">{{ form.city.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.province.id_for_label }}" class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                {{ form.province.label }} <span class="text-red-500">*</span>
+              </label>
+              {{ form.province }}
+              {% if form.province.errors %}<p class="text-red-500 text-xs mt-1">{{ form.province.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.postalcode.id_for_label }}" class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                {{ form.postalcode.label }} <span class="text-red-500">*</span>
+              </label>
+              {{ form.postalcode }}
+              {% if form.postalcode.errors %}<p class="text-red-500 text-xs mt-1">{{ form.postalcode.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.phonenumber.id_for_label }}" class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                {{ form.phonenumber.label }} <span class="text-red-500">*</span>
+              </label>
+              {{ form.phonenumber }}
+              {% if form.phonenumber.errors %}<p class="text-red-500 text-xs mt-1">{{ form.phonenumber.errors.0 }}</p>{% endif %}
+            </div>
+          </div>
+
+          <div class="space-y-3 pt-4">
+            <div class="flex items-center gap-3">
+              {{ form.defaultshippingaddress }}
+              <label for="{{ form.defaultshippingaddress.id_for_label }}" class="text-sm font-semibold text-gray-700">
+                {{ form.defaultshippingaddress.label }}
+              </label>
+            </div>
+            <div class="flex items-center gap-3">
+              {{ form.defaultbillingaddress }}
+              <label for="{{ form.defaultbillingaddress.id_for_label }}" class="text-sm font-semibold text-gray-700">
+                {{ form.defaultbillingaddress.label }}
+              </label>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-4 pt-8">
+            <a href="{% url 'dashboard' %}" class="flex-1 bg-white border border-gray-200 text-gray-700 font-bold py-4 px-6 transition-all text-center">
+              Cancel
+            </a>
+            <button type="submit" class="flex-1 bg-primary text-white font-bold py-4 px-6 transition-all shadow-lg shadow-primary/20 transform hover:-translate-y-0.5">
+              Save Details
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

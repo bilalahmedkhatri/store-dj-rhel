@@ -6,12 +6,11 @@
 
 
 {% block content %}
-<div class="bg-gray-50 min-h-screen py-8 md:py-12">
-  <div class="mx-auto px-4 sm:px-6 lg:px-8">
+<div class="bg-gray-50 min-h-screen">
+  <div class="container mx-auto px-4 sm:px-6 pt-12 pb-15">
 
     <!-- Brand + Back -->
     <div class="flex items-center justify-between mb-8">
-      <a href="{% url 'index' %}" class="font-black text-xl tracking-wide text-black">MukhtaleefWear </a>
       <a href="{% url 'cart' %}" class="text-sm text-gray-500 hover:text-gray-800 flex items-center gap-1.5 transition-colors">
         <i class="fas fa-arrow-left"></i>
         Back to Cart
@@ -19,28 +18,41 @@
     </div>
 
     <!-- ── Stepper ──────────────────────────────────────────────── -->
-    <div class="checkout-stepper mb-8 mx-auto" id="checkout-stepper">
+    <div class="checkout-stepper mb-8 flex justify-center items-center gap-4" id="checkout-stepper">
+      <!-- Step 1 -->
       <div class="checkout-step active" data-step="1">
         <div class="flex flex-col items-center">
           <div class="step-circle" data-circle="1">1</div>
           <span class="step-label">Contact</span>
         </div>
       </div>
+
+      <!-- Connector -->
       <div class="step-connector" id="connector-1-2"></div>
+
+      <!-- Step 2 -->
       <div class="checkout-step" data-step="2">
         <div class="flex flex-col items-center">
           <div class="step-circle" data-circle="2">2</div>
           <span class="step-label">Shipping</span>
         </div>
       </div>
+
+      <!-- Connector -->
       <div class="step-connector" id="connector-2-3"></div>
+
+      <!-- Step 3 -->
       <div class="checkout-step" data-step="3">
         <div class="flex flex-col items-center">
           <div class="step-circle" data-circle="3">3</div>
           <span class="step-label">Payment</span>
         </div>
       </div>
+
+      <!-- Connector -->
       <div class="step-connector" id="connector-3-4"></div>
+
+      <!-- Step 4 -->
       <div class="checkout-step" data-step="4">
         <div class="flex flex-col items-center">
           <div class="step-circle" data-circle="4">4</div>
@@ -48,6 +60,7 @@
         </div>
       </div>
     </div>
+
 
     <!-- ── Main Grid ───────────────────────────────────────────── -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -59,7 +72,7 @@
 
           <!-- ════ STEP 1: Contact & Address ════ -->
           <div class="checkout-panel panel-active" id="panel-1">
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8">
+            <div class="bg-white border border-gray-100 shadow-sm p-6 sm:p-8">
               <h2 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
                 <span class="w-6 h-6 rounded-full bg-gray-900 text-white text-xs flex items-center justify-center font-bold">1</span>
                 Contact Information
@@ -69,7 +82,8 @@
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1.5" for="email">Email address</label>
                   <input id="email" name="email" type="email" autocomplete="email"
-                         placeholder="you@example.com" class="checkout-input" required>
+                         placeholder="you@example.com" class="checkout-input" required
+                         value="{{ saved_customer.emailaddress|default:'' }}">
                   <p class="field-error" id="email-error">Please enter a valid email address.</p>
                 </div>
 
@@ -77,13 +91,15 @@
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5" for="first-name">First name</label>
                     <input id="first-name" name="first_name" type="text" autocomplete="given-name"
-                           placeholder="John" class="checkout-input" required>
+                           placeholder="John" class="checkout-input" required
+                           value="{{ saved_customer.firstname|default:'' }}">
                     <p class="field-error" id="first-name-error">Required.</p>
                   </div>
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5" for="last-name">Last name</label>
                     <input id="last-name" name="last_name" type="text" autocomplete="family-name"
-                           placeholder="Doe" class="checkout-input" required>
+                           placeholder="Doe" class="checkout-input" required
+                           value="{{ saved_customer.lastname|default:'' }}">
                     <p class="field-error" id="last-name-error">Required.</p>
                   </div>
                 </div>
@@ -91,13 +107,14 @@
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1.5" for="phone">Phone number <span class="text-gray-400 font-normal">(optional)</span></label>
                   <input id="phone" name="phone" type="tel" autocomplete="tel"
-                         placeholder="+1 (555) 000-0000" class="checkout-input">
+                         placeholder="+1 (555) 000-0000" class="checkout-input"
+                         value="{{ saved_address.phonenumber|default:saved_customer.phonenumber|default:'' }}">
                 </div>
               </div>
             </div>
 
             <!-- Address card -->
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8 mt-4">
+            <div class="bg-white border border-gray-100 shadow-sm p-6 sm:p-8 mt-4">
               <h2 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
                 <i class="fas fa-map-marker-alt"></i>
                 Shipping Address  
@@ -107,7 +124,8 @@
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1.5" for="address">Street address</label>
                   <input id="address" name="address" type="text" autocomplete="street-address"
-                         placeholder="123 Main Street, Apt 4B" class="checkout-input" required>
+                         placeholder="123 Main Street, Apt 4B" class="checkout-input" required
+                         value="{{ saved_address.streetline1|default:'' }}">
                   <p class="field-error" id="address-error">Required.</p>
                 </div>
 
@@ -115,39 +133,26 @@
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5" for="city">City</label>
                     <input id="city" name="city" type="text" autocomplete="address-level2"
-                           placeholder="New York" class="checkout-input" required>
+                           placeholder="New York" class="checkout-input" required
+                           value="{{ saved_address.city|default:'' }}">
                     <p class="field-error" id="city-error">Required.</p>
                   </div>
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5" for="postal">Postal code</label>
                     <input id="postal" name="postal" type="text" autocomplete="postal-code"
-                           placeholder="10001" class="checkout-input" required>
+                           placeholder="10001" class="checkout-input" required
+                           value="{{ saved_address.postalcode|default:'' }}">
                     <p class="field-error" id="postal-error">Required.</p>
                   </div>
                 </div>
 
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1.5" for="country">Country</label>
-                  <select id="country" name="country" class="checkout-input" required>
-                    <option value="">Select country…</option>
-                    <option value="US">United States</option>
-                    <option value="GB">United Kingdom</option>
-                    <option value="CA">Canada</option>
-                    <option value="AU">Australia</option>
-                    <option value="PK">Pakistan</option>
-                    <option value="IN">India</option>
-                    <option value="AE">UAE</option>
-                    <option value="SA">Saudi Arabia</option>
-                    <option value="DE">Germany</option>
-                    <option value="FR">France</option>
-                  </select>
-                  <p class="field-error" id="country-error">Please select a country.</p>
-                </div>
+                <!-- Country is fixed to Pakistan -->
+                <input type="hidden" name="country" value="PK">
               </div>
             </div>
 
             <div class="mt-4 flex justify-end">
-              <button type="button" class="btn-next bg-gray-900 text-white font-semibold px-8 py-3.5 rounded-xl hover:bg-gray-700 transition-colors flex items-center gap-2" data-target="2">
+              <button type="button" class="btn-next bg-gray-900 text-white font-semibold px-8 py-3.5 hover:bg-gray-700 transition-colors flex items-center gap-2" data-target="2">
                 Continue to Shipping
                 <i class="fas fa-arrow-right"></i>
               </button>
@@ -156,7 +161,7 @@
 
           <!-- ════ STEP 2: Shipping Method ════ -->
           <div class="checkout-panel" id="panel-2">
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8">
+            <div class="bg-white border border-gray-100 shadow-sm p-6 sm:p-8">
               <h2 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
                 <span class="w-6 h-6 rounded-full bg-gray-900 text-white text-xs flex items-center justify-center font-bold">2</span>
                 Shipping Method
@@ -217,7 +222,7 @@
                 <i class="fas fa-arrow-left"></i>
                 Back
               </button>
-              <button type="button" class="btn-next bg-gray-900 text-white font-semibold px-8 py-3.5 rounded-xl hover:bg-gray-700 transition-colors flex items-center gap-2" data-target="3">
+              <button type="button" class="btn-next bg-gray-900 text-white font-semibold px-8 py-3.5 hover:bg-gray-700 transition-colors flex items-center gap-2" data-target="3">
                 Continue to Payment
                 <i class="fas fa-arrow-right"></i>
               </button>
@@ -226,7 +231,7 @@
 
           <!-- ════ STEP 3: Payment ════ -->
           <div class="checkout-panel" id="panel-3">
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8">
+            <div class="bg-white border border-gray-100 shadow-sm p-6 sm:p-8">
               <h2 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
                 <span class="w-6 h-6 rounded-full bg-gray-900 text-white text-xs flex items-center justify-center font-bold">3</span>
                 Payment Method
@@ -320,7 +325,7 @@
 
           <!-- ════ STEP 4: Review & Confirm ════ -->
           <div class="checkout-panel" id="panel-4">
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8">
+            <div class="bg-white border border-gray-100 shadow-sm p-6 sm:p-8">
               <h2 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
                 <span class="w-6 h-6 rounded-full bg-gray-900 text-white text-xs flex items-center justify-center font-bold">4</span>
                 Review Your Order
@@ -420,7 +425,7 @@
                 Back
               </button>
               <button type="submit" id="place-order-btn"
-                      class="bg-gray-900 text-white font-bold px-10 py-4 rounded-xl hover:bg-gray-700 transition-colors flex items-center gap-3 text-base">
+                      class="bg-gray-900 text-white font-bold px-10 py-4 hover:bg-gray-700 transition-colors flex items-center gap-3 text-base">
                 <i class="fas fa-lock"></i>
                 Place Order
               </button>
@@ -432,7 +437,7 @@
 
       <!-- ── Right column: sticky order summary ────────────────── -->
       <div class="lg:col-span-5">
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8 sticky top-6">
+        <div class="bg-white border border-gray-100 shadow-sm p-6 sm:p-8 sticky top-6">
           <h2 class="text-base font-semibold text-gray-900 mb-5">Order Summary</h2>
 
           <!-- Items list (live) -->
@@ -444,7 +449,7 @@
                      class="w-12 h-12 rounded-lg object-cover bg-gray-100">
                 <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-gray-900 text-white text-[10px] font-bold rounded-full flex items-center justify-center">{{ item.quantity }}</span>
               </div>
-              <p class="flex-1 text-sm text-gray-700 min-w-0 truncate">{{ item.product.name }}</p>
+              <p class="flex-1 text-sm text-gray-700 min-w-0 line-clamp-2">{{ item.product.name }}</p>
               <p class="text-sm font-semibold text-gray-900">Rs. {{ item.total_price|floatformat:2 }}</p>
             </div>
             {% empty %}

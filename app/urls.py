@@ -18,6 +18,9 @@ urlpatterns = [
     path('payment/failed/', views.payment_failed_view, name='payment_failed'),
     path('payment/pending/', views.payment_pending_view, name='payment_pending'),
     path('receipt/<str:transaction_id>/', views.receipt_view, name='receipt'),
+    path('dashboard/', views.dashboard_view, name='dashboard'),
+    path('profile/', views.profile_view, name='profile'),
+    path('dashboard/address/add/', views.add_address_view, name='add_address'),
     
     # categories
     path('categories/', views.category_list, name='category_list'),

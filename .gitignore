@@ -215,6 +215,8 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 dj_env/
+.dj_env/*
+dj_env/*
 staticfiles/
 media/
 node_modules/
