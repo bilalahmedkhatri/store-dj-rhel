@@ -24,7 +24,7 @@
 
     <!-- Empty State -->
     <div id="cart-empty-state" class="{% if cart_items %}hidden {% endif %}bg-white p-12 text-center shadow-sm border border-neutral-100">
-      <div class="w-16 h-16 bg-neutral-50 rounded-full flex items-center justify-center mx-auto mb-6">
+      <div class="w-16 h-16 bg-neutral-50 flex items-center justify-center mx-auto mb-6">
         <i class="fas fa-shopping-bag"></i>
       </div>
       <h2 class="text-xl font-medium mb-2">Your cart is empty</h2>
@@ -32,7 +32,7 @@
         Looks like you haven't added anything to your cart yet. Explore our collection to find something you love.
       </p>
       <a href="{% url 'products' %}"
-        class="inline-block bg-neutral-900 text-white px-8 py-3 rounded-full font-medium hover:bg-neutral-800 transition-colors">
+        class="inline-block bg-neutral-900 text-white px-8 py-3 font-medium hover:bg-neutral-800 transition-colors">
         Start Shopping
       </a>
     </div>
@@ -77,9 +77,9 @@
 
                   <div class="mt-auto pt-6 flex items-center justify-between">
                     <!-- Quantity Control -->
-                    <div class="flex items-center border border-neutral-200 rounded-full p-1">
+                    <div class="flex items-center border border-neutral-200 p-1">
                       <button type="button" data-qty-btn="decrease" {% if item.quantity <= 1 %}disabled{% endif %}
-                        class="w-8 h-8 flex items-center justify-center rounded-full text-neutral-500 hover:bg-neutral-100 disabled:opacity-50 disabled:hover:bg-transparent transition-colors">
+                        class="w-8 h-8 flex items-center justify-center text-neutral-500 hover:bg-neutral-100 disabled:opacity-50 disabled:hover:bg-transparent transition-colors">
                         <i class="fas fa-minus"></i>
                       </button>
 
@@ -88,7 +88,7 @@
                       </span>
 
                       <button type="button" data-qty-btn="increase"
-                        class="w-8 h-8 flex items-center justify-center rounded-full text-neutral-500 hover:bg-neutral-100 transition-colors">
+                        class="w-8 h-8 flex items-center justify-center text-neutral-500 hover:bg-neutral-100 transition-colors">
                         <i class="fas fa-plus"></i>
                       </button>
                     </div>
@@ -139,7 +139,7 @@
           </div>
 
           <a href="{% url 'checkout' %}"
-            class="w-full bg-neutral-900 text-white py-4 rounded-full font-medium hover:bg-neutral-800 transition-colors flex items-center justify-center group">
+            class="w-full bg-neutral-900 text-white py-4 font-medium hover:bg-neutral-800 transition-colors flex items-center justify-center group">
             Checkout
             <i class="fas fa-arrow-right ml-2"></i>
           </a>

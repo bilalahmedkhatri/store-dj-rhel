@@ -10,6 +10,9 @@ def register_view(request):
             user = form.save()
             # Specify which backend to use for login since we have multiple backends
             login(request, user, backend='app.auth_backends.EmailBackend')
+            next_url = request.POST.get('next') or request.GET.get('next')
+            if next_url:
+                return redirect(next_url)
             return redirect('dashboard') 
         else:
             return render(request, 'landing/register.html', {'register_form': form})

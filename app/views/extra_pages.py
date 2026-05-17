@@ -1,4 +1,7 @@
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from .mock_data import (
@@ -25,14 +28,35 @@ def contact_us(request):
         email = request.POST.get('email')
         subject = request.POST.get('subject')
         message = request.POST.get('message')
-        # Send email (configure settings first)
-        send_mail(
-            f'Contact Form: {subject}',
-            f'From: {name} <{email}>\n\n{message}',
-            email,
-            ['support@MukhtaleefWear.com'],
-            fail_silently=False,
+        
+        # Prepare context for the HTML email
+        email_context = {
+            'name': name,
+            'email': email,
+            'subject': subject,
+            'message': message,
+        }
+        
+        # Render the premium HTML email
+        html_content = render_to_string('emails/contact_form.html', email_context)
+        text_content = strip_tags(html_content)
+        
+        from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@storedjreheel.com')
+        to = ['najeeb.back74@gmail.com']
+        
+        msg = EmailMultiAlternatives(
+            f'Contact Form Inquiry: {subject}',
+            text_content,
+            from_email,
+            to
         )
+        msg.attach_alternative(html_content, "text/html")
+        
+        try:
+            msg.send()
+        except Exception as e:
+            print(f"Error sending contact form email: {e}")
+            
         messages.success(request, 'Your message has been sent. We\'ll get back to you soon.')
         return redirect('contact_us')
     return render(request, 'landing/contact.html', context)
@@ -84,6 +108,15 @@ def cookie_policy(request):
 
 def status_page(request):
     return render(request, 'landing/status.html')
+
+def contact_email_preview(request):
+    mock_context = {
+        'name': 'Bilal Ahmed Khatri',
+        'email': 'bilal@example.com',
+        'subject': 'Inquiry regarding custom embroidery service',
+        'message': "Hello Team,\n\nI would love to know if you provide custom sizing or embroidery options for the MukhtaleefWear premium hoodie collection. Specifically, I am interested in ordering 10 units with my startup company logo.\n\nBest regards,\nBilal Khatri",
+    }
+    return render(request, 'emails/contact_form.html', mock_context)
 
 def error_404(request, exception):
     return render(request, 'landing/error.html', status=404)

@@ -8,6 +8,9 @@ from ..models import User as AppUser, Customer, Address, Order, OrderLine, Produ
 from .cart_utils import CART_SESSION_KEY, build_cart_context, get_cart
 
 def checkout_view(request):
+    if not request.user.is_authenticated:
+        return redirect('/register/?next=/cart/')
+        
     if request.method == "POST":
         cart = get_cart(request)
         is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.POST.get('ajax') == 'true'
@@ -20,15 +23,55 @@ def checkout_view(request):
         # 1. Handle Customer
         customer = None
         if request.user.is_authenticated:
-            app_user = AppUser.objects.filter(id=request.user.id).first()
-            customer, _ = Customer.objects.get_or_create(
-                userid=app_user,
-                defaults={
-                    'emailaddress': request.user.email,
-                    'firstname': request.user.first_name or request.user.username,
-                    'lastname': request.user.last_name or ""
-                }
-            )
+            app_user = AppUser.objects.filter(identifier=request.user.email).first()
+            if not app_user:
+                app_user = AppUser.objects.filter(id=request.user.id).first()
+                
+            if app_user:
+                customer = Customer.objects.filter(userid=app_user).first()
+                
+            if not customer and request.user.email:
+                customer = Customer.objects.filter(emailaddress=request.user.email).first()
+                
+            if not customer:
+                customer = Customer.objects.create(
+                    userid=app_user,
+                    emailaddress=request.user.email,
+                    firstname=request.POST.get('first_name', '') or request.user.first_name or "Valued Customer",
+                    lastname=request.POST.get('last_name', '') or request.user.last_name or "",
+                    phonenumber=request.POST.get('phone', '')
+                )
+            else:
+                # Update details if provided
+                if app_user and not customer.userid:
+                    customer.userid = app_user
+                if request.POST.get('first_name'):
+                    customer.firstname = request.POST.get('first_name')
+                if request.POST.get('last_name'):
+                    customer.lastname = request.POST.get('last_name')
+                if request.POST.get('phone'):
+                    customer.phonenumber = request.POST.get('phone')
+                customer.save()
+        else:
+            # Guest or anonymous
+            email = request.POST.get('email')
+            if email:
+                customer = Customer.objects.filter(emailaddress=email).first()
+            if not customer:
+                customer = Customer.objects.create(
+                    emailaddress=email,
+                    firstname=request.POST.get('first_name', '') or "Valued Customer",
+                    lastname=request.POST.get('last_name', '') or "",
+                    phonenumber=request.POST.get('phone', '')
+                )
+            else:
+                if request.POST.get('first_name'):
+                    customer.firstname = request.POST.get('first_name')
+                if request.POST.get('last_name'):
+                    customer.lastname = request.POST.get('last_name')
+                if request.POST.get('phone'):
+                    customer.phonenumber = request.POST.get('phone')
+                customer.save()
         
         # 2. Build Cart Context for totals
         cart_data = build_cart_context(request)
@@ -113,10 +156,32 @@ def checkout_view(request):
         return redirect("payment_success")
 
     context = build_cart_context(request)
+    context['saved_customer'] = {
+        'emailaddress': '',
+        'firstname': '',
+        'lastname': '',
+        'phonenumber': ''
+    }
+    context['saved_address'] = {
+        'phonenumber': '',
+        'streetline1': '',
+        'city': '',
+        'postalcode': ''
+    }
     
     if request.user.is_authenticated:
-        app_user = AppUser.objects.filter(id=request.user.id).first()
-        customer = Customer.objects.filter(userid=app_user).first()
+        app_user = AppUser.objects.filter(identifier=request.user.email).first()
+        if not app_user:
+            app_user = AppUser.objects.filter(id=request.user.id).first()
+            
+        customer = None
+        if app_user:
+            customer = Customer.objects.filter(userid=app_user).first()
+            
+        # Fallback: find by email ONLY if it matches the current user's email
+        if not customer:
+            customer = Customer.objects.filter(emailaddress=request.user.email).first()
+            
         if customer:
             context['saved_customer'] = customer
             # Get default shipping address

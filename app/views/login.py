@@ -10,6 +10,9 @@ def login_view(request):
             user = form.get_user()
             # Specify the backend explicitly to avoid ValueError
             login(request, user, backend='app.auth_backends.EmailBackend')
+            next_url = request.POST.get('next') or request.GET.get('next')
+            if next_url:
+                return redirect(next_url)
             return redirect('dashboard')
         else:
             return render(request, 'landing/login.html', {'login_form': form})

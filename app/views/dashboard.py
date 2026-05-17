@@ -4,25 +4,39 @@ from django.contrib import messages
 from ..models import Customer, Order, Address, ProductVariantPrice
 from ..forms import AddressForm
 
+def get_customer_for_user(request):
+    from ..models import User as AppUser
+    app_user = AppUser.objects.filter(identifier=request.user.email).first()
+    if not app_user:
+        app_user = AppUser.objects.filter(id=request.user.id).first()
+        
+    customer = None
+    if app_user:
+        customer = Customer.objects.filter(userid=app_user).first()
+        
+    if not customer and request.user.email:
+        customer = Customer.objects.filter(emailaddress=request.user.email).first()
+        
+    if not customer:
+        customer = Customer.objects.create(
+            userid=app_user,
+            emailaddress=request.user.email or f"{request.user.username}@example.com",
+            firstname=request.user.first_name or request.user.username,
+            lastname=request.user.last_name or ""
+        )
+    elif app_user and not customer.userid:
+        customer.userid = app_user
+        customer.save()
+        
+    return customer
+
 @login_required
 def dashboard_view(request):
     """
     Renders a clean, professional dashboard for the authenticated customer.
     """
-    from ..models import User as AppUser
-    
-    # Get the correct User model instance from our app models
-    app_user = AppUser.objects.filter(id=request.user.id).first()
-    
     # 1. Get or create Customer profile
-    customer, created = Customer.objects.get_or_create(
-        userid=app_user,
-        defaults={
-            'emailaddress': request.user.email or f"{request.user.username}@example.com",
-            'firstname': request.user.first_name or request.user.username,
-            'lastname': request.user.last_name or ""
-        }
-    )
+    customer = get_customer_for_user(request)
 
     # 2. Get Order History (Recent first)
     orders_qs = Order.objects.filter(customerid=customer).order_by('-createdat')
@@ -61,9 +75,7 @@ def profile_view(request):
     """
     Renders and handles updates for the user profile page.
     """
-    from ..models import User as AppUser
-    app_user = AppUser.objects.filter(id=request.user.id).first()
-    customer = get_object_or_404(Customer, userid=app_user)
+    customer = get_customer_for_user(request)
     
     # Get default address for editing
     address = Address.objects.filter(customerid=customer, defaultshippingaddress=True).first()

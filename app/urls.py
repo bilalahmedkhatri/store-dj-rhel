@@ -31,6 +31,7 @@ urlpatterns = [
     # extra pages
     path('about-us/', views.about_us, name='about_us'),
     path('contact-us/', views.contact_us, name='contact_us'),
+    path('contact-us/preview/', views.contact_email_preview, name='contact_email_preview'),
     path('faqs/', views.faqs, name='faqs'),
     path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
     path('terms-and-conditions/', views.terms_and_conditions, name='terms_and_conditions'),

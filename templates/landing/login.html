@@ -21,7 +21,9 @@
         {% endif %}
 
         <form method="POST" action="{% url 'login' %}" class="space-y-6">
-          {% csrf_token %} {% for field in login_form %}
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.GET.next|default:'' }}">
+          {% for field in login_form %}
           <div class="form-group">
             <label
               for="{{ field.id_for_label }}"
@@ -71,7 +73,7 @@
         <div class="text-center mt-6">
           <p class="text-gray-600">
             Don't have an account? 
-            <a href="{% url 'register' %}" class="text-primary font-semibold hover:underline">Sign up</a>
+            <a href="{% url 'register' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" class="text-primary font-semibold hover:underline">Sign up</a>
           </p>
         </div>
       </div>

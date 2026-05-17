@@ -117,6 +117,39 @@ document.addEventListener('DOMContentLoaded', function () {
     const addToCartForm = document.getElementById('add-to-cart-form');
     const addToCartBtn = document.getElementById('add-to-cart-btn');
 
+    function showAuthPromptModal() {
+        const modal = document.getElementById('auth-prompt-modal');
+        if (!modal) return;
+        const box = modal.querySelector('.relative');
+        
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        // trigger animation reflow
+        void modal.offsetWidth;
+        
+        box.classList.remove('scale-95', 'opacity-0');
+        box.classList.add('scale-100', 'opacity-100');
+    }
+
+    function hideAuthPromptModal() {
+        const modal = document.getElementById('auth-prompt-modal');
+        if (!modal) return;
+        const box = modal.querySelector('.relative');
+        
+        box.classList.remove('scale-100', 'opacity-100');
+        box.classList.add('scale-95', 'opacity-0');
+        
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }, 300);
+    }
+
+    const closeBtn = document.getElementById('close-auth-modal');
+    const continueBtn = document.getElementById('continue-shopping-btn');
+    if (closeBtn) closeBtn.addEventListener('click', hideAuthPromptModal);
+    if (continueBtn) continueBtn.addEventListener('click', hideAuthPromptModal);
+
     if (addToCartForm && addToCartBtn && !addToCartForm.dataset.eventsAttached) {
         addToCartForm.dataset.eventsAttached = "true";
         
@@ -125,6 +158,8 @@ document.addEventListener('DOMContentLoaded', function () {
             e.stopPropagation();
             e.stopImmediatePropagation();
             if (addToCartBtn.disabled || addToCartBtn.getAttribute('data-state') === 'success') return;
+
+            const isAuthenticated = addToCartForm.getAttribute('data-authenticated') === 'true';
 
             const originalHTML = addToCartBtn.innerHTML;
             addToCartBtn.disabled = true;
@@ -144,24 +179,30 @@ document.addEventListener('DOMContentLoaded', function () {
             const result = await engine.addToCart(addToCartForm);
 
             if (result?.success) {
-                addToCartBtn.setAttribute('data-state', 'success');
-                addToCartBtn.innerHTML = `
-                    <i class="fas fa-check"></i>
-                    <span>Show Cart</span>
-                `;
-                addToCartBtn.classList.remove('bg-primary');
-                addToCartBtn.classList.add('bg-secondary', 'text-white');
-                addToCartBtn.type = 'button';
-                addToCartBtn.disabled = false;
-                
-                // Important: detach the submit handler logic for redirection
-                addToCartBtn.onclick = (event) => {
-                    event.preventDefault();
-                    window.location.href = '/cart/';
-                };
+                if (!isAuthenticated) {
+                    showAuthPromptModal();
+                    addToCartBtn.disabled = false;
+                    addToCartBtn.innerHTML = originalHTML;
+                } else {
+                    addToCartBtn.setAttribute('data-state', 'success');
+                    addToCartBtn.innerHTML = `
+                        <i class="fas fa-check"></i>
+                        <span>Show Cart</span>
+                    `;
+                    addToCartBtn.classList.remove('bg-primary');
+                    addToCartBtn.classList.add('bg-secondary', 'text-white');
+                    addToCartBtn.type = 'button';
+                    addToCartBtn.disabled = false;
+                    
+                    // Important: detach the submit handler logic for redirection
+                    addToCartBtn.onclick = (event) => {
+                        event.preventDefault();
+                        window.location.href = '/cart/';
+                    };
 
-                // Remove the hidden attribute if any
-                addToCartBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    // Remove the hidden attribute if any
+                    addToCartBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
             } else {
                 addToCartBtn.innerHTML = `<span>Try Again</span>`;
                 setTimeout(() => {

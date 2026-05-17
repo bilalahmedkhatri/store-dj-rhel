@@ -26,4 +26,5 @@ from .extra_pages import (
     security,
     cookie_policy,
     status_page,
+    contact_email_preview,
 )

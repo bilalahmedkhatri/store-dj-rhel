@@ -28,12 +28,12 @@
       {% if sub.slug %}
       <a
         href="{% url 'category_detail_slug' category_id=sub.id slug=sub.slug %}"
-        class="inline-flex items-center px-4 py-2 rounded-full bg-white border border-gray-200 text-sm font-medium text-gray-800 hover:border-primary hover:text-primary transition-colors shadow-sm"
+        class="inline-flex items-center px-4 py-2 bg-white border border-gray-200 text-sm font-medium text-gray-800 hover:border-primary hover:text-primary transition-colors shadow-sm"
       >{{ sub.name }}</a>
       {% else %}
       <a
         href="{% url 'category_detail' category_id=sub.id %}"
-        class="inline-flex items-center px-4 py-2 rounded-full bg-white border border-gray-200 text-sm font-medium text-gray-800 hover:border-primary hover:text-primary transition-colors shadow-sm"
+        class="inline-flex items-center px-4 py-2 bg-white border border-gray-200 text-sm font-medium text-gray-800 hover:border-primary hover:text-primary transition-colors shadow-sm"
       >{{ sub.name }}</a>
       {% endif %}
       {% endfor %}
