@@ -10,7 +10,11 @@ from .cart_utils import CART_SESSION_KEY, build_cart_context, get_cart
 def checkout_view(request):
     if request.method == "POST":
         cart = get_cart(request)
+        is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.POST.get('ajax') == 'true'
         if not cart:
+            if is_ajax:
+                from django.http import JsonResponse
+                return JsonResponse({'status': 'error', 'message': 'Cart is empty', 'redirect_url': '/cart/'})
             return redirect("cart")
 
         # 1. Handle Customer
@@ -77,10 +81,35 @@ def checkout_view(request):
                 orderid=order
             )
 
+        # Create Payment Record
+        from ..models import Payment
+        payment_method = request.POST.get('payment', 'card')
+        Payment.objects.create(
+            createdat=timezone.now(),
+            updatedat=timezone.now(),
+            method=payment_method,
+            state='Settled',
+            transactionid=order.code,
+            amount=int(cart_data['total'] * 100),
+            orderid=order,
+            metadata="{}"
+        )
+
+        # Save order code in session
+        request.session['latest_order_code'] = order.code
+
         # 5. Clear Cart
         request.session[CART_SESSION_KEY] = []
         request.session.modified = True
         
+        if is_ajax:
+            from django.http import JsonResponse
+            return JsonResponse({
+                'status': 'success',
+                'redirect_url': '/payment/success/',
+                'message': 'Order placed successfully!'
+            })
+            
         return redirect("payment_success")
 
     context = build_cart_context(request)
@@ -98,12 +127,26 @@ def checkout_view(request):
     return render(request, "landing/checkout.html", context)
 
 def payment_success_view(request):
-    # In a real app, we'd fetch transaction details from session or DB
-    context = {
-        'transaction_id': 'PF-TXN-' + uuid.uuid4().hex[:8].upper(),
-        'amount': 'Calculated at checkout',
-        'timestamp': timezone.now().strftime('%Y-%m-%d %H:%M:%S'),
-    }
+    latest_code = request.session.get('latest_order_code')
+    order = None
+    if latest_code:
+        order = Order.objects.filter(code=latest_code).first()
+        
+    if order:
+        from ..models import Payment
+        payment = Payment.objects.filter(orderid=order).first()
+        amount_paid = f"{(payment.amount / 100) if payment else ((order.subtotalwithtax + order.shipping) / 100):,.2f}"
+        context = {
+            'transaction_id': order.code,
+            'amount': amount_paid,
+            'timestamp': order.createdat.strftime('%Y-%m-%d %H:%M:%S'),
+        }
+    else:
+        context = {
+            'transaction_id': 'PF-TXN-' + uuid.uuid4().hex[:8].upper(),
+            'amount': '0.00',
+            'timestamp': timezone.now().strftime('%Y-%m-%d %H:%M:%S'),
+        }
     return render(request, "landing/payment_success.html", context)
 
 def payment_failed_view(request):
@@ -122,12 +165,33 @@ def payment_pending_view(request):
 def receipt_view(request, transaction_id):
     # Fetch order by code
     order = Order.objects.filter(code=transaction_id).first()
-    
+    payment = None
+    if order:
+        from ..models import Payment
+        payment = Payment.objects.filter(orderid=order).first()
+        
+    payment_via = "ATM Card"
+    if payment:
+        if payment.method == 'card':
+            payment_via = "Credit / Debit Card"
+        elif payment.method == 'paypal':
+            payment_via = "PayPal"
+        else:
+            payment_via = payment.method.title()
+            
+    # Format total paid amount
+    total_amount = "0.00"
+    if payment:
+        total_amount = f"{payment.amount / 100:,.2f}"
+    elif order:
+        total_amount = f"{(order.subtotalwithtax + order.shipping) / 100:,.2f}"
+        
     context = {
         'transaction_id': transaction_id,
-        'amount': f"{order.subtotal / 100:,.2f}" if order else "0.00",
+        'amount': total_amount,
         'payer_name': order.customerid.firstname if order and order.customerid else "Valued Customer",
         'timestamp': order.createdat.strftime('%Y-%m-%d %H:%M:%S') if order else timezone.now().strftime('%Y-%m-%d %H:%M:%S'),
+        'payment_via': payment_via,
         'order': order
     }
     return render(request, "landing/receipt.html", context)

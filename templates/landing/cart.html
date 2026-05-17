@@ -48,7 +48,7 @@
                 data-update-url="{% url 'cart_update' item.slug %}" data-remove-url="{% url 'cart_remove' item.slug %}"
                 {% else %} data-update-url="" data-remove-url="" {% endif %}>
                 <!-- Product Image -->
-                <div class="relative w-full sm:w-32 aspect-[4/5] bg-neutral-100 rounded-xl overflow-hidden shrink-0">
+                <div class="relative w-full sm:w-32 aspect-[4/5] bg-neutral-100 overflow-hidden shrink-0">
                   <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"
                     class="object-cover w-full h-full" />
                 </div>

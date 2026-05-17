@@ -199,7 +199,7 @@
             const code = input.value.trim().toUpperCase();
             if (code === 'SAVE10' || code === 'WELCOME') {
                 if (success) {
-                    success.textContent = `✓ Coupon "${code}" applied! You saved $5.00.`;
+                    success.textContent = `✓ Coupon "${code}" applied! You saved Rs. 5.00.`;
                     success.classList.remove('hidden');
                 }
                 input.disabled = true;

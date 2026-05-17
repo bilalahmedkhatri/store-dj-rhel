@@ -37,7 +37,7 @@
       if (loadMoreIcon) { loadMoreIcon.classList.add('hidden'); }
       if (loadMoreSpinner) { loadMoreSpinner.classList.remove('hidden'); }
       
-      fetch(`/api/load-more-products/?offset=Rs. {offset}&limit=Rs. {limit}`)
+      fetch(`/api/load-more-products/?offset=${offset}&limit=${limit}`)
         .then(response => response.text())
         .then(html => {
           if (html.trim() === '' || html.includes('No products found')) {

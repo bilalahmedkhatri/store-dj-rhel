@@ -46,7 +46,7 @@
                     <div class="cart-toast__body">
                         <p class="cart-toast__label">Added to cart</p>
                         <p class="cart-toast__name">${name}</p>
-                        <p class="cart-toast__meta">Qty ${qty} &middot; $${(price * qty).toFixed(2)}</p>
+                        <p class="cart-toast__meta">Qty ${qty} &middot; Rs. ${(price * qty).toFixed(2)}</p>
                     </div>
                     <a href="/cart/" class="cart-toast__cta">View Cart</a>
                     <button class="cart-toast__close" aria-label="Dismiss"><i class="fas fa-times"></i></button>
@@ -176,7 +176,7 @@
                         <div class="flex-1 min-w-0">
                             <p class="text-sm font-semibold text-gray-900 truncate">${item.name}</p>
                             <p class="text-xs text-gray-400 mt-0.5">Qty: ${item.quantity}</p>
-                            <p class="text-sm font-bold text-gray-900 mt-0.5">$${(parseFloat(item.price) * parseInt(item.quantity)).toFixed(2)}</p>
+                            <p class="text-sm font-bold text-gray-900 mt-0.5">Rs. ${(parseFloat(item.price) * parseInt(item.quantity)).toFixed(2)}</p>
                         </div>
                         <button class="mini-cart-remove flex-shrink-0 text-gray-300 hover:text-red-500 transition-colors p-1.5 rounded-lg hover:bg-red-50"
                                 data-slug="${item.slug}" aria-label="Remove ${item.name}">
@@ -198,7 +198,7 @@
                 }
             }
             if (itemsLabel) itemsLabel.textContent = this.items.length;
-            if (subtotalEl) subtotalEl.textContent = '$' + this.subtotal.toFixed(2);
+            if (subtotalEl) subtotalEl.textContent = 'Rs. ' + this.subtotal.toFixed(2);
         }
     };
 
